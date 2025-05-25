@@ -23,6 +23,7 @@ Rails.application.routes.draw do
         end
       end
       resources :sephcocco_lounge_product_likes
+      resources :sephcocco_lounge_orders
     end
   end
 
