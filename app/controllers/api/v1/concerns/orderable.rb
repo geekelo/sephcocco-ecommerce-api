@@ -9,12 +9,22 @@ module Api::V1::Concerns::Orderable
   end
 
   def index
-    orders = order_class.all
+    orders = 
+      if current_user.sephcocco_user_role.name == 'admin'
+        order_class.all
+      else
+        current_user.send(order_association)
+      end
     render json: orders
   end
 
   def create
-    order = @customer&.send(order_association).new(order_params)
+    order = 
+    if current_user.sephcocco_user_role.name == 'admin'
+      @customer&.send(order_association).new(order_params)
+    else
+      order = current_user.send(order_association).new(order_params)
+    end
 
     if order&.save
       render json: order, status: :created
@@ -32,37 +42,6 @@ module Api::V1::Concerns::Orderable
   end
 
   def destroy
-    if @order.destroy
-      render json: { message: 'Order deleted successfully' }, status: :ok
-    else
-      render json: { error: 'Failed to delete order' }, status: :unprocessable_entity
-    end
-  end
-
-  # USER METHODS
-  def user_orders
-    orders = current_user.send(order_association)
-    render json: orders
-  end
-
-  def user_order_create
-    order = current_user.send(order_association).new(order_params)
-    if order.save
-      render json: order, status: :created
-    else
-      render json: order.errors, status: :unprocessable_entity
-    end
-  end
-
-  def user_order_update
-    if @order.update(order_params)
-      render json: @order
-    else
-      render json: @order.errors, status: :unprocessable_entity
-    end
-  end
-
-  def user_order_destroy
     if @order.destroy
       render json: { message: 'Order deleted successfully' }, status: :ok
     else
