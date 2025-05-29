@@ -10,22 +10,47 @@ Rails.application.routes.draw do
       post "signup" => "registration#create"
       post "login" => "authentication#create"
 
-      resources :sephcocco_lounge_products do
-        member do
-          post "like" => "sephcocco_lounge_products#like"
-          post "unlike" => "sephcocco_lounge_products#unlike"
-          post "switch_visibility" => "sephcocco_lounge_products#switch_visibility"
+      # LOUNGE
+      namespace :lounge do
+        resources :sephcocco_lounge_products do
+          member do
+            post "like" => "sephcocco_lounge_products#like"
+            post "unlike" => "sephcocco_lounge_products#unlike"
+            post "switch_visibility" => "sephcocco_lounge_products#switch_visibility"
+          end
         end
-      end
-      resources :sephcocco_lounge_product_categories do
-        member do
-          post "add_product_to_category" => "sephcocco_lounge_product_categories#add_product_to_category"
+        resources :sephcocco_lounge_product_categories do
+          member do
+            post "add_product_to_category" => "sephcocco_lounge_product_categories#add_product_to_category"
+          end
         end
+        resources :sephcocco_lounge_product_likes
+        resources :sephcocco_lounge_orders
+        resources :sephcocco_lounge_payments
       end
-      resources :sephcocco_lounge_product_likes
-      resources :sephcocco_lounge_orders
+
+      # PHARMACY
+      namespace :pharmacy do
+        resources :sephcocco_pharmacy_products do
+          member do
+            post "like" => "sephcocco_pharmacy_products#like"
+            post "unlike" => "sephcocco_pharmacy_products#unlike"
+            post "switch_visibility" => "sephcocco_pharmacy_products#switch_visibility"
+          end
+        end
+        resources :sephcocco_pharmacy_product_categories do
+          member do
+            post "add_product_to_category" => "sephcocco_pharmacy_product_categories#add_product_to_category"
+          end
+        end
+        resources :sephcocco_pharmacy_product_likes
+        resources :sephcocco_pharmacy_orders
+        resources :sephcocco_pharmacy_payments
+      end
     end
   end
+
+
 
   # Render dynamic PWA files from app/views/pwa/*
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker

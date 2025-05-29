@@ -1,5 +1,5 @@
 # app/controllers/api/v1/concerns/product_manageable.rb
-module Api::V1::Concerns::ProductManageable
+module Api::V1::Concerns::ProductsControllerHelper
   extend ActiveSupport::Concern
 
   included do

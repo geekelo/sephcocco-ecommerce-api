@@ -1,5 +1,5 @@
 class SephcoccoLoungeProduct < ApplicationRecord
-  include ProductBehavior
+  include ProductModelHelper
 
   def self.category_association_name
     :lounge_product_categories

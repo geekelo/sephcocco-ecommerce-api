@@ -1,6 +1,6 @@
 # app/controllers/api/v1/sephcocco_lounge_orders_controller.rb
-class Api::V1::SephcoccoLoungeOrdersController < ApplicationController
-  include Api::V1::Concerns::Orderable
+class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
+  include Api::V1::Concerns::OrdersControllerHelper
 
   private
 

@@ -1,5 +1,5 @@
-# app/controllers/api/v1/concerns/product_categorizable.rb
-module Api::V1::Concerns::ProductCategorizable
+# app/controllers/api/v1/concerns/product_categories_controller_helper.rb
+module Api::V1::Concerns::ProductCategoriesControllerHelper
   extend ActiveSupport::Concern
 
   included do

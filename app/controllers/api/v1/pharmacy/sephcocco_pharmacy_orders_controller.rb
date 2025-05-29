@@ -1,6 +1,6 @@
 # app/controllers/api/v1/sephcocco_pharmacy_orders_controller.rb
-class Api::V1::SephcoccoPharmacyOrdersController < ApplicationController
-  include Api::V1::Concerns::Orderable
+class Api::V1::Pharmacy::SephcoccoPharmacyOrdersController < ApplicationController
+  include Api::V1::Concerns::OrdersControllerHelper
 
   private
 

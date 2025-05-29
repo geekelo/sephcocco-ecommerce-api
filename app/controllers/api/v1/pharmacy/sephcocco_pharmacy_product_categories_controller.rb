@@ -1,6 +1,6 @@
-# app/controllers/api/v1/sephcocco_pharmacy_product_categories_controller.rb
-class Api::V1::SephcoccoPharmacyProductCategoriesController < ApplicationController
-  include Api::V1::Concerns::ProductCategorizable
+# app/controllers/api/v1/pharmacy/sephcocco_pharmacy_product_categories_controller.rb
+class Api::V1::Pharmacy::SephcoccoPharmacyProductCategoriesController < ApplicationController
+  include Api::V1::Concerns::ProductCategoriesControllerHelper
 
   private
 

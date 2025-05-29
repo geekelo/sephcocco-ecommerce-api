@@ -1,5 +1,5 @@
-# app/models/concerns/order_callbacks.rb
-module OrderCallbacks
+# app/models/concerns/order_model_helper.rb
+module OrderModelHelper
   extend ActiveSupport::Concern
 
   included do

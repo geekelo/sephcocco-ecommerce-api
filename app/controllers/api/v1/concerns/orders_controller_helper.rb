@@ -1,5 +1,5 @@
-# app/controllers/api/v1/concerns/orderable.rb
-module Api::V1::Concerns::Orderable
+# app/controllers/api/v1/concerns/orders_controller_helper.rb
+module Api::V1::Concerns::OrdersControllerHelper
   extend ActiveSupport::Concern
 
   included do
@@ -9,19 +9,18 @@ module Api::V1::Concerns::Orderable
   end
 
   def index
-    orders = 
       if current_user.sephcocco_user_role.name == 'admin'
-        order_class.all
+        order = order_class.all
+        render json: orders, each_serializer: Lounge::Admin::SephcoccoLoungeOrderSerializer
       else
-        current_user.send(order_association)
+        orders = current_user.send(order_association)
+        render json: orders, each_serializer: Lounge::User::SephcoccoLoungeOrderSerializer
       end
-    render json: orders
   end
 
   def create
-    order = 
     if current_user.sephcocco_user_role.name == 'admin'
-      @customer&.send(order_association).new(order_params)
+      order = @customer&.send(order_association).new(order_params)
     else
       order = current_user.send(order_association).new(order_params)
     end
@@ -35,7 +34,11 @@ module Api::V1::Concerns::Orderable
 
   def update
     if @order.update(order_params)
-      render json: @order
+      if current_user.sephcocco_user_role.name == 'admin'
+        render json: @order, each_serializer: Lounge::Admin::SephcoccoLoungeOrderSerializer
+      else 
+        render json: @order, each_serializer: Lounge::User::SephcoccoLoungeOrderSerializer
+      end
     else
       render json: @order.errors, status: :unprocessable_entity
     end

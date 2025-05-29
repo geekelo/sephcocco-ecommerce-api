@@ -1,23 +1,23 @@
-# app/controllers/api/v1/sephcocco_lounge_products_controller.rb
-class Api::V1::SephcoccoLoungeProductsController < ApplicationController
-  include Api::V1::Concerns::ProductManageable
-
+# app/controllers/api/v1/pharmacy/sephcocco_pharmacy_products_controller.rb
+class Api::V1::Pharmacy::SephcoccoPharmacyProductsController < ApplicationController
+  include Api::V1::Concerns::ProductsControllerHelper
+  
   private
 
   def product_class
-    SephcoccoLoungeProduct
+    SephcoccoPharmacyProduct
   end
 
   def category_class
-    SephcoccoLoungeProductCategory
+    SephcoccoPharmacyProductCategory
   end
 
   def like_class
-    SephcoccoLoungeProductLike
+    SephcoccoPharmacyProductLike
   end
 
   def product_key
-    :sephcocco_lounge_product_id
+    :sephcocco_pharmacy_product_id
   end
 
   def user_key
@@ -25,7 +25,7 @@ class Api::V1::SephcoccoLoungeProductsController < ApplicationController
   end
 
   def category_association_name
-    :sephcocco_lounge_product_categories
+    :sephcocco_pharmacy_product_categories
   end
 
   def product_params

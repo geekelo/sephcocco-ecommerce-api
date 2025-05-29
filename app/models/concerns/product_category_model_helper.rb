@@ -1,4 +1,4 @@
-module ProductCategoryBehavior
+module ProductCategoryModelHelper
   extend ActiveSupport::Concern
 
   included do

@@ -1,6 +1,6 @@
 # app/controllers/api/v1/sephcocco_lounge_product_categories_controller.rb
-class Api::V1::SephcoccoLoungeProductCategoriesController < ApplicationController
-  include Api::V1::Concerns::ProductCategorizable
+class Api::V1::Lounge::SephcoccoLoungeProductCategoriesController < ApplicationController
+  include Api::V1::Concerns::ProductCategoriesControllerHelper
 
   private
 

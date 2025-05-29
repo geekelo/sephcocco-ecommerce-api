@@ -1,5 +1,5 @@
-# app/models/concerns/product_like_behavior.rb
-module ProductLikeBehavior
+# app/models/concerns/product_like_model_helper.rb
+module ProductLikeModelHelper
   extend ActiveSupport::Concern
 
   module ClassMethods

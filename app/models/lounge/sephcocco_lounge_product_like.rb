@@ -1,5 +1,5 @@
 class SephcoccoLoungeProductLike < ApplicationRecord
-  include ProductLikeBehavior
+  include ProductLikeModelHelper
 
   def self.user_class_name
     'SephcoccoUser'

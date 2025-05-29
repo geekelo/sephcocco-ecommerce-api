@@ -1,4 +1,4 @@
-module ProductBehavior
+module ProductModelHelper
   extend ActiveSupport::Concern
 
   class_methods do
