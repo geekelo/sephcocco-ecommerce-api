@@ -1,5 +1,5 @@
 class Restaurant::SephcoccoRestuarantOrder < ApplicationRecord
-  include OrderCallbacks
+  include OrderModelHelper
 
   belongs_to :sephcocco_restuarant_product
   belongs_to :sephcocco_user
