@@ -1,4 +1,4 @@
-class SephcoccoRestuarantOrder < ApplicationRecord
+class Restaurant::SephcoccoRestuarantOrder < ApplicationRecord
   include OrderCallbacks
 
   belongs_to :sephcocco_restuarant_product

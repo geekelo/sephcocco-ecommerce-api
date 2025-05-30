@@ -1,5 +1,5 @@
-class SephcoccoPharmacyOrder < ApplicationRecord
-  include OrderCallbacks
+class Pharmacy::SephcoccoPharmacyOrder < ApplicationRecord
+  include OrderModelHelper
 
   belongs_to :sephcocco_pharmacy_product
   belongs_to :sephcocco_user
