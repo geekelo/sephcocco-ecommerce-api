@@ -1,4 +1,4 @@
-class Restaurant::SephcoccoRestuarantOrder < ApplicationRecord
+class Restaurant::SephcoccoRestaurantOrder < ApplicationRecord
   include OrderModelHelper
 
   belongs_to :sephcocco_restuarant_product
