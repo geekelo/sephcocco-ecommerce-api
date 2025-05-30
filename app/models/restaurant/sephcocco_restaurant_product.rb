@@ -18,7 +18,7 @@ class Restaurant::SephcoccoRestaurantProduct < ApplicationRecord
   end
 
   def self.product_like_class
-    SephcoccoRestaurantProductLike
+    Restaurant::SephcoccoRestaurantProductLike
   end
 
   def self.order_class

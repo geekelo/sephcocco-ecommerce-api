@@ -22,7 +22,7 @@ class Pharmacy::SephcoccoPharmacyProduct < ApplicationRecord
   end
 
   def self.order_class
-    SephcoccoPharmacyOrder
+    Pharmacy::SephcoccoPharmacyOrder
   end
 
   def self.likes_association_name
