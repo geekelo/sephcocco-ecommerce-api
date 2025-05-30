@@ -1,5 +1,5 @@
 # app/controllers/api/v1/sephcocco_restaurant_orders_controller.rb
-class Api::V1::SephcoccoRestaurantOrdersController < ApplicationController
+class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationController
   include Api::V1::Concerns::OrdersControllerHelper
 
   private
