@@ -1,4 +1,4 @@
-class SephcoccoLoungeProductLike < ApplicationRecord
+class Lounge::SephcoccoLoungeProductLike < ApplicationRecord
   include ProductLikeModelHelper
 
   def self.user_class_name

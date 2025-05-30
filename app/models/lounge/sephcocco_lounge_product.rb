@@ -1,4 +1,4 @@
-class SephcoccoLoungeProduct < ApplicationRecord
+class Lounge::SephcoccoLoungeProduct < ApplicationRecord
   include ProductModelHelper
 
   def self.category_association_name
@@ -18,11 +18,11 @@ class SephcoccoLoungeProduct < ApplicationRecord
   end
 
   def self.product_like_class
-    SephcoccoLoungeProductLike
+    Lounge::SephcoccoLoungeProductLike
   end
 
   def self.order_class
-    SephcoccoLoungeOrder
+    Lounge::SephcoccoLoungeOrder
   end
 
   def self.likes_association_name

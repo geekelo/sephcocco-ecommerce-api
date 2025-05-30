@@ -1,5 +1,5 @@
 # app/controllers/api/v1/sephcocco_restaurant_product_categories_controller.rb
-class Api::V1::SephcoccoRestaurantProductCategoriesController < ApplicationController
+class Api::V1::Restaurant::SephcoccoRestaurantProductCategoriesController < ApplicationController
   include Api::V1::Concerns::ProductCategoriesControllerHelper
 
   private

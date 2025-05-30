@@ -1,7 +1,7 @@
 require_relative '../../lib/migration_helpers/payments_migration_helper'
 
 class CreateSephcoccoLoungePayments < ActiveRecord::Migration[7.2]
-  include PaymentsMigrationHelper
+  include MigrationHelpers::PaymentsMigrationHelper
 
   def up
     create_payments_table(

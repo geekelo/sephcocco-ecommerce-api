@@ -1,4 +1,4 @@
-class Api::V1::Lounge::SephcoccoPharmacyPaymentsController < ApplicationController
+class Api::V1::Pharmacy::SephcoccoPharmacyPaymentsController < ApplicationController
   include Api::V1::Concerns::PaymentsControllerHelper
 
   private
