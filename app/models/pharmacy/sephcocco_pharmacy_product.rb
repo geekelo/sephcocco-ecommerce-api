@@ -1,4 +1,4 @@
-class SephcoccoPharmacyProduct < ApplicationRecord
+class Pharmacy::SephcoccoPharmacyProduct < ApplicationRecord
   include ProductModelHelper
 
   def self.category_association_name
@@ -18,7 +18,7 @@ class SephcoccoPharmacyProduct < ApplicationRecord
   end
 
   def self.product_like_class
-    SephcoccoPharmacyProductLike
+    Pharmacy::SephcoccoPharmacyProductLike
   end
 
   def self.order_class

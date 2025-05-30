@@ -1,4 +1,4 @@
-class SephcoccoPharmacyProductLike < ApplicationRecord
+class Pharmacy::SephcoccoPharmacyProductLike < ApplicationRecord
   include ProductLikeModelHelper
 
   def self.user_class_name

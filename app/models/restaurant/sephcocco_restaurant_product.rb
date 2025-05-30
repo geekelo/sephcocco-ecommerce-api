@@ -1,4 +1,4 @@
-class SephcoccoRestaurantProduct < ApplicationRecord
+class Restaurant::SephcoccoRestaurantProduct < ApplicationRecord
   include ProductModelHelper
 
   def self.category_association_name
@@ -22,7 +22,7 @@ class SephcoccoRestaurantProduct < ApplicationRecord
   end
 
   def self.order_class
-    SephcoccoRestaurantOrder
+    Restaurant::SephcoccoRestaurantOrder
   end
 
   def self.likes_association_name

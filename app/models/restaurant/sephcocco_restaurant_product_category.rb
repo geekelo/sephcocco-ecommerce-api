@@ -1,4 +1,4 @@
-class SephcoccoRestaurantProductCategory < ApplicationRecord
+class Restaurant::SephcoccoRestaurantProductCategory < ApplicationRecord
   include ProductCategoryModelHelper
 
   def self.product_association_name
