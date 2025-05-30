@@ -1,7 +1,7 @@
 require_relative '../../lib/migration_helpers/order_migration_helper'
 
 class CreateSephcoccoLoungeOrders < ActiveRecord::Migration[7.2]
-  include OrderMigrationHelper
+  include MigrationHelpers::OrderMigrationHelper
 
   def up
     create_orders_table(

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_05_21_170256) do
+ActiveRecord::Schema[7.2].define(version: 2025_05_25_234717) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -24,6 +24,19 @@ ActiveRecord::Schema[7.2].define(version: 2025_05_21_170256) do
     t.uuid "restaurant_product_id", null: false
     t.uuid "restaurant_product_category_id", null: false
     t.index ["restaurant_product_id", "restaurant_product_category_id"], name: "index_restaurant_products_categories_on_product_and_category", unique: true
+  end
+
+  create_table "sephcocco_lounge_payments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "status", default: "pending", null: false
+    t.string "status_history", default: [], array: true
+    t.decimal "amount", precision: 10, scale: 2
+    t.string "payment_method"
+    t.string "transaction_id"
+    t.string "orders", default: [], array: true
+    t.uuid "sephcocco_user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sephcocco_user_id"], name: "index_sephcocco_lounge_payments_on_sephcocco_user_id"
   end
 
   create_table "sephcocco_lounge_product_categories", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -185,6 +198,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_05_21_170256) do
     t.index ["sephcocco_user_role_id"], name: "index_sephcocco_users_on_sephcocco_user_role_id"
   end
 
+  add_foreign_key "sephcocco_lounge_payments", "sephcocco_users"
   add_foreign_key "sephcocco_lounge_product_likes", "sephcocco_lounge_products"
   add_foreign_key "sephcocco_lounge_product_likes", "sephcocco_users"
   add_foreign_key "sephcocco_pharmacy_orders", "sephcocco_pharmacy_products"

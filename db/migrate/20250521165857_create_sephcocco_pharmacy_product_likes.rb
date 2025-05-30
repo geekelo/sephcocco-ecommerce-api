@@ -1,7 +1,7 @@
 require_relative '../../lib/migration_helpers/product_likes_migration_helper'
 
 class CreateSephcoccoPharmacyProductLikes < ActiveRecord::Migration[7.2]
-  include ProductLikesMigrationHelper
+  include MigrationHelpers::ProductLikesMigrationHelper
 
   def up
     create_product_likes_table(

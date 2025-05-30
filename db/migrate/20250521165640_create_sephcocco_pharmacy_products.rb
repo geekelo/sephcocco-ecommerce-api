@@ -1,7 +1,7 @@
 require_relative '../../lib/migration_helpers/product_migration_helpers'
 
 class CreateSephcoccoPharmacyProducts < ActiveRecord::Migration[7.2]
-  include ProductMigrationHelpers
+  include MigrationHelpers::ProductMigrationHelpers
 
   def up
     create_product_table_for('pharmacy')
