@@ -1,3 +1,4 @@
+
 class Pharmacy::SephcoccoPharmacyOrder < ApplicationRecord
   include OrderModelHelper
 

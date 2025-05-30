@@ -6,6 +6,6 @@ class Restaurant::SephcoccoRestaurantOrder < ApplicationRecord
 
   # Alias to standardize the method used in the concern
   def product
-    sephcocco_restuarant_product
+    sephcocco_restaurant_product
   end
 end
