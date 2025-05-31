@@ -1,14 +1,15 @@
 module Lounge
   module Messages
     class UpdateService
-      def initialize(user:, message_id:, params:)
+      def initialize(user:, message_id:, params:, message_class:)
         @user = user
         @message_id = message_id
         @params = params
+        @message_class = message_class
       end
 
       def call
-        @message = Lounge::SephcoccoLoungeMessage.find(@message_id)
+        @message = @message_class.find(@message_id)
 
         raise ActiveRecord::RecordNotFound unless authorized?
 

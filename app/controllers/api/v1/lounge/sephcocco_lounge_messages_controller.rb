@@ -37,6 +37,7 @@ class Api::V1::Lounge::SephcoccoLoungeMessagesController < ApplicationController
         user: current_user,
         message_id: params[:id],
         params: message_params
+        message_class: Lounge::SephcoccoLoungeMessage
       ).call
       if admin?
         render json: @message, serializer: Lounge::Admin::SephcoccoLoungeMessageSerializer
