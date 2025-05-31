@@ -36,7 +36,7 @@ class Api::V1::Lounge::SephcoccoLoungeMessagesController < ApplicationController
       @message = Lounge::Messages::UpdateService.new(
         user: current_user,
         message_id: params[:id],
-        params: message_params
+        params: message_params,
         message_class: Lounge::SephcoccoLoungeMessage
       ).call
       if admin?
