@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_05_25_234717) do
+ActiveRecord::Schema[7.2].define(version: 2025_05_30_113642) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -24,6 +24,19 @@ ActiveRecord::Schema[7.2].define(version: 2025_05_25_234717) do
     t.uuid "restaurant_product_id", null: false
     t.uuid "restaurant_product_category_id", null: false
     t.index ["restaurant_product_id", "restaurant_product_category_id"], name: "index_restaurant_products_categories_on_product_and_category", unique: true
+  end
+
+  create_table "sephcocco_lounge_messages", force: :cascade do |t|
+    t.string "sephcocco_lounge_products_type"
+    t.uuid "sephcocco_lounge_products_id"
+    t.uuid "sephcocco_users_id", null: false
+    t.jsonb "chats", default: []
+    t.jsonb "status_history", default: [], array: true
+    t.string "status", default: "open", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sephcocco_lounge_products_type", "sephcocco_lounge_products_id"], name: "index_sephcocco_lounge_messages_on_sephcocco_lounge_products"
+    t.index ["sephcocco_users_id"], name: "index_sephcocco_lounge_messages_on_sephcocco_users_id"
   end
 
   create_table "sephcocco_lounge_payments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -198,6 +211,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_05_25_234717) do
     t.index ["sephcocco_user_role_id"], name: "index_sephcocco_users_on_sephcocco_user_role_id"
   end
 
+  add_foreign_key "sephcocco_lounge_messages", "sephcocco_users", column: "sephcocco_users_id"
   add_foreign_key "sephcocco_lounge_payments", "sephcocco_users"
   add_foreign_key "sephcocco_lounge_product_likes", "sephcocco_lounge_products"
   add_foreign_key "sephcocco_lounge_product_likes", "sephcocco_users"
