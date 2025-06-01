@@ -1,5 +1,5 @@
 class Api::V1::Lounge::SephcoccoLoungeMessagesController < ApplicationController
-  include MessageControllerHelper
+  include Api::V1::Concerns::MessageControllerHelper
 
   private
 
