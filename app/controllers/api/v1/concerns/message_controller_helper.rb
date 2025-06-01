@@ -1,4 +1,4 @@
-module Api::V1::MessageControllerHelper
+module Api::V1::Concerns::MessageControllerHelper
   extend ActiveSupport::Concern
 
   included do
