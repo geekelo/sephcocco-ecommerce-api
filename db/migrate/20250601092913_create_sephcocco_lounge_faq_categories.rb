@@ -1,16 +1,13 @@
-class CreateSephcoccoLoungeFaqCategories < ActiveRecord::Migration[7.2]
-  def up
-    create_table :sephcocco_lounge_faq_categories do |t|
-      t.string :title, null: false
-      t.text :description
-      t.boolean :visibility, default: false, null: false
-      t.integer :position, null: false, default: 0
+require Rails.root.join("lib/migration_helpers/faq_category_migration_helper")
 
-      t.timestamps
-    end
+class CreateSephcoccoLoungeFaqCategories < ActiveRecord::Migration[7.2]
+  include MigrationHelpers::FaqCategoryMigrationHelper
+
+  def up
+    create_faq_category_table :sephcocco_lounge_faq_categories
   end
 
   def down
-    drop_table :sephcocco_lounge_faq_categories
+    drop_faq_category_table :sephcocco_lounge_faq_categories
   end
 end
