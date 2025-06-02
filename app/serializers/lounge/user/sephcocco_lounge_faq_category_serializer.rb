@@ -7,7 +7,6 @@ class Api::V1::Lounge::User::SephcoccoLoungeFaqCategorySerializer < ActiveModel:
         id: faq.id,
         title: faq.title,
         answer: faq.answer,
-        update_history: faq.update_history,
       }
     end
   end

@@ -6,7 +6,9 @@ class Api::V1::Lounge::Admin::SephcoccoLoungeFaqCategorySerializer < ActiveModel
       {
         id: faq.id,
         title: faq.title,
-        answer: faq.answer
+        answer: faq.answer,
+        visibility: faq.visibility,
+        position: faq.position,
         update_history: faq.update_history
       }
     end
