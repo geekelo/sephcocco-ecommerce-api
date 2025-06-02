@@ -1,4 +1,4 @@
-class Api::V1::Lounge::Admin::SephcoccoLoungeFaqCategorySerializer < ActiveModel::Serializer
+class Lounge::Admin::SephcoccoLoungeFaqCategorySerializer < ActiveModel::Serializer
   attributes :id, :name, :description, :position, :visibility
 
   def faqs
