@@ -24,8 +24,8 @@ class Api::V1::Lounge::SephcoccoLoungeFaqsController < ApplicationController
   def faq_category_association
     :sephcocco_lounge_faq_categories
   end
-  
+
   def faq_params
-    params.require(:faq).permit(:title, :answer, :position, :visibility, faq_category_ids: [])
+    params.require(:faq).permit(:title, :answer, :position, :visibility, :faq_category_id)
   end
 end
