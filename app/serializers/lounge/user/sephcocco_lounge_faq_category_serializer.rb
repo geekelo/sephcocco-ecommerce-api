@@ -6,7 +6,7 @@ class Api::V1::Lounge::User::SephcoccoLoungeFaqCategorySerializer < ActiveModel:
       {
         id: faq.id,
         title: faq.title,
-        answer: faq.answer,
+        answer: faq.answer
       }
     end
   end

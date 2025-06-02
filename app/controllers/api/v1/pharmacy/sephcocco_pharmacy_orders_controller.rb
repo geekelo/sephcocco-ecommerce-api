@@ -13,7 +13,7 @@ class Api::V1::Pharmacy::SephcoccoPharmacyOrdersController < ApplicationControll
   end
 
   def order_params
-    if current_user.sephcocco_user_role.name == 'admin'
+    if current_user.sephcocco_user_role.name == "admin"
       params.require(:sephcocco_pharmacy_order).permit(
         :sephcocco_user_id,
         :quantity,

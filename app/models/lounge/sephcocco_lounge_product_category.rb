@@ -6,7 +6,7 @@ class Lounge::SephcoccoLoungeProductCategory < ApplicationRecord
   end
 
   def self.join_table_name
-    'sephcocco_lounge_product_categories_products'
+    "sephcocco_lounge_product_categories_products"
   end
 
   def self.category_foreign_key

@@ -10,9 +10,9 @@ module PaymentModelHelper
   private
 
   def set_default_status
-    self.status ||= 'pending'
+    self.status ||= "pending"
     self.status_history ||= []
-    self.status_history << { 'pending' => Time.current } unless status_history.any? { |h| h.key?('pending') }
+    self.status_history << { "pending" => Time.current } unless status_history.any? { |h| h.key?("pending") }
   end
 
   def set_status
@@ -32,10 +32,10 @@ module PaymentModelHelper
   def update_order_status
     return unless respond_to?(:orders)
 
-    if self.status == 'paid' || status_history.any? { |h| h.key?('paid') }
-      update_orders_to('paid', remove: 'pending')
+    if self.status == "paid" || status_history.any? { |h| h.key?("paid") }
+      update_orders_to("paid", remove: "pending")
     else
-      update_orders_to('pending', remove: 'paid')
+      update_orders_to("pending", remove: "paid")
     end
   end
 

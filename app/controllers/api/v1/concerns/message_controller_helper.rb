@@ -10,7 +10,7 @@ module Api::V1::Concerns::MessageControllerHelper
       message_class.pluck(:id, product_foreign_key, :created_at, :status)
     else
       current_user.send(user_association_name)
-                  .where(status: 'open')
+                  .where(status: "open")
                   .pluck(:id, product_foreign_key, :created_at, :status)
     end
 
@@ -45,7 +45,7 @@ module Api::V1::Concerns::MessageControllerHelper
 
     render json: message, serializer: serializer_class
   rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Not authorized or message not found' }, status: :forbidden
+    render json: { error: "Not authorized or message not found" }, status: :forbidden
   rescue ActiveRecord::RecordInvalid => e
     render json: e.record.errors, status: :unprocessable_entity
   end
@@ -53,7 +53,7 @@ module Api::V1::Concerns::MessageControllerHelper
   private
 
   def admin?
-    current_user.sephcocco_user_role.name == 'admin'
+    current_user.sephcocco_user_role.name == "admin"
   end
 
   def message_params

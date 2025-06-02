@@ -1,7 +1,7 @@
 # app/controllers/api/v1/pharmacy/sephcocco_pharmacy_products_controller.rb
 class Api::V1::Pharmacy::SephcoccoPharmacyProductsController < ApplicationController
   include Api::V1::Concerns::ProductsControllerHelper
-  
+
   private
 
   def product_class

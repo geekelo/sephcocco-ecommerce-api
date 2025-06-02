@@ -1,11 +1,11 @@
 class Api::V1::RegistrationController < ApplicationController
   def create
     if email_already_exists?
-      render json: { error: 'Email already exists' }, status: :unprocessable_entity
+      render json: { error: "Email already exists" }, status: :unprocessable_entity
     else
       user = SephcoccoUser.new(user_params)
       if user.save
-        render json: { message: 'User created successfully' }, status: :created
+        render json: { message: "User created successfully" }, status: :created
       else
         render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
       end

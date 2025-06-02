@@ -34,7 +34,7 @@ module Lounge
 
       def authorized?
         # only allow admin or owner to update
-        @user.sephcocco_user_role.name == 'admin' || @message.sephcocco_user_id == @user.id
+        @user.sephcocco_user_role.name == "admin" || @message.sephcocco_user_id == @user.id
       end
     end
   end

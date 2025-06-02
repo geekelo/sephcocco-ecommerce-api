@@ -1,5 +1,4 @@
 class Lounge::Admin::SephcoccoLoungeOrderSerializer < ActiveModel::Serializer
-  
   attributes  :id,
               :sephcocco_user_id,
               :status,

@@ -2,11 +2,11 @@ class Restaurant::SephcoccoRestaurantProductLike < ApplicationRecord
   include ProductLikeModelHelper
 
   def self.user_class_name
-    'SephcoccoUser'
+    "SephcoccoUser"
   end
 
   def self.product_class_name
-    'SephcoccoRestaurantProduct'
+    "SephcoccoRestaurantProduct"
   end
 
   def self.user_foreign_key

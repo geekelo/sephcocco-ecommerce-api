@@ -6,8 +6,8 @@ module MigrationHelpers
         t.references user_table, null: false, type: :uuid, foreign_key: { to_table: user_table }
         t.jsonb :chats, default: []
         t.jsonb :status_history, array: true, default: []
-        t.string :status, default: 'open', null: false
-  
+        t.string :status, default: "open", null: false
+
         t.timestamps
       end
     end

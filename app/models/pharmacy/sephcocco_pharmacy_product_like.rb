@@ -2,11 +2,11 @@ class Pharmacy::SephcoccoPharmacyProductLike < ApplicationRecord
   include ProductLikeModelHelper
 
   def self.user_class_name
-    'SephcoccoUser'
+    "SephcoccoUser"
   end
 
   def self.product_class_name
-    'SephcoccoPharmacyProduct'
+    "SephcoccoPharmacyProduct"
   end
 
   def self.user_foreign_key

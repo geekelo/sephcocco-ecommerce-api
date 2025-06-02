@@ -3,12 +3,12 @@ module Api::V1::Concerns::FaqCategoriesControllerHelper
 
   included do
     before_action :authenticate_user!
-    before_action :authorize_admin!, except: [:index, :show]
+    before_action :authorize_admin!, except: [ :index, :show ]
     before_action :set_faq_category, only: %i[show update destroy switch_visibility]
   end
 
   def index
-    if current_user.sephcocco_user_role.name == 'admin'
+    if current_user.sephcocco_user_role.name == "admin"
       faq_categories = faq_category_class.all
       render json: faq_categories, each_serializer: faq_category_serializer
     else
@@ -40,18 +40,18 @@ module Api::V1::Concerns::FaqCategoriesControllerHelper
 
   def destroy
     if @faq_category.destroy
-      render json: { message: 'FAQ Category deleted successfully' }, status: :ok
+      render json: { message: "FAQ Category deleted successfully" }, status: :ok
     else
-      render json: { error: 'Failed to delete FAQ Category' }, status: :unprocessable_entity
+      render json: { error: "Failed to delete FAQ Category" }, status: :unprocessable_entity
     end
   end
 
   def switch_visibility
     @faq_category.visibility = !@faq_category.visibility
     if @faq_category.save
-      render json: { message: 'FAQ Category visibility updated successfully' }, status: :ok
+      render json: { message: "FAQ Category visibility updated successfully" }, status: :ok
     else
-      render json: { error: 'Failed to update FAQ Category visibility' }, status: :unprocessable_entity
+      render json: { error: "Failed to update FAQ Category visibility" }, status: :unprocessable_entity
     end
   end
 
@@ -61,7 +61,7 @@ module Api::V1::Concerns::FaqCategoriesControllerHelper
         category = faq_category_class.find(category_params[:id])
         category.update!(position: category_params[:position])
       end
-      render json: { message: 'FAQ Categories positions updated successfully' }, status: :ok
+      render json: { message: "FAQ Categories positions updated successfully" }, status: :ok
     rescue ActiveRecord::RecordInvalid => e
       render json: { error: e.message }, status: :unprocessable_entity
     end
@@ -70,8 +70,8 @@ module Api::V1::Concerns::FaqCategoriesControllerHelper
   private
 
   def authorize_admin!
-    unless current_user&.sephcocco_user_role&.name == 'admin'
-      render json: { message: 'Unauthorized' }, status: :unauthorized
+    unless current_user&.sephcocco_user_role&.name == "admin"
+      render json: { message: "Unauthorized" }, status: :unauthorized
     end
   end
 

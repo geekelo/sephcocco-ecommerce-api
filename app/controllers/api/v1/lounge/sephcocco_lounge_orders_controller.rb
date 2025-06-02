@@ -13,7 +13,7 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
   end
 
   def order_params
-    if current_user.sephcocco_user_role.name == 'admin'
+    if current_user.sephcocco_user_role.name == "admin"
       params.require(:sephcocco_lounge_order).permit(
         :sephcocco_user_id,
         :quantity,

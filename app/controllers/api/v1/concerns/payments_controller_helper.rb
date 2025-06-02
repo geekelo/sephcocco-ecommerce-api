@@ -2,12 +2,12 @@ module Api::V1::Concerns::PaymentsControllerHelper
   extend ActiveSupport::Concern
 
   included do
-    before_action :authenticate_user!, only: [:create, :update, :destroy]
-    before_action :set_payment, only: [:update, :destroy]
+    before_action :authenticate_user!, only: [ :create, :update, :destroy ]
+    before_action :set_payment, only: [ :update, :destroy ]
   end
-  
+
   def index
-    if current_user.sephcocco_user_role.name == 'admin'
+    if current_user.sephcocco_user_role.name == "admin"
       payments = payment_class.all
       render json: payments, each_serializer: Lounge::Admin::SephcoccoLoungePaymentSerializer
     else
@@ -17,7 +17,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
   end
 
   def create
-    if current_user.sephcocco_user_role.name == 'admin'
+    if current_user.sephcocco_user_role.name == "admin"
       payment = @customer.payment_association.new(payment_params)
       if payment.save
         render json: payment, each_serializer: Lounge::Admin::SephcoccoLoungePaymentSerializer, status: :created
@@ -36,7 +36,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
 
   def update
     if @payment.update(payment_params)
-      if current_user.sephcocco_user_role.name == 'admin'
+      if current_user.sephcocco_user_role.name == "admin"
         render json: @payment, each_serializer: Lounge::Admin::SephcoccoLoungePaymentSerializer
       else
         render json: @payment, each_serializer: Lounge::User::SephcoccoLoungePaymentSerializer
@@ -48,16 +48,16 @@ module Api::V1::Concerns::PaymentsControllerHelper
 
   def destroy
     if @payment.destroy
-        render json: { message: 'Payment deleted successfully' }, status: :ok
+        render json: { message: "Payment deleted successfully" }, status: :ok
     else
-        render json: { error: 'Failed to delete payment' }, status: :unprocessable_entity
+        render json: { error: "Failed to delete payment" }, status: :unprocessable_entity
     end
   end
 
   private
 
   def set_payment
-    if current_user.sephcocco_user_role.name == 'admin'
+    if current_user.sephcocco_user_role.name == "admin"
         @payment = payment_class.find(params[:id])
     else
         @payment = current_user.payment_association.find_by(id: params[:id])

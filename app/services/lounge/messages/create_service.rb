@@ -22,13 +22,13 @@ module Lounge
           sephcocco_user: admin? ? nil : @user,
           sephcocco_lounge_product_id: @product_id,
           chats: Array.wrap(@params[:chat]),
-          status: 'open',
-          status_history: [{ 'open' => Time.current }],
+          status: "open",
+          status_history: [ { "open" => Time.current } ],
         )
       end
 
       def admin?
-        @user.sephcocco_user_role.name == 'admin'
+        @user.sephcocco_user_role.name == "admin"
       end
     end
   end

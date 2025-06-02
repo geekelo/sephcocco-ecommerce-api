@@ -27,14 +27,14 @@ roles = %w[user manager frontdesk superadmin admin support]
 
 roles.each do |role_name|
   role = SephcoccoUserRole.find_by(name: role_name)
-  
+
   if role.nil?
     puts "❗ Role '#{role_name}' not found. Skipping user creation for this role."
     next
   end
 
   email = "#{role_name}@sephcocco.com"
-  
+
   user = SephcoccoUser.find_or_create_by!(email: email) do |u|
     u.name = "#{role_name.capitalize} User"
     u.address = "123 #{role_name.capitalize} Street"

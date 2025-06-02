@@ -3,13 +3,13 @@ module Api::V1::Concerns::ProductsControllerHelper
   extend ActiveSupport::Concern
 
   included do
-    before_action :authenticate_user!, only: [:create, :update, :destroy, :switch_visibility, :like, :unlike]
-    before_action :set_product, only: [:show, :update, :destroy, :switch_visibility, :like, :unlike]
+    before_action :authenticate_user!, only: [ :create, :update, :destroy, :switch_visibility, :like, :unlike ]
+    before_action :set_product, only: [ :show, :update, :destroy, :switch_visibility, :like, :unlike ]
   end
 
   def index
     products = product_class.all
-    if current_user.sephcocco_user_role.name == 'admin'
+    if current_user.sephcocco_user_role.name == "admin"
       render json: products, each_serializer: Lounge::Admin::SephcoccoLoungeProductSerializer
     else
       render json: products, each_serializer: Lounge::User::SephcoccoLoungeProductSerializer
@@ -28,7 +28,7 @@ module Api::V1::Concerns::ProductsControllerHelper
     end
 
     if @product.save
-      if current_user.sephcocco_user_role.name == 'admin'
+      if current_user.sephcocco_user_role.name == "admin"
         render json: @product, serializer: Lounge::Admin::SephcoccoLoungeProductSerializer, status: :created
       else
         render json: @product, serializer: Lounge::User::SephcoccoLoungeProductSerializer, status: :created
@@ -40,7 +40,7 @@ module Api::V1::Concerns::ProductsControllerHelper
 
   def update
     if @product.update(product_params)
-      if current_user.sephcocco_user_role.name == 'admin'
+      if current_user.sephcocco_user_role.name == "admin"
         render json: @product, serializer: Lounge::Admin::SephcoccoLoungeProductSerializer
       else
         render json: @product, serializer: Lounge::User::SephcoccoLoungeProductSerializer
@@ -52,12 +52,12 @@ module Api::V1::Concerns::ProductsControllerHelper
 
   def destroy
     @product.destroy
-    render json: { message: 'Product deleted successfully' }, status: :ok
+    render json: { message: "Product deleted successfully" }, status: :ok
   end
 
   def switch_visibility
     @product.update(visible: !@product.visible)
-    serializer = Lounge::Admin::SephcoccoLoungeProductSerializer if current_user.sephcocco_user_role.name == 'admin'
+    serializer = Lounge::Admin::SephcoccoLoungeProductSerializer if current_user.sephcocco_user_role.name == "admin"
 
   render json: {
     message: "Product visibility updated successfully",
@@ -69,7 +69,7 @@ module Api::V1::Concerns::ProductsControllerHelper
     unless like_class.exists?(product_key => @product.id, user_key => current_user.id)
       @product.increment!(:likes)
       like_class.create(user_key => current_user.id, product_key => @product.id)
-      serializer = Lounge::User::SephcoccoLoungeProductSerializer if current_user.sephcocco_user_role.name == 'user'
+      serializer = Lounge::User::SephcoccoLoungeProductSerializer if current_user.sephcocco_user_role.name == "user"
       render json: { message: "Product liked successfully", product: serializer.new(@product) }, status: :created
     else
       render json: { message: "Product already liked" }, status: :unprocessable_entity
@@ -81,7 +81,7 @@ module Api::V1::Concerns::ProductsControllerHelper
       if like_class.exists?(product_key => @product.id, user_key => current_user.id)
         like_class.where(product_key => @product.id, user_key => current_user.id).destroy_all
         @product.decrement!(:likes)
-        serializer = Lounge::User::SephcoccoLoungeProductSerializer if current_user.sephcocco_user_role.name == 'user'
+        serializer = Lounge::User::SephcoccoLoungeProductSerializer if current_user.sephcocco_user_role.name == "user"
         render json: { message: "Product unliked successfully", product: serializer.new(@product) }, status: :ok
       else
         render json: { message: "Product not liked by user" }, status: :unprocessable_entity

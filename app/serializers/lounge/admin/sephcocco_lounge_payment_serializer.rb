@@ -1,5 +1,5 @@
 class Lounge::Admin::SephcoccoLoungePaymentSerializer < ActiveModel::Serializer
-  attributes  :id,
+  attributes :id,
                :sephcocco_user_id,
                :amount,
                :status,

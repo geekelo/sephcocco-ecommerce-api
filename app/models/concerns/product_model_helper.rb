@@ -23,35 +23,35 @@ module ProductModelHelper
     end
 
     def category_association_name
-      raise NotImplementedError, 'Define self.category_association_name'
+      raise NotImplementedError, "Define self.category_association_name"
     end
 
     def join_table_name
-      raise NotImplementedError, 'Define self.join_table_name'
+      raise NotImplementedError, "Define self.join_table_name"
     end
 
     def product_foreign_key
-      raise NotImplementedError, 'Define self.product_foreign_key'
+      raise NotImplementedError, "Define self.product_foreign_key"
     end
 
     def category_foreign_key
-      raise NotImplementedError, 'Define self.category_foreign_key'
+      raise NotImplementedError, "Define self.category_foreign_key"
     end
 
     def product_like_class
-      raise NotImplementedError, 'Define self.product_like_class'
+      raise NotImplementedError, "Define self.product_like_class"
     end
 
     def order_class
-      raise NotImplementedError, 'Define self.order_class'
+      raise NotImplementedError, "Define self.order_class"
     end
 
     def likes_association_name
-      raise NotImplementedError, 'Define self.likes_association_name'
+      raise NotImplementedError, "Define self.likes_association_name"
     end
 
     def order_association_name
-      raise NotImplementedError, 'Define self.order_association_name'
+      raise NotImplementedError, "Define self.order_association_name"
     end
   end
 end

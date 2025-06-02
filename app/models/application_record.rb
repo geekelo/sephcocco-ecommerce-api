@@ -6,12 +6,12 @@ class ApplicationRecord < ActiveRecord::Base
 
   def authenticate_user!
     payload = JsonWebToken.decode(auth_token)
-    @current_user = SephcoccoUser.find(payload['sub'])
+    @current_user = SephcoccoUser.find(payload["sub"])
   rescue JWT::DecodeError
-    render json: { error: 'Invalid Auth Token' }, status: :unauthorized
+    render json: { error: "Invalid Auth Token" }, status: :unauthorized
   end
 
   def auth_token
-    @auth_token ||= request.headers.fetch('Authorization', '').split.last
+    @auth_token ||= request.headers.fetch("Authorization", "").split.last
   end
 end
