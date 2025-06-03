@@ -12,6 +12,18 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
     :sephcocco_lounge_orders
   end
 
+  def order_serializer
+    if current_user.sephcocco_user_role.name == "admin"
+      Lounge::Admin::SephcoccoLoungeOrderSerializer
+    else
+      Lounge::User::SephcoccoLoungeOrderSerializer
+    end
+  end
+
+  def order_association_prefix
+    "sephcocco_lounge"
+  end
+
   def order_params
     if current_user.sephcocco_user_role.name == "admin"
       params.require(:sephcocco_lounge_order).permit(

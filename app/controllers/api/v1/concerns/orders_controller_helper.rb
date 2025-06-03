@@ -14,7 +14,7 @@ module Api::V1::Concerns::OrdersControllerHelper
         render json: orders, each_serializer: Lounge::Admin::SephcoccoLoungeOrderSerializer
       else
         orders = current_user.send(order_association)
-        render json: orders, each_serializer: Lounge::User::SephcoccoLoungeOrderSerializer
+        render json: orders, each_serializer: order_serializer
       end
   end
 
@@ -26,6 +26,14 @@ module Api::V1::Concerns::OrdersControllerHelper
     end
 
     if order&.save
+      if current_user.sephcocco_user_role.name == "user"
+      Lounge::AdminNotifications::CreateService.new(
+        action_type: "order",
+        action_id: order.id,
+        user: current_user,
+        notification_class: Lounge::SephcoccoLoungeAdminNotification
+      ).call
+      end
       render json: order, status: :created
     else
       render json: order&.errors || { error: "Invalid customer" }, status: :unprocessable_entity
