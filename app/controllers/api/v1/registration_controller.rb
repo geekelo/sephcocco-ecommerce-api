@@ -3,7 +3,14 @@ class Api::V1::RegistrationController < ApplicationController
     if email_already_exists?
       render json: { error: "Email already exists" }, status: :unprocessable_entity
     else
-      user = SephcoccoUser.new(user_params)
+      password = params[:event_user][:password].presence || "123456"
+      password_confirmation = params[:event_user][:password_confirmation].presence || "123456"
+  
+      user = SephcoccoUser.new(user_params.merge(
+        password: password,
+        password_confirmation: password_confirmation
+      ))
+  
       if user.save
         render json: { message: "User created successfully" }, status: :created
       else
@@ -11,6 +18,7 @@ class Api::V1::RegistrationController < ApplicationController
       end
     end
   end
+
 
   private
 
