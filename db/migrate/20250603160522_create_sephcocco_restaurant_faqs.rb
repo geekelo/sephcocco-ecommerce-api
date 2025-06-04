@@ -1,5 +1,4 @@
 require Rails.root.join("lib/migration_helpers/faq_migration_helper")
-
 class CreateSephcoccoRestaurantFaqs < ActiveRecord::Migration[7.2]
     include MigrationHelpers::FaqMigrationHelper
 
