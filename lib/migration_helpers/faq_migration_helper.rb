@@ -21,3 +21,4 @@ def create_faq_table(faq_table_name, category_table_name, category_reference_col
 
   end
 end
+
