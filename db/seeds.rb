@@ -54,7 +54,7 @@ end
     u.address = "123 Admin2 Street"
     u.phone_number = "080#{rand(10000000..99999999)}"
     u.whatsapp_number = "080#{rand(10000000..99999999)}"
-    u.sephcocco_user_role_id = role.id
+    u.sephcocco_user_role_id = role2.id
     u.password = "1234567" # Ensure password is set for the user
     u.password_confirmation = "1234567" # Ensure password confirmation matches
   end
