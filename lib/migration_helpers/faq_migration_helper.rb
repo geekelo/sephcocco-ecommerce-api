@@ -1,6 +1,5 @@
 module MigrationHelpers
   module FaqMigrationHelper
-
 def create_faq_table(faq_table_name, category_table_name, category_reference_column)
       create_table faq_table_name, id: :uuid do |t|
         t.string :title, null: false
@@ -12,7 +11,6 @@ def create_faq_table(faq_table_name, category_table_name, category_reference_col
         t.references category_reference_column, null: false,
                      foreign_key: { to_table: category_table_name },
                      type: :uuid
-
         t.timestamps
       end
     end
