@@ -12,6 +12,27 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
     :sephcocco_restaurant_orders
   end
 
+  def outlet
+    Restaurant
+  end
+
+  def admin_notification_class
+    Restaurant::SephcoccoRestaurantAdminNotification
+  end
+
+  def order_serializer
+    if current_user.sephcocco_user_role.name == "admin"
+      Restaurant::Admin::SephcoccoRestaurantOrderSerializer
+    else
+      Restaurant::User::SephcoccoRestaurantOrderSerializer
+    end
+  end
+
+  def order_association_prefix
+    "sephcocco_restaurant"
+  end
+
+
   def order_params
     if current_user.sephcocco_user_role.name == "admin"
       params.require(:sephcocco_restaurant_order).permit(
