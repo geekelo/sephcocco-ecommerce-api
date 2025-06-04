@@ -1,14 +1,6 @@
-# class CreateSephcoccoRestaurantFaqs < ActiveRecord::Migration[7.2]
-#   def change
-#     create_table :sephcocco_restaurant_faqs do |t|
-#       t.timestamps
-#     end
-#   end
-# end
-
 require Rails.root.join("lib/migration_helpers/faq_migration_helper")
 
-class CreateCreateSephcoccoRestaurantFaqs < ActiveRecord::Migration[7.2]
+class CreateSephcoccoRestaurantFaqs < ActiveRecord::Migration[7.2]
     include MigrationHelpers::FaqMigrationHelper
 
   def up
