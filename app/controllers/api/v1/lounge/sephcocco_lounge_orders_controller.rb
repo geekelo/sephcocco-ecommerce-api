@@ -12,6 +12,10 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
     :sephcocco_lounge_orders
   end
 
+  def outlet
+    Lounge
+  end
+
   def order_serializer
     if current_user.sephcocco_user_role.name == "admin"
       Lounge::Admin::SephcoccoLoungeOrderSerializer
