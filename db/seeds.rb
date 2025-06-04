@@ -60,7 +60,6 @@ end
   end
 
   puts "✅ Created/Found user for role: \"admin\" (Email2: #{user2.email})"
-end
 unless user2.persisted?
   puts "❗ Failed to create user for role: \"admin\" (Email2: #{user2.email})"
 end
