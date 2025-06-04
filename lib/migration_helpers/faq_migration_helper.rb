@@ -1,6 +1,7 @@
 module MigrationHelpers
   module FaqMigrationHelper
-    def create_faq_table(faq_table_name, category_table_name, category_reference_column)
+
+def create_faq_table(faq_table_name, category_table_name, category_reference_column)
       create_table faq_table_name, id: :uuid do |t|
         t.string :title, null: false
         t.text :answer
@@ -19,5 +20,6 @@ module MigrationHelpers
     def drop_faq_table(table_name)
       drop_table table_name
     end
+
   end
 end

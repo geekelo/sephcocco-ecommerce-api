@@ -9,9 +9,10 @@ class CreateSephcoccoRestaurantFaqs < ActiveRecord::Migration[7.2]
       :sephcocco_restaurant_faq_categories,
       :sephcocco_restaurant_category,
     )
+  end
 
     def down
       drop_faq_table :sephcocco_restaurant_faqs
     end
-  end
+
 end
