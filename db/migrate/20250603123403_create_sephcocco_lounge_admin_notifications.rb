@@ -10,4 +10,5 @@ class CreateSephcoccoLoungeAdminNotifications < ActiveRecord::Migration[7.2]
   def down
     drop_notification_table :sephcocco_lounge_admin_notifications
   end
+
 end
