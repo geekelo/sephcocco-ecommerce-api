@@ -1,4 +1,4 @@
-class SephcoccoLoungeAdminNotificationSerializer < ActiveModel::Serializer
+class Lounge::Admin::SephcoccoLoungeAdminNotificationSerializer < ActiveModel::Serializer
   attributes :id, :action_type, :action_id, :message, :viewed, :visible, :created_at,
   :user_id, :user_name, :user_email
 
