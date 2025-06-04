@@ -1,6 +1,6 @@
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins ['http://localhost:3000', 'http://localhost:5173'] # Add your frontend origin(s)
+    origins ['http://localhost:3000', 'https://sephcocco-eccomerce-admin.vercel.app', 'http://localhost:5173'] # Add your frontend origin(s)
 
     resource '/api/*',
       headers: :any,
