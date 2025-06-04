@@ -46,4 +46,19 @@ roles.each do |role_name|
   puts "✅ Created/Found user for role: #{role_name} (Email: #{user.email})"
 end
 
+  email2 = "admin2@sephcocco.com"
+  role2 = SephcoccoUserRole.find_by(name: "admin")
+
+  user2 = SephcoccoUser.find_or_create_by!(email: email2) do |u|
+    u.name = "Admin2 User"
+    u.address = "123 Admin2 Street"
+    u.phone_number = "080#{rand(10000000..99999999)}"
+    u.whatsapp_number = "080#{rand(10000000..99999999)}"
+    u.sephcocco_user_role_id = role.id
+  end
+
+  puts "✅ Created/Found user for role: \"admin\" (Email2: #{user2.email})"
+end
+unless
+
 puts "🎉 Sephcocco Users seeded successfully!"
