@@ -3,6 +3,11 @@ class Api::V1::AuthenticationController < ApplicationController
     user = SephcoccoUser.find_by(email: login_params[:email])
   
     if user && user.authenticate(params[:user][:password] || "123456")
+      if user.suspended?
+        return render json: { error: "Your account is suspended. Please contact support." }, status: :forbidden
+      end
+
+      user.update(last_login_at: Time.current.strftime("%Y-%m-%d %H:%M:%S"))
       render json: {
         message: "Login successful",
         user: SephcoccoUserSerializer.new(user),
