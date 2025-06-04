@@ -1,13 +1,4 @@
-class CreateSephcoccoPharmacyFaqs < ActiveRecord::Migration[7.2]
-  def change
-    create_table :sephcocco_pharmacy_faqs do |t|
-      t.timestamps
-    end
-  end
-end
-
 require Rails.root.join("lib/migration_helpers/faq_migration_helper")
-
 class CreateSephcoccoPharmacyFaqs < ActiveRecord::Migration[7.2]
   include MigrationHelpers::FaqMigrationHelper
 
