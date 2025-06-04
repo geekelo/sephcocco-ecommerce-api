@@ -64,4 +64,22 @@ unless user2.persisted?
   puts "❗ Failed to create user for role: \"admin\" (Email2: #{user2.email})"
 end
 
+  email3 = "user2@sephcocco.com"
+  role3 = SephcoccoUserRole.find_by(name: "user")
+
+  user3 = SephcoccoUser.find_or_create_by!(email: email3) do |u|
+    u.name = "User3 User"
+    u.address = "123 User3 Street"
+    u.phone_number = "080#{rand(10000000..99999999)}"
+    u.whatsapp_number = "080#{rand(10000000..99999999)}"
+    u.sephcocco_user_role_id = role3.id
+    u.password = "1234567" # Ensure password is set for the user
+    u.password_confirmation = "1234567" # Ensure password confirmation matches
+  end
+
+  puts "✅ Created/Found user for role: \"user\" (Email3: #{user3.email})"
+unless user3.persisted?
+  puts "❗ Failed to create user for role: \"user\" (Email3: #{user3.email})"
+end
+
 puts "🎉 Sephcocco Users seeded successfully!"
