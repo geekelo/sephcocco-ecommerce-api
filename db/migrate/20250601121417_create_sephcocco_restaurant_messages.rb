@@ -8,6 +8,7 @@ class CreateSephcoccoRestaurantMessages < ActiveRecord::Migration[7.2]
     table_name: :sephcocco_restaurant_messages,
     user_table: :sephcocco_users,
     product_table: :sephcocco_restaurant_products,
+    table_name_suffix: 'restaurant_messages'
    )
   end
 

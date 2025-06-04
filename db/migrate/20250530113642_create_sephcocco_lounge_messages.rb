@@ -7,8 +7,7 @@ class CreateSephcoccoLoungeMessages < ActiveRecord::Migration[7.2]
    create_messages_table(
     table_name: :sephcocco_lounge_messages,
     user_table: :sephcocco_users,
-    product_table: :sephcocco_lounge_products,
-   )
+    product_table: :sephcocco_lounge_products,   )
   end
 
   def down

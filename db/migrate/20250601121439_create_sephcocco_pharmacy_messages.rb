@@ -8,6 +8,7 @@ class CreateSephcoccoPharmacyMessages < ActiveRecord::Migration[7.2]
     table_name: :sephcocco_pharmacy_messages,
     user_table: :sephcocco_users,
     product_table: :sephcocco_pharmacy_products,
+    table_name_suffix: 'pharmacy_messages'
    )
   end
 
