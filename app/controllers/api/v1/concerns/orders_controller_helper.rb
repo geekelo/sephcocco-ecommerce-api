@@ -27,11 +27,11 @@ module Api::V1::Concerns::OrdersControllerHelper
 
     if order&.save
       if current_user.sephcocco_user_role.name == "user"
-      Lounge::AdminNotifications::CreateService.new(
+      outlet::AdminNotifications::CreateService.new(
         action_type: "order",
         action_id: order.id,
         user: current_user,
-        notification_class: Lounge::SephcoccoLoungeAdminNotification
+        notification_class: admin_notification_class,
       ).call
       end
       render json: order, status: :created
