@@ -1,6 +1,5 @@
 module MigrationHelpers
   module FaqCategoryMigrationHelper
-
     def create_faq_category_table(table_name)
       create_table table_name, id: :uuid do |t|
         t.string :title, null: false

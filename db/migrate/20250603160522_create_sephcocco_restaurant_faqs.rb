@@ -13,5 +13,4 @@ class CreateSephcoccoRestaurantFaqs < ActiveRecord::Migration[7.2]
     def down
       drop_faq_table :sephcocco_restaurant_faqs
     end
-
 end

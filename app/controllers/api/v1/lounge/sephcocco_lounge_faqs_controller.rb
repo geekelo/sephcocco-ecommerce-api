@@ -1,10 +1,10 @@
 class Api::V1::Lounge::SephcoccoLoungeFaqsController < ApplicationController
   include Api::V1::Concerns::MessageControllerHelper
-  
+
   before_action :authenticate_user!
-  
+
   private
-  
+
   def message_class
     Lounge::SephcoccoLoungeFaq
   end

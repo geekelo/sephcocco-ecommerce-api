@@ -5,7 +5,7 @@ class CreateJoinTableSephcoccoOutletsUsers < ActiveRecord::Migration[7.2]
       t.uuid :sephcocco_outlet_id, null: false
     end
 
-    add_index :sephcocco_outlets_users, [:sephcocco_user_id, :sephcocco_outlet_id], unique: true, name: 'index_outlets_users_on_user_id_and_outlet_id'
+    add_index :sephcocco_outlets_users, [ :sephcocco_user_id, :sephcocco_outlet_id ], unique: true, name: 'index_outlets_users_on_user_id_and_outlet_id'
 
     add_foreign_key :sephcocco_outlets_users, :sephcocco_users
     add_foreign_key :sephcocco_outlets_users, :sephcocco_outlets

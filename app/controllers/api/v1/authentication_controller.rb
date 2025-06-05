@@ -1,7 +1,7 @@
 class Api::V1::AuthenticationController < ApplicationController
   def create
     user = SephcoccoUser.find_by(email: login_params[:email])
-  
+
     if user && user.authenticate(params[:user][:password] || "1234567")
       if user.suspended?
         return render json: { error: "Your account is suspended. Please contact support." }, status: :forbidden

@@ -1,7 +1,7 @@
 class Api::V1::SephcoccoUsersController < ApplicationController
   before_action :authenticate_user!
-  before_action :check_admin_role, only: [:index, :create, :update_user_outlets]
-  before_action :set_user, only: [:show, :update, :destroy]
+  before_action :check_admin_role, only: [ :index, :create, :update_user_outlets ]
+  before_action :set_user, only: [ :show, :update, :destroy ]
 
   def update
     if @user.update(user_params)
@@ -16,7 +16,7 @@ class Api::V1::SephcoccoUsersController < ApplicationController
       outlets = SephcoccoOutlet.where(name: params[:user][:outlets])
       @user.sephcocco_outlets |= outlets if outlets.any?
     end
-  
+
     if @user.save
       render json: { message: "User outlets updated successfully" }, status: :ok
     else
@@ -45,7 +45,7 @@ class Api::V1::SephcoccoUsersController < ApplicationController
       else
         render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
       end
-    end
+     end
   end
 
   def suspend_user

@@ -1,5 +1,4 @@
 class Api::V1::Restaurant::SephcoccoRestaurantAdminNotificationsController < ApplicationController
-
   def index
     notifications = SephcoccoRestaurantAdminNotification.where(visible: true).all
     render json: notifications, status: :ok

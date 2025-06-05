@@ -18,7 +18,5 @@ def create_faq_table(faq_table_name, category_table_name, category_reference_col
     def drop_faq_table(table_name)
       drop_table table_name
     end
-
   end
 end
-

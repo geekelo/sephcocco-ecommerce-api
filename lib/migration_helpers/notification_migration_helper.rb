@@ -17,5 +17,4 @@ module MigrationHelpers
       drop_table table_name
     end
   end
-
 end
