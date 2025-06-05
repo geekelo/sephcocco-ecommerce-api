@@ -1,7 +1,4 @@
 class Api::V1::Pharmacy::SephcoccoPharmacyAdminNotificationsController < ApplicationController
-end
-
-class Api::V1::Pharmacy::SephcoccoPharmacyAdminNotificationsController < ApplicationController
   def index
     notifications = SephcoccoPharmacyAdminNotification.where(visible: true).all
     render json: notifications, status: :ok
