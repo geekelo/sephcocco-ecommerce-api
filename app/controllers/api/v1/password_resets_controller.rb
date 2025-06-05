@@ -5,7 +5,7 @@ class Api::V1::PasswordResetsController < ApplicationController
       token = @user.generate_password_reset_token!
       UserMailer.password_reset(@user).deliver_now
     end
-    render json: { notice: 'If your email is in our system, you will receive password reset instructions.' }
+    render json: { message: 'If your email is in our system, you will receive password reset instructions.' }
   end
 
   def update
