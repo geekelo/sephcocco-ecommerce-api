@@ -14,7 +14,6 @@ class Api::V1::Pharmacy::SephcoccoPharmacyAdminNotificationsController < Applica
   end
 
   private
-
   def notification_params
     params.require(:sephcocco_pharmacy_admin_notification).permit(:viewed)
   end
