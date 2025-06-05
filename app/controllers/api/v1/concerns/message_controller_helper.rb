@@ -23,11 +23,12 @@ module Api::V1::Concerns::MessageControllerHelper
   end
 
   def create
-    message = Lounge::Messages::CreateService.new(
+    message = Messages::CreateService.new(
       user: current_user,
       params: message_params,
       product_id: message_params[product_param_key],
-      message_class: message_class
+      message_class: message_class,
+      outlet: outlet
     ).call
 
     render json: message, serializer: serializer_class, status: :created
@@ -36,11 +37,12 @@ module Api::V1::Concerns::MessageControllerHelper
   end
 
   def update
-    message = Lounge::Messages::UpdateService.new(
+    message = Messages::UpdateService.new(
       user: current_user,
       message_id: params[:id],
       params: message_params,
-      message_class: message_class
+      message_class: message_class,
+      outlet: outlet
     ).call
 
     render json: message, serializer: serializer_class

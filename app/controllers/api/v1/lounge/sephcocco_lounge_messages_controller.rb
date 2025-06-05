@@ -7,6 +7,10 @@ class Api::V1::Lounge::SephcoccoLoungeMessagesController < ApplicationController
     Lounge::SephcoccoLoungeMessage
   end
 
+  def outlet
+    Lounge
+  end
+
   def product_param_key
     :sephcocco_lounge_product_id
   end

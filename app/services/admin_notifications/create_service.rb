@@ -1,7 +1,7 @@
-module Restaurant
+
   module AdminNotifications
     class CreateService
-      def initialize(action_type:, action_id:, user:, notification_class:)
+      def initialize(action_type:, action_id:, user:, notification_class:, outlet:)
         @action_type = action_type
         @action_id = action_id
         @user = user
@@ -18,12 +18,11 @@ module Restaurant
           viewed: false,
           visible: true
         )
-
+        
       end
 
       def generate_message
-          "New #{@action_type} created at #{Time.current.strftime('%Y-%m-%d %H:%M:%S')}."
+          "New #{@action_type} created at #{Date.current.strftime('%Y-%m-%d %H:%M:%S')}."
       end
     end
   end
-end

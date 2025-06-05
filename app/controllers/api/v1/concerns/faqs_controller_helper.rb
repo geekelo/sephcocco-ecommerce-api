@@ -6,10 +6,11 @@ module Api::V1::Concerns::FaqsControllerHelper
   end
 
   def create
-    faq = Lounge::Faqs::CreateService.new(
+    faq = Faqs::CreateService.new(
       user: current_user,
       params: faq_params,
-      message_class: message_class
+      message_class: message_class,
+      outlet: outlet
     ).call
 
     render json: faq, serializer: faq_serializer_class, status: :created
@@ -18,11 +19,12 @@ module Api::V1::Concerns::FaqsControllerHelper
   end
 
   def update
-    faq = Lounge::Faqs::UpdateService.new(
+    faq = Faqs::UpdateService.new(
       user: current_user,
       faq_id: params[:id],
       params: faq_params,
-      message_class: message_class
+      message_class: message_class,
+      outlet: outlet
     ).call
 
     render json: faq, serializer: faq_serializer_class

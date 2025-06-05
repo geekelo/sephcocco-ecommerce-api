@@ -23,7 +23,7 @@ class Api::V1::RegistrationController < ApplicationController
           outlets = SephcoccoOutlet.where(name: user_params[:outlets])
         
           # Associate only if found
-          user.sephcocco_outlets << outlets if outlets.any?
+          user.sephcocco_outlets << outlets if outlets&.any?
         end
       
         render json: { message: "User created successfully" }, status: :created
