@@ -7,4 +7,19 @@ class SephcoccoUser < ApplicationRecord
 
   has_many :orders, class_name: "SephcoccoLoungeOrder", foreign_key: :sephcocco_user_id
   has_many :ordered_products, through: :orders, source: :sephcocco_lounge_product
+
+  # password reset token
+  def generate_password_reset_token!
+    token = rand(100000..999999).to_s
+    update!(
+      reset_password_token: token,
+      reset_password_sent_at: Time.current
+    )
+    token
+  end
+
+  # Checks if the password reset token has expired
+  def password_reset_token_expired?
+    reset_password_sent_at < 2.hours.ago
+  end
 end
