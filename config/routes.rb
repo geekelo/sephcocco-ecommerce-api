@@ -9,7 +9,11 @@ Rails.application.routes.draw do
     namespace :v1 do
       post "signup" => "registration#create"
       post "login" => "authentication#create"
-      resources :password_resets, only: [:new, :create, :edit, :update]
+      resources :password_resets, only: [:new, :create, :edit, :update] do
+        collection do
+          post "verify_otp" => "password_resets#verify_otp"
+        end
+      end
 
       # LOUNGE
       namespace :lounge do
