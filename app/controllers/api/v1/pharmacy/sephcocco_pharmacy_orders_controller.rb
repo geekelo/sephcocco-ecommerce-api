@@ -12,7 +12,6 @@ class Api::V1::Pharmacy::SephcoccoPharmacyOrdersController < ApplicationControll
     :sephcocco_pharmacy_orders
   end
 
-
   def outlet
     Pharmacy
   end

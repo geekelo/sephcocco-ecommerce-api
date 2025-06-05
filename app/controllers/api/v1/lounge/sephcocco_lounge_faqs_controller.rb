@@ -9,6 +9,10 @@ class Api::V1::Lounge::SephcoccoLoungeFaqsController < ApplicationController
     Lounge::SephcoccoLoungeFaq
   end
 
+  def outlet
+    Lounge
+  end
+
   def faq_serializer_class_admin
     Lounge::Admin::SephcoccoLoungeFaqSerializer
   end
