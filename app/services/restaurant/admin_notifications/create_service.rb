@@ -22,7 +22,7 @@ module Restaurant
       end
 
       def generate_message
-          "New #{@action_type} created at #{Date.current.strftime('%Y-%m-%d %H:%M:%S')}."
+          "New #{@action_type} created at #{Time.current.strftime('%Y-%m-%d %H:%M:%S')}."
       end
     end
   end

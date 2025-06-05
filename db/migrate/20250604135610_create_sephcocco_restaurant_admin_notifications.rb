@@ -1,11 +1,3 @@
-class CreateSephcoccoRestaurantAdminNotifications < ActiveRecord::Migration[7.2]
-  def change
-    create_table :sephcocco_restaurant_admin_notifications do |t|
-      t.timestamps
-    end
-  end
-end
-
 require_relative '../../lib/migration_helpers/notification_migration_helper'
 
 class CreateSephcoccoRestaurantAdminNotifications < ActiveRecord::Migration[7.2]
@@ -18,5 +10,4 @@ class CreateSephcoccoRestaurantAdminNotifications < ActiveRecord::Migration[7.2]
   def down
     drop_notification_table :sephcocco_restaurant_admin_notifications
   end
-
 end
