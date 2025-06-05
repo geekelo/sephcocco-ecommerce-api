@@ -47,10 +47,11 @@ Rails.application.routes.draw do
         resources :sephcocco_pharmacy_product_likes
         resources :sephcocco_pharmacy_orders
         resources :sephcocco_pharmacy_payments
-          resources :sephcocco_pharmacy_faqs do
-            member do
-              post "like" => "sephcocco_pharmacy_faqs#like"
-
+        resources :sephcocco_pharmacy_faqs do
+          member do
+            post "like" => "sephcocco_pharmacy_faqs#like"
+          end
+        end
         resources :sephcocco_pharmacy_faq_categories
       end
     end
