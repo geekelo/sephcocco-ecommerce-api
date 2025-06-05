@@ -22,4 +22,8 @@ class SephcoccoUser < ApplicationRecord
   def password_reset_token_expired?
     reset_password_sent_at < 2.hours.ago
   end
+
+  def self.clear_reset_generated_token!
+    update!(reset_password_token: nil, reset_password_sent_at: nil)
+  end
 end
