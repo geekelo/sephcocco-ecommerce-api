@@ -11,7 +11,6 @@ class Api::V1::RegistrationController < ApplicationController
       extracted_user_params = user_params.except(:role, :outlets).merge(
         password: password,
         password_confirmation: password_confirmation,
-        profile_image_url: "https:no-image.com",
 
         sephcocco_user_role_id: user_role_id || SephcoccoUserRole.find_by(name: "user")&.id # Default to 'user' role if not specified
       )

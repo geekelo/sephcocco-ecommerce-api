@@ -7,7 +7,6 @@ class CreateSephcoccoUsers < ActiveRecord::Migration[7.2]
       t.string :phone_number
       t.string :whatsapp_number
       t.string :password_digest, null: false
-      t.string :profile_image_url
 
       t.timestamps
     end
