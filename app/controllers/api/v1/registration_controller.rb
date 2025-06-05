@@ -5,8 +5,8 @@ class Api::V1::RegistrationController < ApplicationController
     if email_already_exists?
       render json: { error: "Email is already registered with us" }, status: :unprocessable_entity
     else
-      password = params[:user][:password].presence || "123456"
-      password_confirmation = params[:user][:password_confirmation].presence || "123456"
+      password = params[:user][:password].presence || "1234567"
+      password_confirmation = params[:user][:password_confirmation].presence || "1234567"
 
       user = SephcoccoUser.new(user_params.merge(
         password: password,
