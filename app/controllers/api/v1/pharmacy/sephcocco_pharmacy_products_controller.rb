@@ -16,6 +16,14 @@ class Api::V1::Pharmacy::SephcoccoPharmacyProductsController < ApplicationContro
     SephcoccoPharmacyProductLike
   end
 
+  def product_serializer
+    if current_user.sephcocco_user_role.name == "admin"
+      Pharmacy::Admin::SephcoccoPharmacyProductSerializer
+    else
+      Pharmacy::User::SephcoccoPharmacyProductSerializer
+    end
+  end
+
   def product_key
     :sephcocco_pharmacy_product_id
   end

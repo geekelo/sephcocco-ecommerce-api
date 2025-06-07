@@ -16,6 +16,14 @@ class Api::V1::Lounge::SephcoccoLoungeProductsController < ApplicationController
     SephcoccoLoungeProductLike
   end
 
+  def product_serializer
+    if current_user.sephcocco_user_role.name == "admin"
+      Lounge::Admin::SephcoccoLoungeProductSerializer
+    else
+      Lounge::User::SephcoccoLoungeProductSerializer
+    end
+  end
+
   def product_key
     :sephcocco_lounge_product_id
   end

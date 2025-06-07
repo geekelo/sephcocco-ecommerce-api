@@ -20,6 +20,14 @@ class Api::V1::Restaurant::SephcoccoRestaurantProductsController < ApplicationCo
     :sephcocco_restaurant_product_id
   end
 
+  def product_serializer
+    if current_user.sephcocco_user_role.name == "admin"
+      Restaurant::Admin::SephcoccoRestaurantProductSerializer
+    else
+      Restaurant::User::SephcoccoRestaurantProductSerializer
+    end
+  end
+
   def user_key
     :sephcocco_user_id
   end
