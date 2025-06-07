@@ -24,10 +24,9 @@ Rails.application.routes.draw do
             post "switch_visibility" => "sephcocco_lounge_products#switch_visibility"
           end
         end
-        resources :sephcocco_lounge_product_categories do
-          member do
-            post "add_product_to_category" => "sephcocco_lounge_product_categories#add_product_to_category"
-          end
+        resources :product_categories do
+          # Custom route for adding a product to a category
+          post :add_product_to_category, on: :collection
         end
         resources :sephcocco_lounge_product_likes
         resources :sephcocco_lounge_orders
@@ -43,10 +42,9 @@ Rails.application.routes.draw do
             post "switch_visibility" => "sephcocco_pharmacy_products#switch_visibility"
           end
         end
-        resources :sephcocco_pharmacy_product_categories do
-          member do
-            post "add_product_to_category" => "sephcocco_pharmacy_product_categories#add_product_to_category"
-          end
+        resources :product_categories do
+          # Custom route for adding a product to a category
+          post :add_product_to_category, on: :collection
         end
         resources :sephcocco_pharmacy_product_likes
         resources :sephcocco_pharmacy_orders
@@ -58,8 +56,33 @@ Rails.application.routes.draw do
         end
         resources :sephcocco_pharmacy_faq_categories
       end
+
+      # RESTAURANT
+      namespace :restaurant do
+        resources :sephcocco_restaurant_products do
+          member do
+            post "like" => "sephcocco_restaurant_products#like"
+            post "unlike" => "sephcocco_restaurant_products#unlike"
+            post "switch_visibility" => "sephcocco_restaurant_products#switch_visibility"
+          end
+        end
+        resources :product_categories do
+          # Custom route for adding a product to a category
+          post :add_product_to_category, on: :collection
+        end
+        resources :sephcocco_restaurant_product_likes
+        resources :sephcocco_restaurant_orders
+        resources :sephcocco_restaurant_payments
+        resources :sephcocco_restaurant_faqs do
+          member do
+            post "like" => "sephcocco_restaurant_faqs#like"
+          end
+        end
+        resources :sephcocco_restaurant_faq_categories
+      end
     end
   end
+
 
 
 
