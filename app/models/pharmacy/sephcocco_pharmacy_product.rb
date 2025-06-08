@@ -1,5 +1,5 @@
-class Api::V1::Pharmacy::SephcoccoPharmacyProduct < ApplicationRecord
-  include Api::V1::ProductModelHelper
+class Pharmacy::SephcoccoPharmacyProduct < ApplicationRecord
+  include ProductModelHelper
 
   def self.category_association_name
     :pharmacy_product_categories

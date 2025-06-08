@@ -1,6 +1,6 @@
 
-class Api::V1::Pharmacy::SephcoccoPharmacyOrder < ApplicationRecord
-  include Api::V1::OrderModelHelper
+class Pharmacy::SephcoccoPharmacyOrder < ApplicationRecord
+  include OrderModelHelper
 
   belongs_to :sephcocco_pharmacy_product
   belongs_to :sephcocco_user

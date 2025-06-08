@@ -1,9 +1,9 @@
-class Api::V1::Pharmacy::SephcoccoPharmacyPayment < ApplicationRecord
-  include Api::V1::PaymentModelHelper
+class Pharmacy::SephcoccoPharmacyPayment < ApplicationRecord
+  include PaymentModelHelper
 
   belongs_to :sephcocco_user, class_name: "SephcoccoUser", foreign_key: :sephcocco_user_id, optional: true
 
   def associated_order_class
-    Api::V1::Pharmacy::SephcoccoPharmacyOrder
+    Pharmacy::SephcoccoPharmacyOrder
   end
 end

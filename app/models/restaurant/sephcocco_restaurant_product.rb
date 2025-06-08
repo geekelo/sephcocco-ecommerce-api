@@ -1,5 +1,5 @@
-class Api::V1::Restaurant::SephcoccoRestaurantProduct < ApplicationRecord
-  include Api::V1::ProductModelHelper
+class Restaurant::SephcoccoRestaurantProduct < ApplicationRecord
+  include ProductModelHelper
 
   def self.category_association_name
     :restaurant_product_categories

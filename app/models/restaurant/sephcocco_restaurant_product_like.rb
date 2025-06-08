@@ -1,5 +1,5 @@
-class Api::V1::Restaurant::SephcoccoRestaurantProductLike < ApplicationRecord
-  include Api::V1::ProductLikeModelHelper
+class Restaurant::SephcoccoRestaurantProductLike < ApplicationRecord
+  include ProductLikeModelHelper
 
   def self.user_class_name
     "SephcoccoUser"
