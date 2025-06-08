@@ -1,4 +1,6 @@
-class Lounge::SephcoccoLoungeProduct < ApplicationRecord
+
+module Lounge
+ class SephcoccoLoungeProduct < ApplicationRecord
   include ProductModelHelper
 
   def self.category_association_name
@@ -35,4 +37,5 @@ class Lounge::SephcoccoLoungeProduct < ApplicationRecord
 
   # 🔧 Call the association setup after all class methods are defined
   setup_product_associations
+end
 end
