@@ -18,11 +18,11 @@ class Restaurant::SephcoccoRestaurantProduct < ApplicationRecord
   end
 
   def self.product_like_class
-    Api::V1::Restaurant::SephcoccoRestaurantProductLike
+    Restaurant::SephcoccoRestaurantProductLike
   end
 
   def self.order_class
-    Api::V1::Restaurant::SephcoccoRestaurantOrder
+    Restaurant::SephcoccoRestaurantOrder
   end
 
   def self.likes_association_name
