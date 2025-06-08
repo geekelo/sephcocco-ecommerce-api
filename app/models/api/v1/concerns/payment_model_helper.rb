@@ -1,4 +1,4 @@
-module Api::V1::PaymentModelHelper
+module Api::V1::Concerns::PaymentModelHelper
   extend ActiveSupport::Concern
 
   included do

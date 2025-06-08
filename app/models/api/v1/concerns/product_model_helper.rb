@@ -1,4 +1,4 @@
-module Api::V1::ProductModelHelper
+module Api::V1::Concerns::ProductModelHelper
   extend ActiveSupport::Concern
 
   class_methods do
