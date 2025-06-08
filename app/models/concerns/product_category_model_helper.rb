@@ -1,4 +1,4 @@
-module Api::V1::Concerns::ProductCategoryModelHelper
+module ProductCategoryModelHelper
   extend ActiveSupport::Concern
 
   included do

@@ -1,5 +1,5 @@
-class Api::V1::Lounge::SephcoccoLoungeOrder < ApplicationRecord
-  include Api::V1::OrderModelHelper
+class Lounge::SephcoccoLoungeOrder < ApplicationRecord
+  include OrderModelHelper
 
   belongs_to :sephcocco_lounge_product
   belongs_to :sephcocco_user
