@@ -1,4 +1,4 @@
-class Pharmacy::SephcoccoPharmacyAdminNotification < ApplicationRecord
+class Api::V1::Pharmacy::SephcoccoPharmacyAdminNotification < ApplicationRecord
   belongs_to :sephcocco_user
 
   after_update :switch_visibility

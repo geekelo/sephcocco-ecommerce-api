@@ -1,5 +1,5 @@
 # app/models/concerns/order_model_helper.rb
-module OrderModelHelper
+module Api::V1::OrderModelHelper
   extend ActiveSupport::Concern
 
   included do

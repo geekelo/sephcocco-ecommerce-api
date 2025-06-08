@@ -1,4 +1,4 @@
-class Lounge::SephcoccoLoungeAdminNotification < ApplicationRecord
+class Api::V1::Lounge::SephcoccoLoungeAdminNotification < ApplicationRecord
   belongs_to :sephcocco_user
 
   after_update :switch_visibility

@@ -1,5 +1,5 @@
-class Restaurant::SephcoccoRestaurantProduct < ApplicationRecord
-  include ProductModelHelper
+class Api::V1::Restaurant::SephcoccoRestaurantProduct < ApplicationRecord
+  include Api::V1::ProductModelHelper
 
   def self.category_association_name
     :restaurant_product_categories
@@ -18,11 +18,11 @@ class Restaurant::SephcoccoRestaurantProduct < ApplicationRecord
   end
 
   def self.product_like_class
-    Restaurant::SephcoccoRestaurantProductLike
+    Api::V1::Restaurant::SephcoccoRestaurantProductLike
   end
 
   def self.order_class
-    Restaurant::SephcoccoRestaurantOrder
+    Api::V1::Restaurant::SephcoccoRestaurantOrder
   end
 
   def self.likes_association_name

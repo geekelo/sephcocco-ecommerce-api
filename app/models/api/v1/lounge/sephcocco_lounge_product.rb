@@ -1,5 +1,5 @@
 class Api::Lounge::SephcoccoLoungeProduct < ApplicationRecord
-  include ProductModelHelper
+  include Api::V1::ProductModelHelper
 
   def self.category_association_name
     :lounge_product_categories

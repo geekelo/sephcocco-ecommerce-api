@@ -1,5 +1,5 @@
 
-class Restaurant::SephcoccoRestaurantAdminNotification < ApplicationRecord
+class Api::V1::Restaurant::SephcoccoRestaurantAdminNotification < ApplicationRecord
   belongs_to :sephcocco_user
 
   after_update :switch_visibility
