@@ -9,11 +9,11 @@ class Api::V1::Lounge::SephcoccoLoungeProductsController < ApplicationController
   end
 
   def category_class
-    'SephcoccoLoungeProductCategory'
+    Lounge::SephcoccoLoungeProductCategory
   end
 
   def like_class
-    'SephcoccoLoungeProductLike'
+    Lounge::SephcoccoLoungeProductLike
   end
 
   def product_serializer
