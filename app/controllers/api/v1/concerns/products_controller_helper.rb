@@ -33,9 +33,6 @@ module Api::V1::Concerns::ProductsControllerHelper
   def update
     if @product.update(product_params)
       render json: @product, serializer: product_serializer, status: :ok
-      else
-        render json: @product, serializer: product_serializer, status: :ok
-      end
     else
       render json: @product.errors, status: :unprocessable_entity
     end
@@ -50,10 +47,10 @@ module Api::V1::Concerns::ProductsControllerHelper
     @product.update(visible: !@product.visible)
     serializer = product_serializer if current_user.sephcocco_user_role.name == "admin"
 
-  render json: {
-    message: "Product visibility updated successfully",
-    product: serializer.new(@product)
-  }
+   render json: {
+     message: "Product visibility updated successfully",
+     product: serializer.new(@product)
+   }
   end
 
   def like
