@@ -5,7 +5,7 @@ class Api::V1::Lounge::SephcoccoLoungeProductsController < ApplicationController
   private
 
   def product_class
-    ::SephcoccoLoungeProduct
+    SephcoccoLoungeProduct
   end
 
   def category_class
