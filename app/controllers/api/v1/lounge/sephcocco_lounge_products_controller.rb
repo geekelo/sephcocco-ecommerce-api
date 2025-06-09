@@ -24,6 +24,10 @@ class Api::V1::Lounge::SephcoccoLoungeProductsController < ApplicationController
     end
   end
 
+  def unnested_product_serializer
+    Lounge::SephcoccoLoungeProductSerializer
+  end
+
   def product_key
     :sephcocco_lounge_product_id
   end
