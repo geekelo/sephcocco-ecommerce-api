@@ -5,17 +5,17 @@ class Api::V1::Lounge::SephcoccoLoungeProductCategoriesController < ApplicationC
   private
 
   def category_class
-    SephcoccoLoungeProductCategory
+    Lounge::SephcoccoLoungeProductCategory
   end
 
   def product_class
-    SephcoccoLoungeProduct
+    Lounge::SephcoccoLoungeProduct
   end
 
   def product_category_unnested_serializer
     Lounge::SephcoccoLoungeProductCategorySerializer
   end
-  
+
   def product_category_serializer
     if current_user.sephcocco_user_role.name == "admin"
       Lounge::Admin::SephcoccoLoungeProductCategorySerializer

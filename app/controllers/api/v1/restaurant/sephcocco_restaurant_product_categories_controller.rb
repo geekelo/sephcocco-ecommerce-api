@@ -5,11 +5,11 @@ class Api::V1::Restaurant::SephcoccoRestaurantProductCategoriesController < Appl
   private
 
   def category_class
-    SephcoccoRestaurantProductCategory
+    Restaurant::SephcoccoRestaurantProductCategory
   end
 
   def product_class
-    SephcoccoRestaurantProduct
+    Restaurant::SephcoccoRestaurantProduct
   end
 
   def product_category_unnested_serializer

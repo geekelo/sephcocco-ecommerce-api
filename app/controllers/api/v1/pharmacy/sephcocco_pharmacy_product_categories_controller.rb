@@ -5,11 +5,11 @@ class Api::V1::Pharmacy::SephcoccoPharmacyProductCategoriesController < Applicat
   private
 
   def category_class
-    SephcoccoPharmacyProductCategory
+    Pharmacy::SephcoccoPharmacyProductCategory
   end
 
   def product_class
-    SephcoccoPharmacyProduct
+    Pharmacy::SephcoccoPharmacyProduct
   end
 
   def product_category_unnested_serializer
