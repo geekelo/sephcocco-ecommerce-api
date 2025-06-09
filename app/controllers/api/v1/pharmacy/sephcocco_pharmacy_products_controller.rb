@@ -16,6 +16,10 @@ class Api::V1::Pharmacy::SephcoccoPharmacyProductsController < ApplicationContro
     SephcoccoPharmacyProductLike
   end
 
+  def unnested_product_serializer
+    Pharmacy::SephcoccoPharmacyProductSerializer
+  end
+
   def product_serializer
     if current_user.sephcocco_user_role.name == "admin"
       Pharmacy::Admin::SephcoccoPharmacyProductSerializer
