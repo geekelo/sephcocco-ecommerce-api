@@ -5,15 +5,15 @@ class Api::V1::Restaurant::SephcoccoRestaurantProductsController < ApplicationCo
   private
 
   def product_class
-    SephcoccoRestaurantProduct
+    Restaurant::SephcoccoRestaurantProduct
   end
 
   def category_class
-    SephcoccoRestaurantProductCategory
+    Restaurant::SephcoccoRestaurantProductCategory
   end
 
   def like_class
-    SephcoccoRestaurantProductLike
+    Restaurant::SephcoccoRestaurantProductLike
   end
 
   def product_key
