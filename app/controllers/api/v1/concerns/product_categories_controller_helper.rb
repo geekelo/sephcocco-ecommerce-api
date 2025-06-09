@@ -9,26 +9,18 @@ module Api::V1::Concerns::ProductCategoriesControllerHelper
 
   def index
     categories = category_class.all
-    if current_user.sephcocco_user_role.name == "admin"
-      render json: categories, each_serializer: Lounge::Admin::SephcoccoLoungeProductCategorySerializer
-    else
-      render json: categories, each_serializer: Lounge::User::SephcoccoLoungeProductCategorySerializer
-    end
+    render json: categories, each_serializer: product_category_unnested_serializer
   end
 
   def show
-    render json: @product_category, serializer: Lounge::Admin::SephcoccoLoungeProductCategorySerializer
+    render json: @product_category, serializer: product_category_serializer
   end
 
   def create
     @product_category = category_class.new(product_category_params)
 
     if @product_category.save
-      if current_user.sephcocco_user_role.name == "admin"
-        render json: @product_category, serializer: Lounge::Admin::SephcoccoLoungeProductCategorySerializer, status: :created
-      else
-        render json: @product_category, serializer: Lounge::User::SephcoccoLoungeProductCategorySerializer, status: :created
-      end
+      render json: @product_category, serializer: product_category_serializer, status: :created
     else
       render json: @product_category.errors, status: :unprocessable_entity
     end
@@ -36,8 +28,7 @@ module Api::V1::Concerns::ProductCategoriesControllerHelper
 
   def update
     if @product_category.update(product_category_params)
-      if current_user.sephcocco_user_role.name == "admin"
-        render json: @product_category, serializer: Lounge::Admin::SephcoccoLoungeProductCategorySerializer
+      render json: @product_category, serializer: product_category_serializer
       else
         render json: @product_category, serializer: Lounge::User::SephcoccoLoungeProductCategorySerializer
       end

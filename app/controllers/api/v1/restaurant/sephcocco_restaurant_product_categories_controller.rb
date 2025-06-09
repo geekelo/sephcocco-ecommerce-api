@@ -12,6 +12,18 @@ class Api::V1::Restaurant::SephcoccoRestaurantProductCategoriesController < Appl
     SephcoccoRestaurantProduct
   end
 
+  def product_category_unnested_serializer
+    Restaurant::SephcoccoRestaurantProductCategorySerializer
+  end
+
+  def product_category_serializer
+    if current_user.sephcocco_user_role.name == "admin"
+      Restaurant::Admin::SephcoccoRestaurantProductCategorySerializer
+    else
+      Restaurant::User::SephcoccoRestaurantProductCategorySerializer
+    end
+  end
+
   def product_category_association_name
     :sephcocco_restaurant_product_categories
   end

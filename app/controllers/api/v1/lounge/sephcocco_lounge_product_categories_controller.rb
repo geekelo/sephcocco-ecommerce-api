@@ -12,6 +12,18 @@ class Api::V1::Lounge::SephcoccoLoungeProductCategoriesController < ApplicationC
     SephcoccoLoungeProduct
   end
 
+  def product_category_unnested_serializer
+    Lounge::SephcoccoLoungeProductCategorySerializer
+  end
+  
+  def product_category_serializer
+    if current_user.sephcocco_user_role.name == "admin"
+      Lounge::Admin::SephcoccoLoungeProductCategorySerializer
+    else
+      Lounge::User::SephcoccoLoungeProductCategorySerializer
+    end
+  end
+
   def product_category_association_name
     :sephcocco_lounge_product_categories
   end

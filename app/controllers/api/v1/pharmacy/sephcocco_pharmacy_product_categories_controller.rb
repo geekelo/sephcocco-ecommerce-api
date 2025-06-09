@@ -12,6 +12,18 @@ class Api::V1::Pharmacy::SephcoccoPharmacyProductCategoriesController < Applicat
     SephcoccoPharmacyProduct
   end
 
+  def product_category_unnested_serializer
+    Pharmacy::SephcoccoPharmacyProductCategorySerializer
+  end
+  
+  def product_category_serializer
+    if current_user.sephcocco_user_role.name == "admin"
+      Pharmacy::Admin::SephcoccoPharmacyProductCategorySerializer
+    else
+      Pharmacy::User::SephcoccoPharmacyProductCategorySerializer
+    end
+  end
+
   def product_category_association_name
     :sephcocco_pharmacy_product_categories
   end
