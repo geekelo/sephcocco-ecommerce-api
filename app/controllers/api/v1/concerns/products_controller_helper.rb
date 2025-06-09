@@ -9,11 +9,11 @@ module Api::V1::Concerns::ProductsControllerHelper
 
   def index
     products = product_class.all
-    render json: products, each_serializer: product_serializer
+    render json: products, each_serializer: unnested_product_serializer
   end
 
   def show
-    render json: @product, serializer: unnested_product_serializer
+    render json: @product, serializer: product_serializer
   end
 
   def create
