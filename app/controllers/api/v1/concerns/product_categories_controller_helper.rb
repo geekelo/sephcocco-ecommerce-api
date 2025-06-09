@@ -29,9 +29,6 @@ module Api::V1::Concerns::ProductCategoriesControllerHelper
   def update
     if @product_category.update(product_category_params)
       render json: @product_category, serializer: product_category_serializer
-      else
-        render json: @product_category, serializer: Lounge::User::SephcoccoLoungeProductCategorySerializer
-      end
     else
       render json: @product_category.errors, status: :unprocessable_entity
     end
