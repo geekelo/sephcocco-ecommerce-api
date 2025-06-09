@@ -1,8 +1,8 @@
-class Lounge::User::SephcoccoLoungeFaqCategorySerializer < ActiveModel::Serializer
+class Restaurant::User::SephcoccoRestaurantFaqCategorySerializer < ActiveModel::Serializer
   attributes :id, :name, :description, :position, :visibility
 
   def faqs
-    object.sephcocco_lounge_faqs.where(visibility: true).order(:position).map do |faq|
+    object.sephcocco_restaurant_faqs.where(visibility: true).order(:position).map do |faq|
       {
         id: faq.id,
         title: faq.title,
