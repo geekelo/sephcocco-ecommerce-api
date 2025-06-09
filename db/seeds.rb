@@ -82,4 +82,8 @@ unless user3.persisted?
   puts "❗ Failed to create user for role: \"user\" (Email3: #{user3.email})"
 end
 
+main_outlet = %w[restaurant lounge pharmacy]
+outlets = main_outlet.map { |name| SephcoccoOutlet.find_or_create_by(name: name) }
+puts "✅ Created/Found outlets: #{outlets.map(&:name).join(', ')}"
+
 puts "🎉 Sephcocco Users seeded successfully!"

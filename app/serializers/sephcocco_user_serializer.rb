@@ -7,9 +7,7 @@ class SephcoccoUserSerializer < ActiveModel::Serializer
 
   def outlets
     object&.sephcocco_outlets&.map do |outlet|
-      {
-        name: outlet.name
-      }
+      outlet.name
     end || []
   end
 end
