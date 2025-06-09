@@ -24,7 +24,7 @@ Rails.application.routes.draw do
             post "switch_visibility" => "sephcocco_lounge_products#switch_visibility"
           end
         end
-        resources :product_categories do
+        resources :sephcocco_lounge_product_categories do
           # Custom route for adding a product to a category
           post :add_product_to_category, on: :collection
         end
@@ -42,7 +42,7 @@ Rails.application.routes.draw do
             post "switch_visibility" => "sephcocco_pharmacy_products#switch_visibility"
           end
         end
-        resources :product_categories do
+        resources :sephcocco_pharmacy_product_categories do
           # Custom route for adding a product to a category
           post :add_product_to_category, on: :collection
         end
@@ -66,7 +66,7 @@ Rails.application.routes.draw do
             post "switch_visibility" => "sephcocco_restaurant_products#switch_visibility"
           end
         end
-        resources :product_categories do
+        resources :sephcocco_restaurant_product_categories do
           # Custom route for adding a product to a category
           post :add_product_to_category, on: :collection
         end
