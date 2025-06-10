@@ -3,7 +3,7 @@ module Api::V1::Concerns::ProductCategoriesControllerHelper
   extend ActiveSupport::Concern
 
   included do
-    before_action :authenticate_user!, only: [ :create, :update, :destroy ]
+    before_action :authenticate_user!, only: [ :update, :destroy ]
     before_action :set_product_category, only: [ :show, :update, :destroy ]
   end
 
