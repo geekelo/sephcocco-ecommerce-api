@@ -6,7 +6,7 @@ class Pharmacy::SephcoccoPharmacyProductCategory < ApplicationRecord
   end
 
   def self.join_table_name
-    "sephcocco_pharmacy_product_categories_products"
+    "pharmacy_product_categories_pharmacy_products"
   end
 
   def self.category_foreign_key
