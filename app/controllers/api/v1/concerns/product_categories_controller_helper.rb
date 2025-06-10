@@ -20,7 +20,7 @@ module Api::V1::Concerns::ProductCategoriesControllerHelper
     @product_category = category_class.new(product_category_params)
 
     if @product_category.save
-      render json: @product_category, serializer: product_category_serializer, status: :created
+      render json: @product_category, serializer: product_category_unnested_serializer, status: :created
     else
       render json: @product_category.errors, status: :unprocessable_entity
     end
