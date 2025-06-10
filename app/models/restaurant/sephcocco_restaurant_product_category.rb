@@ -14,7 +14,7 @@ class Restaurant::SephcoccoRestaurantProductCategory < ApplicationRecord
   end
 
   def self.product_foreign_key
-    :sephcocco_restaurant_product_id
+    :restaurant_product_categories_id
   end
 
   # Setup associations AFTER defining the required class methods
