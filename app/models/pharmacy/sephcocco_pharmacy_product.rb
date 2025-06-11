@@ -10,6 +10,10 @@ class Pharmacy::SephcoccoPharmacyProduct < ApplicationRecord
   end
 
   def self.category_product_foreign_key
+    :pharmacy_product_id
+  end
+
+  def self.category_association_foreign_key_name
     :pharmacy_product_category_id
   end
 

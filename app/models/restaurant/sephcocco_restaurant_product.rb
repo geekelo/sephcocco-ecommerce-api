@@ -13,7 +13,7 @@ class Restaurant::SephcoccoRestaurantProduct < ApplicationRecord
     :restaurant_product_id
   end
 
-  def self.category_association_foreign_key
+  def self.category_association_foreign_key_name
     :restaurant_product_category_id
   end
 
