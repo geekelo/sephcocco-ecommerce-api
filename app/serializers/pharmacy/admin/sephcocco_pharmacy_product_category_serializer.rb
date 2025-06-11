@@ -2,15 +2,13 @@ class Pharmacy::Admin::SephcoccoPharmacyProductCategorySerializer < ActiveModel:
   attributes  :id,
               :name,
               :slug,
-              :products,
+              :total_products,
               :description,
               :created_at,
               :updated_at
 
 
-  def products
-    object.sephcocco_pharmacy_products.map do |product|
-      Pharmacy::Admin::SephcoccoPharmacyProductSerializer.new(product).as_json
-    end
+   def total_products
+    object&.pharmacy_products&.count || 0
   end
 end
