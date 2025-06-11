@@ -6,7 +6,7 @@ class Restaurant::SephcoccoRestaurantProductCategory < ApplicationRecord
   end
 
   def self.join_table_name
-    "restaurant_product_categories_restaurant_products"
+    :restaurant_product_categories_restaurant_products
   end
 
   def self.category_foreign_key
