@@ -14,7 +14,7 @@ class Pharmacy::SephcoccoPharmacyProductCategory < ApplicationRecord
   end
 
   def self.product_foreign_key
-    :pharmacy_product_categories_id
+    :pharmacy_product_category_id
   end
 
   # Setup associations AFTER defining the required class methods
