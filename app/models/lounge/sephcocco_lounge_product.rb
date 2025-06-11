@@ -11,9 +11,6 @@ module Lounge
     :sephcocco_lounge_product_categories_products
   end
 
-  def self.category_product_foreign_key
-    :sephcocco_lounge_product_id
-  end
 
   def self.category_association_foreign_key_name
     :sephcocco_lounge_product_category_id
@@ -21,10 +18,6 @@ module Lounge
 
   def self.product_foreign_key
     :sephcocco_lounge_product_id
-  end
-
-  def self.category_foreign_key
-    :sephcocco_lounge_product_category_id
   end
 
   def self.product_like_class
