@@ -2,11 +2,15 @@ class Pharmacy::SephcoccoPharmacyProduct < ApplicationRecord
   include ProductModelHelper
 
   def self.category_association_name
-    :pharmacy_product_categories
+    :sephcocco_pharmacy_product_categories
   end
 
   def self.join_table_name
-    :sephcocco_pharmacy_product_categories_products
+    :pharmacy_product_categories_pharmacy_products
+  end
+
+  def self.category_product_foreign_key
+    :pharmacy_product_category_id
   end
 
   def self.product_foreign_key
