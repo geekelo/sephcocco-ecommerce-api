@@ -2,11 +2,19 @@ class Restaurant::SephcoccoRestaurantProduct < ApplicationRecord
   include ProductModelHelper
 
   def self.category_association_name
-    :restaurant_product_categories
+    :sephcocco_restaurant_product_categories
   end
 
   def self.join_table_name
-    :sephcocco_restaurant_product_categories_products
+    :restaurant_product_categories_restaurant_products
+  end
+
+  def self.category_product_foreign_key
+    :restaurant_product_id
+  end
+
+  def self.category_association_foreign_key
+    :restaurant_product_category_id
   end
 
   def self.product_foreign_key

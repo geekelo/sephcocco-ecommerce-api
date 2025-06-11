@@ -5,8 +5,8 @@ module ProductModelHelper
     def setup_product_associations
       has_and_belongs_to_many category_association_name,
                               join_table: join_table_name,
-                              foreign_key: product_foreign_key,
-                              association_foreign_key: category_foreign_key
+                              foreign_key: category_product_foreign_key,
+                              association_foreign_key: category_association_foreign_key
 
       has_many likes_association_name,
                class_name: product_like_class.name,
