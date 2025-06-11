@@ -8,6 +8,6 @@ class Pharmacy::SephcoccoPharmacyProductCategorySerializer < ActiveModel::Serial
               :updated_at
 
    def total_products
-    object&.pharmacy_products&.count || 0
+    object&.sephcocco_pharmacy_products&.count || 0
   end
 end

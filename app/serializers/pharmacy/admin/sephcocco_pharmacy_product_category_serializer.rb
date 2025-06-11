@@ -9,6 +9,6 @@ class Pharmacy::Admin::SephcoccoPharmacyProductCategorySerializer < ActiveModel:
 
 
    def total_products
-    object&.pharmacy_products&.count || 0
+    object&.sephcocco_pharmacy_products&.count || 0
   end
 end
