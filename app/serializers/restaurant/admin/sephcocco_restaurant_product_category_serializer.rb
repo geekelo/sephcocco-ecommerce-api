@@ -4,5 +4,10 @@ class Restaurant::Admin::SephcoccoRestaurantProductCategorySerializer < ActiveMo
               :slug,
               :description,
               :created_at,
-              :updated_at
+              :updated_at,
+              :total_products
+
+  def total_products
+    object&.restaurant_products&.count || 0
+  end
 end
