@@ -11,7 +11,6 @@ module Lounge
     :sephcocco_lounge_product_categories_products
   end
 
-
   def self.category_association_foreign_key_name
     :sephcocco_lounge_product_category_id
   end
@@ -42,5 +41,4 @@ module Lounge
 
   # 🔧 Call the association setup after all class methods are defined
   setup_product_associations
-end
 end
