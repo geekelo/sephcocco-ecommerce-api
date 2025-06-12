@@ -44,6 +44,19 @@ class Pharmacy::SephcoccoPharmacyProduct < ApplicationRecord
   # 🔧 Call the association setup after all class methods are defined
   setup_product_associations
 
+  # Add attribute accessor for category_ids
+  attr_accessor :category_ids
+
   # Add this line to handle category_ids
-  accepts_nested_attributes_for :sephcocco_pharmacy_product_categories
+  accepts_nested_attributes_for :sephcocco_pharmacy_product_categories, allow_destroy: true
+
+  # Add callback to handle category_ids after save
+  after_save :assign_categories
+
+  private
+
+  def assign_categories
+    return unless category_ids.present?
+    self.sephcocco_pharmacy_product_categories = Pharmacy::SephcoccoPharmacyProductCategory.where(id: category_ids)
+  end
 end
