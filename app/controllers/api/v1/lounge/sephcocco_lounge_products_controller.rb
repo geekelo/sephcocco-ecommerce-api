@@ -45,7 +45,7 @@ class Api::V1::Lounge::SephcoccoLoungeProductsController < ApplicationController
       :name,
       :short_description,
       :long_description,
-      :image_url,,
+      :image_url,
       :amount_in_stock,
       :price,
       :visible,
