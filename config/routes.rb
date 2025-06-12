@@ -9,6 +9,12 @@ Rails.application.routes.draw do
     namespace :v1 do
       post "signup" => "registration#create"
       post "login" => "authentication#create"
+
+      # uploads to R2
+      post :presign_uploads, to: "uploads#presign_multiple"
+      post :save_metadata,  to: "uploads#save"
+      post :presign_upload, to: "uploads#presign"
+      
       resources :password_resets, only: [ :create, :update ] do
         collection do
           post "verify_otp" => "password_resets#verify_otp"
