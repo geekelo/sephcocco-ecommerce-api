@@ -46,11 +46,11 @@ class Api::V1::Restaurant::SephcoccoRestaurantProductsController < ApplicationCo
       :short_description,
       :long_description,
       :image_url,
-      other_images: [],
       :amount_in_stock,
       :price,
       :visible,
-      category_ids: []
+      category_ids: [],
+      other_images: [],
     )
   end
 end
