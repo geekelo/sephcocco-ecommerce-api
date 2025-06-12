@@ -43,4 +43,7 @@ class Pharmacy::SephcoccoPharmacyProduct < ApplicationRecord
 
   # 🔧 Call the association setup after all class methods are defined
   setup_product_associations
+
+  # Add this line to handle category_ids
+  accepts_nested_attributes_for :sephcocco_pharmacy_product_categories
 end
