@@ -1,8 +1,10 @@
 class Pharmacy::Admin::SephcoccoPharmacyProductSerializer < ActiveModel::Serializer
   attributes  :id,
               :name,
+              :image_url,
               :short_description,
               :long_description,
+              :other_images,
               :amount_in_stock,
               :likes,
               :visible,
@@ -11,8 +13,6 @@ class Pharmacy::Admin::SephcoccoPharmacyProductSerializer < ActiveModel::Seriali
               :categories,
               :created_at,
               :updated_at,
-              :main_image_url,
-              :other_images_urls,
 
   def categories
     object.sephcocco_pharmacy_product_categories.map do |category|
@@ -20,15 +20,15 @@ class Pharmacy::Admin::SephcoccoPharmacyProductSerializer < ActiveModel::Seriali
     end
   end
 
-  def main_image_url
+  def image_url
     return nil unless object.image_url.attached?
-    Rails.application.routes.url_helpers.rails_blob_path(object.image_url, only_path: true)
+    Rails.application.routes.url_helpers.rails_blob_url(object.image_url, host: ENV['API_HOST'] || 'localhost:3000')
   end
 
-  def other_images_urls
+  def other_images
     return [] unless object.other_images.attached?
     object.other_images.map do |image|
-      Rails.application.routes.url_helpers.rails_blob_path(image, only_path: true)
+      Rails.application.routes.url_helpers.rails_blob_url(object.image_url, host: ENV['API_HOST'] || 'localhost:3000')
     end
   end
 
