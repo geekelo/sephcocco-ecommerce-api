@@ -33,16 +33,4 @@ class Pharmacy::SephcoccoPharmacyProductSerializer < ActiveModel::Serializer
       true
     end
   end
-
-  def image_url
-    return nil unless object.image_url.attached?
-    Rails.application.routes.url_helpers.rails_blob_url(object.image_url, host: ENV['API_HOST'] || 'localhost:3000')
-  end
-
-  def other_images
-    return [] unless object.other_images.attached?
-    object.other_images.map do |image|
-      Rails.application.routes.url_helpers.rails_blob_url(image, host: ENV['API_HOST'] || 'localhost:3000')
-    end
-  end
 end
