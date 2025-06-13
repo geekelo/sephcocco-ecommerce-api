@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  # Active Storage routes
+  get '/rails/active_storage/blobs/:signed_id/*filename' => 'active_storage/blobs/proxy#show', as: :rails_service_blob
+  get '/rails/active_storage/representations/:signed_blob_id/:variation_key/*filename' => 'active_storage/representations/proxy#show', as: :rails_blob_representation
+  get '/rails/active_storage/disk/:encoded_key/*filename' => 'active_storage/disk#show', as: :rails_disk_service
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -82,9 +87,6 @@ Rails.application.routes.draw do
       end
     end
   end
-
-
-
 
   # Render dynamic PWA files from app/views/pwa/*
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
