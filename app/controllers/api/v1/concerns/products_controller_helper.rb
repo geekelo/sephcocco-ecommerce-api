@@ -17,13 +17,13 @@ module Api::V1::Concerns::ProductsControllerHelper
   end
 
   def create
-    @product = product_class.new(product_params)
-
-    if product_params[:category_ids].present?
-      @product.send(category_association_name).replace(category_class.where(id: product_params[:category_ids]))
-    end
-
+    @product = product_class.new(product_params.except(:category_ids))
+  
     if @product.save
+      if product_params[:category_ids].present?
+        # Assign categories using the association
+        @product.send(category_association_name).replace(category_class.where(id: product_params[:category_ids]))
+      end
       render json: @product, serializer: product_serializer, status: :created
     else
       render json: @product.errors, status: :unprocessable_entity
