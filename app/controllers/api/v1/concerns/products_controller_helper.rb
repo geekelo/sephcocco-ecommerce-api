@@ -26,14 +26,9 @@ module Api::V1::Concerns::ProductsControllerHelper
   end
 
   def create
-    @product = product_class.new(product_params.except(:category_ids, :image_url, :other_images))
+    @product = product_class.new(product_params.except(:category_ids))
   
-    if @product.save
-      @product.image_url.attach(product_params[:image_url]) if product_params[:image_url]
-      if product_params[:other_images].present?
-        @product.other_images.attach(product_params[:other_images])
-      end
-      
+    if @product.save      
       if product_params[:category_ids].present?
         # Assign categories using the association
         @product.send(category_association_name).replace(category_class.where(id: product_params[:category_ids]))
@@ -45,11 +40,7 @@ module Api::V1::Concerns::ProductsControllerHelper
   end
 
   def update
-    if @product.update(product_params.except(:image_url, :other_images))
-      @product.image_url.attach(product_params[:image_url]) if product_params[:image_url]
-      if product_params[:other_images].present?
-        @product.other_images.attach(product_params[:other_images])
-      end
+    if @product.update(product_params)
       render json: @product, serializer: product_serializer, status: :ok
     else
       render json: @product.errors, status: :unprocessable_entity

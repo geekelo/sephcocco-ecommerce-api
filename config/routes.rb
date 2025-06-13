@@ -93,6 +93,9 @@ Rails.application.routes.draw do
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
+  # Route for serving images from R2
+  get 'images/:key', to: 'images#show', as: :image
+
   # Defines the root path route ("/")
   # root "posts#index"
 end

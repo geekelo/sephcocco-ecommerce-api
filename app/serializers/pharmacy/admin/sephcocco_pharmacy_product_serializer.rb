@@ -20,18 +20,6 @@ class Pharmacy::Admin::SephcoccoPharmacyProductSerializer < ActiveModel::Seriali
     end
   end
 
-  def image_url
-    return nil unless object.image_url.attached?
-    Rails.application.routes.url_helpers.rails_blob_url(object.image_url, host: ENV['API_HOST'] || 'localhost:3000')
-  end
-
-  def other_images
-    return [] unless object.other_images.attached?
-    object.other_images.map do |image|
-      Rails.application.routes.url_helpers.rails_blob_url(object.image_url, host: ENV['API_HOST'] || 'localhost:3000')
-    end
-  end
-
   def out_of_stock_status
     if object.amount_in_stock > 0
       false
