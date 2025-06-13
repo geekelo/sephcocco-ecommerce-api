@@ -14,6 +14,7 @@ class Pharmacy::SephcoccoPharmacyProductSerializer < ActiveModel::Serializer
               :updated_at
 
   def categories
+    return [] unless object.sephcocco_pharmacy_product_categories.any?
     object.sephcocco_pharmacy_product_categories.map do |category|
       {
         id: category.id, 
@@ -34,13 +35,13 @@ class Pharmacy::SephcoccoPharmacyProductSerializer < ActiveModel::Serializer
 
   def image_url
     return nil unless object.image_url.attached?
-    Rails.application.routes.url_helpers.rails_blob_path(object.image_url, only_path: true)
+    Rails.application.routes.url_helpers.url_for(object.image_url)
   end
 
   def other_images
     return [] unless object.other_images.attached?
     object.other_images.map do |image|
-      Rails.application.routes.url_helpers.rails_blob_path(image, only_path: true)
+      Rails.application.routes.url_helpers.url_for(image)
     end
   end
 end

@@ -14,25 +14,14 @@ class Lounge::SephcoccoLoungeProductSerializer < ActiveModel::Serializer
               :updated_at
 
   def categories
+    return [] unless object.sephcocco_lounge_product_categories.any?
     object.sephcocco_lounge_product_categories.map do |category|
       {
-      id: category.id, 
-      name: category.name,
-      description: category.description,
-      slug: category.slug,
-    }
-    end
-  end
-
-  def image_url
-    return nil unless object.image_url.attached?
-    Rails.application.routes.url_helpers.rails_blob_path(object.image_url, only_path: true)
-  end
-
-  def other_images
-    return [] unless object.other_images.attached?
-    object.other_images.map do |image|
-      Rails.application.routes.url_helpers.rails_blob_path(image, only_path: true)
+        id: category.id, 
+        name: category.name,
+        description: category.description,
+        slug: category.slug,
+      }
     end
   end
 
@@ -41,6 +30,18 @@ class Lounge::SephcoccoLoungeProductSerializer < ActiveModel::Serializer
       false
     else
       true
+    end
+  end
+
+  def image_url
+    return nil unless object.image_url.attached?
+    Rails.application.routes.url_helpers.url_for(object.image_url)
+  end
+
+  def other_images
+    return [] unless object.other_images.attached?
+    object.other_images.map do |image|
+      Rails.application.routes.url_helpers.url_for(image)
     end
   end
 end

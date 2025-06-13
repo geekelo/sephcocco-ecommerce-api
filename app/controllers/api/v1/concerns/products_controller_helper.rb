@@ -8,7 +8,16 @@ module Api::V1::Concerns::ProductsControllerHelper
   end
 
   def index
-    products = product_class.all
+    products = case product_class.name
+    when 'Pharmacy::SephcoccoPharmacyProduct'
+      product_class.includes(:sephcocco_pharmacy_product_categories).all
+    when 'Restaurant::SephcoccoRestaurantProduct'
+      product_class.includes(:sephcocco_restaurant_product_categories).all
+    when 'Lounge::SephcoccoLoungeProduct'
+      product_class.includes(:sephcocco_lounge_product_categories).all
+    else
+      product_class.all
+    end
     render json: products, each_serializer: unnested_product_serializer
   end
 
