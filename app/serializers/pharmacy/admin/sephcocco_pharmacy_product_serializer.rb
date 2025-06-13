@@ -22,13 +22,13 @@ class Pharmacy::Admin::SephcoccoPharmacyProductSerializer < ActiveModel::Seriali
 
   def image_url
     return nil unless object.image_url.attached?
-    Rails.application.routes.url_helpers.rails_blob_url(object.image_url)
+    Rails.application.routes.url_helpers.rails_blob_path(object.image_url, only_path: true)
   end
-  
+
   def other_images
     return [] unless object.other_images.attached?
     object.other_images.map do |image|
-      Rails.application.routes.url_helpers.rails_blob_url(image)
+      Rails.application.routes.url_helpers.rails_blob_path(image, only_path: true)
     end
   end
 
