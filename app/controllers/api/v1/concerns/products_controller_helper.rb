@@ -46,6 +46,10 @@ module Api::V1::Concerns::ProductsControllerHelper
 
   def update
     if @product.update(product_params)
+      @product.image_url.attach(product_params[:image_url]) if product_params[:image_url]
+      if product_params[:other_images].present?
+        @product.other_images.attach(product_params[:other_images])
+      end
       render json: @product, serializer: product_serializer, status: :ok
     else
       render json: @product.errors, status: :unprocessable_entity
