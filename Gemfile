@@ -67,5 +67,6 @@ gem "rack-cors"
 gem "twilio-ruby", "~> 7.4"
 gem "prawn"
 gem "prawn-table"
+gem "aws-sdk-s3", require: false
 gem "image_processing", "~> 1.2"
 gem "ruby-vips"  # or ImageMagick
