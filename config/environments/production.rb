@@ -30,7 +30,7 @@ Rails.application.configure do
   config.assets.compile = false
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  # config.asset_host = "http://assets.example.com"
+  config.asset_host = ENV['ASSET_HOST'] if ENV['ASSET_HOST'].present?
 
   # Specifies the header that your server uses for sending files.
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for Apache
@@ -38,6 +38,10 @@ Rails.application.configure do
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
+
+  # Configure Active Storage URL options
+  config.active_storage.resolve_model_to_route = :rails_storage_proxy
+  Rails.application.routes.default_url_options[:host] = ENV['HOST'] if ENV['HOST'].present?
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
@@ -96,24 +100,6 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
 
   config.action_mailer.smtp_settings = {
-  address: "smtp.gmail.com",
-  port: 587,
-  domain: "gmail.com",
-  user_name: ENV["SMTP_USERNAME"],
-  password: ENV["SMTP_PASSWORD"],
-  authentication: "plain",
-  enable_starttls_auto: true
-}
-
-  # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
-  # Skip DNS rebinding protection for the default health check endpoint.
-  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
-
-  config.action_mailer.smtp_settings = {
     address: "smtp.gmail.com",
     port: 587,
     domain: "gmail.com",
@@ -122,4 +108,12 @@ Rails.application.configure do
     authentication: "plain",
     enable_starttls_auto: true
   }
+
+  # Enable DNS rebinding protection and other `Host` header attacks.
+  # config.hosts = [
+  #   "example.com",     # Allow requests from example.com
+  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
+  # ]
+  # Skip DNS rebinding protection for the default health check endpoint.
+  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 end
