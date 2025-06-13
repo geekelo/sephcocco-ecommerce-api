@@ -49,14 +49,4 @@ class Pharmacy::SephcoccoPharmacyProduct < ApplicationRecord
 
   # Add this line to handle category_ids
   accepts_nested_attributes_for :sephcocco_pharmacy_product_categories, allow_destroy: true
-
-  # Add callback to handle category_ids after save
-  after_save :assign_categories
-
-  private
-
-  def assign_categories
-    return unless category_ids.present?
-    self.sephcocco_pharmacy_product_categories = Pharmacy::SephcoccoPharmacyProductCategory.where(id: category_ids)
-  end
 end
