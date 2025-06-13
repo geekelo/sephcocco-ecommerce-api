@@ -67,3 +67,5 @@ gem "rack-cors"
 gem "twilio-ruby", "~> 7.4"
 gem "prawn"
 gem "prawn-table"
+gem "image_processing", "~> 1.2"
+gem "ruby-vips"  # or ImageMagick
