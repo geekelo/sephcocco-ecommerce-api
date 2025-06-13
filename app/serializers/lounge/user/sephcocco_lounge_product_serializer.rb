@@ -6,6 +6,7 @@ class Lounge::User::SephcoccoLoungeProductSerializer < ActiveModel::Serializer
               :long_description,
               :other_images,
               :amount_in_stock,
+              :out_of_stock_status,
               :likes,
               :price,
               :categories,
@@ -15,6 +16,26 @@ class Lounge::User::SephcoccoLoungeProductSerializer < ActiveModel::Serializer
   def categories
     object.sephcocco_lounge_product_categories.map do |category|
       { id: category.id, name: category.name }
+    end
+  end
+
+  def image_url
+    return nil unless object.image_url.attached?
+    Rails.application.routes.url_helpers.rails_blob_url(object.image_url)
+  end
+  
+  def other_images
+    return [] unless object.other_images.attached?
+    object.other_images.map do |image|
+      Rails.application.routes.url_helpers.rails_blob_url(image)
+    end
+  end
+
+  def out_of_stock_status
+    if object.amount_in_stock > 0
+      false
+    else
+      true
     end
   end
 end
