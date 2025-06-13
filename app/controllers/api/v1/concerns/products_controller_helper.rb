@@ -26,7 +26,7 @@ module Api::V1::Concerns::ProductsControllerHelper
   end
 
   def create
-    @product = product_class.new(product_params.except(:category_ids))
+    @product = product_class.new(product_params.except(:category_ids, :image_url, :other_images))
   
     if @product.save
       @product.image_url.attach(product_params[:image_url]) if product_params[:image_url]
@@ -45,7 +45,7 @@ module Api::V1::Concerns::ProductsControllerHelper
   end
 
   def update
-    if @product.update(product_params)
+    if @product.update(product_params.except(:image_url, :other_images))
       @product.image_url.attach(product_params[:image_url]) if product_params[:image_url]
       if product_params[:other_images].present?
         @product.other_images.attach(product_params[:other_images])
