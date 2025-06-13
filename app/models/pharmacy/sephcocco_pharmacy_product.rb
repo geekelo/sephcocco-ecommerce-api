@@ -43,10 +43,4 @@ class Pharmacy::SephcoccoPharmacyProduct < ApplicationRecord
 
   # 🔧 Call the association setup after all class methods are defined
   setup_product_associations
-
-  # Add attribute accessor for category_ids
-  attr_accessor :category_ids
-
-  # Add this line to handle category_ids
-  accepts_nested_attributes_for :sephcocco_pharmacy_product_categories, allow_destroy: true
 end
