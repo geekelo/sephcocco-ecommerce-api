@@ -29,6 +29,11 @@ module Api::V1::Concerns::ProductsControllerHelper
     @product = product_class.new(product_params.except(:category_ids))
   
     if @product.save
+      @product.image_url.attach(product_params[:image_url]) if product_params[:image_url]
+      if product_params[:other_images].present?
+        @product.other_images.attach(product_params[:other_images])
+      end
+      
       if product_params[:category_ids].present?
         # Assign categories using the association
         @product.send(category_association_name).replace(category_class.where(id: product_params[:category_ids]))
