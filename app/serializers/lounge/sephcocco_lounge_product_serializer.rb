@@ -9,6 +9,7 @@ class Lounge::SephcoccoLoungeProductSerializer < ActiveModel::Serializer
               :out_of_stock_status,
               :likes,
               :price,
+              :visible,
               :categories,
               :created_at,
               :updated_at

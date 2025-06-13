@@ -22,7 +22,7 @@ module Api::V1::Concerns::ProductsControllerHelper
   end
 
   def show
-    render json: @product, serializer: product_serializer
+    render json: @product, serializer: unnested_product_serializer
   end
 
   def create
