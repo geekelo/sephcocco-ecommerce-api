@@ -5,7 +5,9 @@ require "rails/all"
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
-
+initializer(:remove_activestorage_routes, after: :add_routing_paths) do |app|
+  app.routes_reloader.paths.delete_if { |path| path =~ /activestorage/ }
+end
 module SephcoccoLoungeApi
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
