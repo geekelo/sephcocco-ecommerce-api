@@ -20,8 +20,8 @@ module ProductModelHelper
                foreign_key: product_foreign_key
 
       has_many :buyers, through: order_association_name, source: :sephcocco_user
-      has_one_attached :image_url
-      has_many_attached :other_images
+      has_one_attached :image_url, dependent: :purge
+      has_many_attached :other_images, dependent: :purge
     end
 
     def category_association_name
