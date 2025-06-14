@@ -23,22 +23,24 @@ class Pharmacy::Admin::SephcoccoPharmacyProductSerializer < ActiveModel::Seriali
 
   def other_images_urls
     return [] unless object.other_images.present?
-    object.other_image_keys.map do |key|
+    object.other_images.map do |key|
       "https://#{ENV['CLOUDFLARE_R2_BUCKET']}.r2.cloudflarestorage.com/#{key}"
     end
   end
 
   def categories
+    return [] unless object.sephcocco_pharmacy_product_categories.any?
     object.sephcocco_pharmacy_product_categories.map do |category|
-      Pharmacy::Admin::SephcoccoPharmacyProductCategorySerializer.new(category)
+      {
+        id: category.id, 
+        name: category.name,
+        description: category.description,
+        slug: category.slug
+      }
     end
   end
 
   def out_of_stock_status
-    if object.amount_in_stock > 0
-      false
-    else
-      true
-    end
+    object.amount_in_stock <= 0
   end
 end
