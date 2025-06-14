@@ -1,10 +1,8 @@
 class Pharmacy::User::SephcoccoPharmacyProductSerializer < ActiveModel::Serializer
   attributes  :id,
               :name,
-              :image_url,
               :short_description,
               :long_description,
-              :other_images,
               :amount_in_stock,
               :likes,
               :price,
@@ -28,16 +26,18 @@ class Pharmacy::User::SephcoccoPharmacyProductSerializer < ActiveModel::Serializ
   end
 
   def categories
+    return [] unless object.sephcocco_pharmacy_product_categories.any?
     object.sephcocco_pharmacy_product_categories.map do |category|
-      Pharmacy::User::SephcoccoPharmacyProductCategorySerializer.new(category)
+      {
+        id: category.id, 
+        name: category.name,
+        description: category.description,
+        slug: category.slug
+      }
     end
   end
 
   def out_of_stock_status
-    if object.amount_in_stock > 0
-      false
-    else
-      true
-    end
+    object.amount_in_stock <= 0
   end
 end
