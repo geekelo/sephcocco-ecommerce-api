@@ -2,7 +2,7 @@ class Pharmacy::SephcoccoPharmacyProductSerializer < ActiveModel::Serializer
   attributes  :id,
               :name,
               :single_image_url,
-              :other_images_urls
+              :other_images_urls,
               :short_description,
               :long_description,
               :amount_in_stock,
