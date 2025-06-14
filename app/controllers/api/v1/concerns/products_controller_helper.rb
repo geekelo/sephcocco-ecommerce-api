@@ -8,7 +8,7 @@ module Api::V1::Concerns::ProductsControllerHelper
   end
 
   def index
-    products = case product_class.name
+    products = case product_class
     when 'Pharmacy::SephcoccoPharmacyProduct'
       product_class.includes(:sephcocco_pharmacy_product_categories).all
     when 'Restaurant::SephcoccoRestaurantProduct'
