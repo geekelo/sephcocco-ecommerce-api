@@ -40,4 +40,16 @@ class Restaurant::User::SephcoccoRestaurantProductSerializer < ActiveModel::Seri
       true
     end
   end
+
+  def single_image_url
+    return nil unless object.image_url.present?
+    "https://#{ENV['CLOUDFLARE_R2_BUCKET']}.r2.cloudflarestorage.com/#{object.image_url}"
+  end
+
+  def other_images_urls
+    return [] unless object.other_images.present?
+    object.other_image_keys.map do |key|
+      "https://#{ENV['CLOUDFLARE_R2_BUCKET']}.r2.cloudflarestorage.com/#{key}"
+    end
+  end
 end

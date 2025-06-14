@@ -9,17 +9,19 @@ class R2UploadService
     )
   end
 
-  def presign_upload(file_name, content_type, expires_in: 300)
-    key = "#{SecureRandom.uuid}-#{file_name}"
-    signer = Aws::S3::Presigner.new(client: @client)
-    url = signer.presigned_url(
-      :put_object,
+  def upload_file(file)
+    key = "#{SecureRandom.uuid}-#{file.original_filename}"
+    
+    @client.put_object(
       bucket: ENV['CLOUDFLARE_R2_BUCKET'],
       key: key,
-      content_type: content_type,
-      expires_in: expires_in
+      body: file.read,
+      content_type: file.content_type
     )
-    public_url = "#{ENV['CLOUDFLARE_R2_BUCKET']}.r2.cloudflarestorage.com/#{key}"
-    { presigned_url: url, key:, public_url: "https://#{public_url}" }
+
+    {
+      key: key,
+      public_url: "https://#{ENV['CLOUDFLARE_R2_BUCKET']}.r2.cloudflarestorage.com/#{key}"
+    }
   end
 end

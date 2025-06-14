@@ -88,6 +88,63 @@ module Api::V1::Concerns::ProductsControllerHelper
     end
   end
 
+  def append_image
+    product = set_product
+    if product.other_image_keys.nil?
+      product.other_image_keys = []
+    end
+    product.other_image_keys << params[:image_key]
+    
+    if product.save
+      render json: {
+        message: 'Image appended successfully',
+        product: product_serializer.new(product)
+      }
+    else
+      render json: { error: product.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def set_main_image
+    product = find_product
+    product.image_key = params[:image_key]
+    
+    if product.save
+      render json: {
+        message: 'Main image updated successfully',
+        product: product_serializer.new(product)
+      }
+    else
+      render json: { error: product.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def upload_image
+    product = set_product
+    
+    if params[:file].present?
+      result = R2UploadService.new.upload_file(params[:file])
+      
+      if params[:is_main_image]
+        product.image_url = result[:key]
+      else
+        product.other_images ||= []
+        product.other_images << result[:key]
+      end
+      
+      if product.save
+        render json: {
+          message: 'Image uploaded successfully',
+          product: product_serializer.new(product)
+        }
+      else
+        render json: { error: product.errors.full_messages }, status: :unprocessable_entity
+      end
+    else
+      render json: { error: 'No file provided' }, status: :bad_request
+    end
+  end
+
   private
 
   def set_product

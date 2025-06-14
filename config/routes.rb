@@ -28,6 +28,9 @@ Rails.application.routes.draw do
             post "like" => "sephcocco_lounge_products#like"
             post "unlike" => "sephcocco_lounge_products#unlike"
             post "switch_visibility" => "sephcocco_lounge_products#switch_visibility"
+            post "append_image" => "sephcocco_lounge_products#append_image"
+            post "set_main_image" => "sephcocco_lounge_products#set_main_image"
+            post "upload_image" => "sephcocco_lounge_products#upload_image"
           end
         end
         resources :sephcocco_lounge_product_categories do
@@ -46,6 +49,9 @@ Rails.application.routes.draw do
             post "like" => "sephcocco_pharmacy_products#like"
             post "unlike" => "sephcocco_pharmacy_products#unlike"
             post "switch_visibility" => "sephcocco_pharmacy_products#switch_visibility"
+            post "append_image" => "sephcocco_pharmacy_products#append_image"
+            post "set_main_image" => "sephcocco_pharmacy_products#set_main_image"
+            post "upload_image" => "sephcocco_pharmacy_products#upload_image"
           end
         end
         resources :sephcocco_pharmacy_product_categories do
@@ -70,6 +76,9 @@ Rails.application.routes.draw do
             post "like" => "sephcocco_restaurant_products#like"
             post "unlike" => "sephcocco_restaurant_products#unlike"
             post "switch_visibility" => "sephcocco_restaurant_products#switch_visibility"
+            post "append_image" => "sephcocco_restaurant_products#append_image"
+            post "set_main_image" => "sephcocco_restaurant_products#set_main_image"
+            post "upload_image" => "sephcocco_restaurant_products#upload_image"
           end
         end
         resources :sephcocco_restaurant_product_categories do
