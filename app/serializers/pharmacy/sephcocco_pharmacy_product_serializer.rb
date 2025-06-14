@@ -31,8 +31,8 @@ class Pharmacy::SephcoccoPharmacyProductSerializer < ActiveModel::Serializer
   end
 
   def single_image_url
-    return nil unless object.image_key.present?
-    "https://#{ENV['CLOUDFLARE_R2_BUCKET']}.r2.cloudflarestorage.com/#{object.image_key}"
+    return nil unless object.image_url.present?
+    "https://#{ENV['CLOUDFLARE_R2_BUCKET']}.r2.cloudflarestorage.com/#{object.image_url}"
   end
 
   def other_images_urls
