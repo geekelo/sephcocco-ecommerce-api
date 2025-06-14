@@ -26,7 +26,7 @@ module Api::V1::Concerns::ProductsControllerHelper
   end
 
   def create
-    @product = product_class.new(product_params.except(:category_ids))
+    @product = product_class.new(product_params.except(:category_ids, :image_url, :other_images))
   
     if @product.save      
       if product_params[:category_ids].present?
