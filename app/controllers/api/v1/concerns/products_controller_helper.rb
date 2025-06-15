@@ -123,22 +123,32 @@ module Api::V1::Concerns::ProductsControllerHelper
     product = set_product
     
     if params[:file].present?
-      result = R2UploadService.new.upload_file(params[:file])
-      
-      if params[:is_main_image]
-        product.image_url = result[:key]
-      else
-        product.other_images ||= []
-        product.other_images << result[:key]
-      end
-      
-      if product.save
-        render json: {
-          message: 'Image uploaded successfully',
-          product: product_serializer.new(product)
-        }
-      else
-        render json: { error: product.errors.full_messages }, status: :unprocessable_entity
+      begin
+        result = R2UploadService.new.upload_file(params[:file])
+        
+        if params[:is_main_image]
+          product.image_url = result[:key]
+        else
+          product.other_images ||= []
+          product.other_images << result[:key]
+        end
+        
+        if product.save
+          render json: {
+            message: 'Image uploaded successfully',
+            product: product_serializer.new(product)
+          }
+        else
+          render json: { error: product.errors.full_messages }, status: :unprocessable_entity
+        end
+      rescue R2UploadService::ConfigurationError => e
+        Rails.logger.error("R2 Configuration Error: #{e.message}")
+        render json: { error: "Image upload service is not properly configured" }, status: :service_unavailable
+      rescue ArgumentError => e
+        render json: { error: e.message }, status: :bad_request
+      rescue StandardError => e
+        Rails.logger.error("Unexpected error during image upload: #{e.message}")
+        render json: { error: "Failed to upload image" }, status: :internal_server_error
       end
     else
       render json: { error: 'No file provided' }, status: :bad_request
