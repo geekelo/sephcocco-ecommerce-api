@@ -10,15 +10,27 @@ module Api::V1::Concerns::ProductsControllerHelper
   def index
     products = case product_class
     when 'Pharmacy::SephcoccoPharmacyProduct'
-      product_class.includes(:sephcocco_pharmacy_product_categories).all
+      product_class.includes(:sephcocco_pharmacy_product_categories)
     when 'Restaurant::SephcoccoRestaurantProduct'
-      product_class.includes(:sephcocco_restaurant_product_categories).all
+      product_class.includes(:sephcocco_restaurant_product_categories)
     when 'Lounge::SephcoccoLoungeProduct'
-      product_class.includes(:sephcocco_lounge_product_categories).all
+      product_class.includes(:sephcocco_lounge_product_categories)
     else
-      product_class.all
+      product_class
     end
-    render json: products, each_serializer: unnested_product_serializer
+
+    # Apply pagination
+    products = products.page(params[:page]).per(params[:per_page] || 20)
+
+    # Use a simpler serializer for the index action
+    render json: products, 
+           each_serializer: unnested_product_serializer,
+           include: params[:include]&.split(','),
+           meta: {
+             total_count: products.total_count,
+             total_pages: products.total_pages,
+             current_page: products.current_page
+           }
   end
 
   def show
