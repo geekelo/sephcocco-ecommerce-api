@@ -23,14 +23,18 @@ module Api::V1::Concerns::ProductsControllerHelper
     products = products.page(params[:page]).per(params[:per_page] || 20)
 
     # Use a simpler serializer for the index action
-    render json: products, 
-           each_serializer: unnested_product_serializer,
-           include: params[:include]&.split(','),
-           meta: {
-             total_count: products.total_count,
-             total_pages: products.total_pages,
-             current_page: products.current_page
-           }
+    render json: {
+      products: ActiveModelSerializers::SerializableResource.new(
+        products,
+        each_serializer: unnested_product_serializer,
+        adapter: :attributes
+      ).as_json,
+      meta: {
+        total_count: products.total_count,
+        total_pages: products.total_pages,
+        current_page: products.current_page
+      }
+    }
   end
 
   def show

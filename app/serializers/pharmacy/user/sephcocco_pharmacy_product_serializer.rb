@@ -10,8 +10,6 @@ class Pharmacy::User::SephcoccoPharmacyProductSerializer < ActiveModel::Serializ
               :categories,
               :created_at,
               :updated_at,
-              :image_url,
-              :other_images
 
   def categories
     return [] unless object.sephcocco_pharmacy_product_categories.any?

@@ -11,16 +11,6 @@ class Pharmacy::Admin::SephcoccoPharmacyProductSerializer < ActiveModel::Seriali
               :categories,
               :created_at,
               :updated_at,
-              :single_image_url,
-              :other_images_urls
-
-  def single_image_url
-    object&.image_url
-  end
-
-  def other_images_urls
-    object&.other_images
-  end
 
   def categories
     return [] unless object.sephcocco_pharmacy_product_categories.any?
