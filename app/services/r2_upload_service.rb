@@ -6,9 +6,10 @@ class R2UploadService
     validate_credentials!
     @client = Aws::S3::Client.new(
       region: 'auto',
-      endpoint: "https://#{ENV['CLOUDFLARE_ACCOUNT_ID']}.r2.cloudflarestorage.com",
+      endpoint: r2_endpoint,
       access_key_id: ENV['CLOUDFLARE_R2_ACCESS_KEY_ID'],
-      secret_access_key: ENV['CLOUDFLARE_R2_SECRET_ACCESS_KEY']
+      secret_access_key: ENV['CLOUDFLARE_R2_SECRET_ACCESS_KEY'],
+      force_path_style: true
     )
   end
 
@@ -26,7 +27,7 @@ class R2UploadService
 
       {
         key: key,
-        public_url: "https://#{ENV['CLOUDFLARE_R2_BUCKET']}.r2.cloudflarestorage.com/#{key}"
+        public_url: public_url(key)
       }
     rescue Aws::S3::Errors::ServiceError => e
       Rails.logger.error("R2 Upload Error: #{e.message}")
@@ -35,6 +36,17 @@ class R2UploadService
   end
 
   private
+
+  def r2_endpoint
+    endpoint = "https://#{ENV['CLOUDFLARE_ACCOUNT_ID']}.r2.cloudflarestorage.com"
+    Rails.logger.debug("R2 endpoint: #{endpoint}") if Rails.env.development? || Rails.env.staging?
+    endpoint
+  end
+  
+
+  def public_url(key)
+    "https://#{ENV['CLOUDFLARE_R2_BUCKET']}.r2.cloudflarestorage.com/#{key}"
+  end
 
   def validate_credentials!
     required_vars = [
