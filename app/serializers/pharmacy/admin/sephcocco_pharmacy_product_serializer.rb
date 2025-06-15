@@ -1,10 +1,9 @@
 class Pharmacy::Admin::SephcoccoPharmacyProductSerializer < ActiveModel::Serializer
   attributes  :id,
               :name,
-              :image_url,
               :short_description,
               :long_description,
-              :other_images,
+
               :amount_in_stock,
               :likes,
               :visible,
