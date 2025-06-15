@@ -1,8 +1,8 @@
 class Pharmacy::SephcoccoPharmacyProductSerializer < ActiveModel::Serializer
   attributes  :id,
               :name,
-              :single_image_url,
-              :other_images_urls,
+              :image_url,
+              :other_images,
               :short_description,
               :long_description,
               :amount_in_stock,
@@ -28,13 +28,5 @@ class Pharmacy::SephcoccoPharmacyProductSerializer < ActiveModel::Serializer
 
   def out_of_stock_status
     object.amount_in_stock <= 0
-  end
-
-  def single_image_url
-    object&.image_url
-  end
-
-  def other_images_urls
-    object&.other_images
   end
 end

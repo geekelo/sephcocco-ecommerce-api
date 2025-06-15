@@ -3,7 +3,6 @@ class Pharmacy::Admin::SephcoccoPharmacyProductSerializer < ActiveModel::Seriali
               :name,
               :short_description,
               :long_description,
-
               :amount_in_stock,
               :likes,
               :visible,
