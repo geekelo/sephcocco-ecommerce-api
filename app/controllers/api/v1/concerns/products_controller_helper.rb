@@ -10,13 +10,13 @@ module Api::V1::Concerns::ProductsControllerHelper
   def index
     products = case product_class
     when 'Pharmacy::SephcoccoPharmacyProduct'
-      product_class.includes(:sephcocco_pharmacy_product_categories)
+      product_class.includes(:sephcocco_pharmacy_product_categories).all
     when 'Restaurant::SephcoccoRestaurantProduct'
-      product_class.includes(:sephcocco_restaurant_product_categories)
+      product_class.includes(:sephcocco_restaurant_product_categories).all
     when 'Lounge::SephcoccoLoungeProduct'
-      product_class.includes(:sephcocco_lounge_product_categories)
+      product_class.includes(:sephcocco_lounge_product_categories).all
     else
-      product_class
+      product_class.all
     end
 
     # Apply pagination

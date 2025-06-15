@@ -63,6 +63,7 @@ gem "active_model_serializers"
 gem "bcrypt"
 gem "jwt"
 gem "rack-cors"
+gem "kaminari"  # Pagination
 
 gem "twilio-ruby", "~> 7.4"
 gem "prawn"
