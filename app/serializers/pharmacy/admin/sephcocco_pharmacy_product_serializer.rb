@@ -8,6 +8,8 @@ class Pharmacy::Admin::SephcoccoPharmacyProductSerializer < ActiveModel::Seriali
               :visible,
               :out_of_stock_status,
               :price,
+              :main_image_url,
+              :other_image_urls,
               :categories,
               :created_at,
               :updated_at,

@@ -7,6 +7,8 @@ class Pharmacy::SephcoccoPharmacyProductSerializer < ActiveModel::Serializer
               :out_of_stock_status,
               :likes,
               :price,
+              :main_image_url,
+              :other_image_urls,
               :visible,
               :categories,
               :created_at,
