@@ -6,6 +6,7 @@ class Pharmacy::Admin::SephcoccoPharmacyProductSerializer < ActiveModel::Seriali
               :amount_in_stock,
               :likes,
               :visible,
+              :discount_price,
               :out_of_stock_status,
               :price,
               :main_image_url,

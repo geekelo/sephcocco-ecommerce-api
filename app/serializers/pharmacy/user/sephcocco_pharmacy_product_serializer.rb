@@ -5,7 +5,9 @@ class Pharmacy::User::SephcoccoPharmacyProductSerializer < ActiveModel::Serializ
               :long_description,
               :amount_in_stock,
               :likes,
+              :liked_by_user,
               :price,
+              :discount_price,
               :out_of_stock_status,
               :main_image_url,
               :other_image_urls,
@@ -27,5 +29,10 @@ class Pharmacy::User::SephcoccoPharmacyProductSerializer < ActiveModel::Serializ
 
   def out_of_stock_status
     object.amount_in_stock <= 0
+  end
+
+  def liked_by_user
+    return false unless current_user
+    object&.sephcocco_pharmacy_product_likes&.exists?(sephcocco_user_id: current_user.id)
   end
 end

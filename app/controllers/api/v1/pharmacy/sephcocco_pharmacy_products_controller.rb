@@ -47,6 +47,7 @@ class Api::V1::Pharmacy::SephcoccoPharmacyProductsController < ApplicationContro
       :long_description,
       :main_image_url,
       :amount_in_stock,
+      :discount_price,
       :price,
       :visible,
       category_ids: [],
