@@ -56,7 +56,7 @@ module Api::V1::Concerns::ProductsControllerHelper
   end
 
   def update
-    if @product.update(product_params)
+    if @product.update(product_params.except(:category_ids))
       render json: @product, serializer: product_serializer, status: :ok
     else
       render json: @product.errors, status: :unprocessable_entity
