@@ -37,7 +37,8 @@ class Lounge::SephcoccoLoungeProductSerializer < ActiveModel::Serializer
   end
 
   def liked_by_user
-    return false unless current_user
-    object&.sephcocco_lounge_product_likes&.exists?(sephcocco_user_id: current_user.id)
+    user = scope
+    return false unless user
+    object&.sephcocco_lounge_product_likes&.exists?(sephcocco_user_id: user.id)
   end
 end
