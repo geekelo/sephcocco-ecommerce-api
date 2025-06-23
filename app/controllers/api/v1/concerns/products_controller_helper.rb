@@ -3,11 +3,15 @@ module Api::V1::Concerns::ProductsControllerHelper
   extend ActiveSupport::Concern
 
   included do
-    before_action :authenticate_user!, only: [ :index, :create, :update, :destroy, :switch_visibility, :like, :unlike ]
+    before_action :authenticate_user!, only: [ :create, :update, :destroy, :switch_visibility, :like, :unlike ]
     before_action :set_product, only: [ :show, :update, :destroy, :switch_visibility, :like, :unlike ]
   end
 
   def index
+    if params[:user_id].present?
+      user = SephcoccoUser.find(params[:user_id])
+    end
+
     products = case product_class
     when 'Pharmacy::SephcoccoPharmacyProduct'
       product_class.includes(:sephcocco_pharmacy_product_categories).all
@@ -28,7 +32,7 @@ module Api::V1::Concerns::ProductsControllerHelper
         products,
         each_serializer: product_serializer,
         adapter: :attributes,
-        scope: current_user
+        scope: user
       ).as_json,
       meta: {
         total_count: products.total_count,
