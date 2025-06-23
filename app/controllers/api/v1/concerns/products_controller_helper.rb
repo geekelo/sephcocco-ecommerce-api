@@ -3,7 +3,7 @@ module Api::V1::Concerns::ProductsControllerHelper
   extend ActiveSupport::Concern
 
   included do
-    before_action :authenticate_user!, only: [ :create, :update, :destroy, :switch_visibility, :like, :unlike ]
+    before_action :authenticate_user!, only: [ :index, :create, :update, :destroy, :switch_visibility, :like, :unlike ]
     before_action :set_product, only: [ :show, :update, :destroy, :switch_visibility, :like, :unlike ]
   end
 
