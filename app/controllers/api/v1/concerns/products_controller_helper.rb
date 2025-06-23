@@ -75,7 +75,7 @@ module Api::V1::Concerns::ProductsControllerHelper
 
   def switch_visibility
     @product.update(visible: !@product.visible)
-    serializer = product_serializer if current_user.sephcocco_user_role.name == "admin"
+    serializer = product_serializer
 
    render json: {
      message: "Product visibility updated successfully",
