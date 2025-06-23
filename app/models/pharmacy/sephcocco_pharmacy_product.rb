@@ -34,7 +34,7 @@ class Pharmacy::SephcoccoPharmacyProduct < ApplicationRecord
   end
 
   def self.likes_association_name
-    :pharmacy_product_likes
+    :sephcocco_pharmacy_product_likes
   end
 
   def self.order_association_name

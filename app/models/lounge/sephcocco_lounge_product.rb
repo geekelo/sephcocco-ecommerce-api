@@ -1,4 +1,3 @@
-
 module Lounge
  class SephcoccoLoungeProduct < ApplicationRecord
   include ProductModelHelper
@@ -32,7 +31,7 @@ module Lounge
     end
   
     def self.likes_association_name
-      :lounge_product_likes
+      :sephcocco_lounge_product_likes
     end
   
     def self.order_association_name

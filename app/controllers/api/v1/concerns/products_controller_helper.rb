@@ -27,7 +27,8 @@ module Api::V1::Concerns::ProductsControllerHelper
       products: ActiveModelSerializers::SerializableResource.new(
         products,
         each_serializer: unnested_product_serializer,
-        adapter: :attributes
+        adapter: :attributes,
+        scope: current_user
       ).as_json,
       meta: {
         total_count: products.total_count,
@@ -38,7 +39,7 @@ module Api::V1::Concerns::ProductsControllerHelper
   end
 
   def show
-    render json: @product, serializer: unnested_product_serializer
+    render json: @product, serializer: unnested_product_serializer, scope: current_user
   end
 
   def create
@@ -49,7 +50,7 @@ module Api::V1::Concerns::ProductsControllerHelper
         # Assign categories using the association
         @product.send(category_association_name).replace(category_class.where(id: product_params[:category_ids]))
       end
-      render json: @product, serializer: product_serializer, status: :created
+      render json: @product, serializer: product_serializer, scope: current_user, status: :created
     else
       render json: @product.errors, status: :unprocessable_entity
     end
@@ -57,7 +58,7 @@ module Api::V1::Concerns::ProductsControllerHelper
 
   def update
     if @product.update(product_params.except(:category_ids))
-      render json: @product, serializer: product_serializer, status: :ok
+      render json: @product, serializer: product_serializer, scope: current_user, status: :ok
     else
       render json: @product.errors, status: :unprocessable_entity
     end
@@ -74,7 +75,7 @@ module Api::V1::Concerns::ProductsControllerHelper
 
    render json: {
      message: "Product visibility updated successfully",
-     product: serializer.new(@product)
+     product: serializer.new(@product, scope: current_user)
    }
   end
 
@@ -83,7 +84,7 @@ module Api::V1::Concerns::ProductsControllerHelper
       @product.increment!(:likes)
       like_class.create(user_key => current_user.id, product_key => @product.id)
       serializer = product_serializer if current_user.sephcocco_user_role.name == "user"
-      render json: { message: "Product liked successfully", product: serializer.new(@product) }, status: :created
+      render json: { message: "Product liked successfully", product: serializer.new(@product, scope: current_user) }, status: :created
     else
       render json: { message: "Product already liked" }, status: :unprocessable_entity
     end
@@ -95,7 +96,7 @@ module Api::V1::Concerns::ProductsControllerHelper
         like_class.where(product_key => @product.id, user_key => current_user.id).destroy_all
         @product.decrement!(:likes)
         serializer = product_serializer if current_user.sephcocco_user_role.name == "user"
-        render json: { message: "Product unliked successfully", product: serializer.new(@product) }, status: :ok
+        render json: { message: "Product unliked successfully", product: serializer.new(@product, scope: current_user) }, status: :ok
       else
         render json: { message: "Product not liked by user" }, status: :unprocessable_entity
       end
@@ -114,7 +115,7 @@ module Api::V1::Concerns::ProductsControllerHelper
     if product.save
       render json: {
         message: 'Image appended successfully',
-        product: product_serializer.new(product)
+        product: product_serializer.new(product, scope: current_user)
       }
     else
       render json: { error: product.errors.full_messages }, status: :unprocessable_entity
@@ -128,7 +129,7 @@ module Api::V1::Concerns::ProductsControllerHelper
     if product.save
       render json: {
         message: 'Main image updated successfully',
-        product: product_serializer.new(product)
+        product: product_serializer.new(product, scope: current_user)
       }
     else
       render json: { error: product.errors.full_messages }, status: :unprocessable_entity
@@ -152,7 +153,7 @@ module Api::V1::Concerns::ProductsControllerHelper
         if product.save
           render json: {
             message: 'Image uploaded successfully',
-            product: product_serializer.new(product)
+            product: product_serializer.new(product, scope: current_user)
           }
         else
           render json: { error: product.errors.full_messages }, status: :unprocessable_entity

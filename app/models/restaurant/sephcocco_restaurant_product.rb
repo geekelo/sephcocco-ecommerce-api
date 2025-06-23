@@ -34,7 +34,7 @@ class Restaurant::SephcoccoRestaurantProduct < ApplicationRecord
   end
 
   def self.likes_association_name
-    :restaurant_product_likes
+    :sephcocco_restaurant_product_likes
   end
 
   def self.order_association_name
