@@ -26,7 +26,7 @@ module Api::V1::Concerns::ProductsControllerHelper
     render json: {
       products: ActiveModelSerializers::SerializableResource.new(
         products,
-        each_serializer: unnested_product_serializer,
+        each_serializer: product_serializer,
         adapter: :attributes,
         scope: current_user
       ).as_json,
@@ -39,7 +39,7 @@ module Api::V1::Concerns::ProductsControllerHelper
   end
 
   def show
-    render json: @product, serializer: unnested_product_serializer, scope: current_user
+    render json: @product, serializer: product_serializer, scope: current_user
   end
 
   def create
