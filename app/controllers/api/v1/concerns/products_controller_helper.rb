@@ -8,8 +8,8 @@ module Api::V1::Concerns::ProductsControllerHelper
   end
 
   def index
-    if params[:user_id].present?
-      user = SephcoccoUser.find(params[:user_id])
+    if params[:user_id].present? && params[:user_id] != "null"
+      user = SephcoccoUser.find(params[:user_id]) || current_user
     end
 
     products = case product_class
