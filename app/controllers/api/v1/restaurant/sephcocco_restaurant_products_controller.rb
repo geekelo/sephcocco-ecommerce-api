@@ -25,10 +25,12 @@ class Api::V1::Restaurant::SephcoccoRestaurantProductsController < ApplicationCo
   end
 
   def product_serializer
-    if current_user.sephcocco_user_role.name == "admin"
+    if current_user&.sephcocco_user_role&.name == "admin"
       Restaurant::Admin::SephcoccoRestaurantProductSerializer
-    else
+    elsif current_user&.sephcocco_user_role&.name == "user"
       Restaurant::User::SephcoccoRestaurantProductSerializer
+    else
+      Restaurant::SephcoccoRestaurantProductSerializer
     end
   end
 

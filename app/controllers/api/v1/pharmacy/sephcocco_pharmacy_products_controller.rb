@@ -21,9 +21,9 @@ class Api::V1::Pharmacy::SephcoccoPharmacyProductsController < ApplicationContro
   end
 
   def product_serializer
-    if current_user&.sephcocco_user_role.name == "admin"
+    if current_user&.sephcocco_user_role&.name == "admin"
       Pharmacy::Admin::SephcoccoPharmacyProductSerializer
-    elsif current_user&.sephcocco_user_role.name == "user"
+    elsif current_user&.sephcocco_user_role&.name == "user"
       Pharmacy::User::SephcoccoPharmacyProductSerializer
     else
       Pharmacy::SephcoccoPharmacyProductSerializer

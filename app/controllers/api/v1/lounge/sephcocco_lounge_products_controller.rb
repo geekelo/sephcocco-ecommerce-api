@@ -17,10 +17,12 @@ class Api::V1::Lounge::SephcoccoLoungeProductsController < ApplicationController
   end
 
   def product_serializer
-    if current_user.sephcocco_user_role.name == "admin"
+    if current_user&.sephcocco_user_role&.name == "admin"
       Lounge::Admin::SephcoccoLoungeProductSerializer
-    else
+    elsif current_user&.sephcocco_user_role&.name == "user"         
       Lounge::User::SephcoccoLoungeProductSerializer
+    else
+      Lounge::SephcoccoLoungeProductSerializer
     end
   end
 
