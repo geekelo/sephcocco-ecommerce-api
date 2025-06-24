@@ -39,4 +39,8 @@ class SephcoccoUser < ApplicationRecord
   def clear_reset_generated_token!
     update!(reset_password_token: nil, reset_password_sent_at: nil)
   end
+
+  has_many :sephcocco_pharmacy_orders, class_name: "Pharmacy::SephcoccoPharmacyOrder", foreign_key: :sephcocco_user_id
+  has_many :sephcocco_restaurant_orders, class_name: "Restaurant::SephcoccoRestaurantOrder", foreign_key: :sephcocco_user_id
+  has_many :sephcocco_lounge_orders, class_name: "Lounge::SephcoccoLoungeOrder", foreign_key: :sephcocco_user_id
 end
