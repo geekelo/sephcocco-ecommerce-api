@@ -62,7 +62,13 @@ class Api::V1::Pharmacy::SephcoccoPharmacyOrdersController < ApplicationControll
         stages: [],
       )
     else
-      params.require(:sephcocco_pharmacy_order).permit(:quantity)
+      params.require(:sephcocco_pharmacy_order).permit(
+        :sephcocco_pharmacy_product_id,
+        :quantity,
+        :address,
+        :phone_number,
+        :additional_notes
+      )
     end
   end
 end

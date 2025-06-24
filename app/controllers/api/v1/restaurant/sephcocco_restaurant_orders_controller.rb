@@ -64,7 +64,13 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
         stages: [],
       )
     else
-      params.require(:sephcocco_restaurant_order).permit(:quantity)
+      params.require(:sephcocco_restaurant_order).permit(
+        :sephcocco_restaurant_product_id,
+        :quantity,
+        :address,
+        :phone_number,
+        :additional_notes
+      )
     end
   end
 end

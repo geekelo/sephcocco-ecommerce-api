@@ -63,7 +63,13 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
         stages: [],
       )
     else
-      params.require(:sephcocco_lounge_order).permit(:quantity)
+      params.require(:sephcocco_lounge_order).permit(
+        :sephcocco_lounge_product_id,
+        :quantity,
+        :address,
+        :phone_number,
+        :additional_notes
+      )
     end
   end
 end
