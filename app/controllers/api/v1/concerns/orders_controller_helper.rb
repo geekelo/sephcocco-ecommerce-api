@@ -11,10 +11,10 @@ module Api::V1::Concerns::OrdersControllerHelper
   def index
       if current_user.sephcocco_user_role.name == "admin"
         order = order_class.all
-        render json: orders, each_serializer: Lounge::Admin::SephcoccoLoungeOrderSerializer
+        render json: orders, each_serializer: order_serializer_class
       else
         orders = current_user.send(order_association)
-        render json: orders, each_serializer: order_serializer
+        render json: orders, each_serializer: order_serializer_class
       end
   end
 
@@ -44,9 +44,9 @@ module Api::V1::Concerns::OrdersControllerHelper
   def update
     if @order.update(order_params)
       if current_user.sephcocco_user_role.name == "admin"
-        render json: @order, each_serializer: Lounge::Admin::SephcoccoLoungeOrderSerializer
+        render json: @order, each_serializer: order_serializer_class
       else
-        render json: @order, each_serializer: Lounge::User::SephcoccoLoungeOrderSerializer
+        render json: @order, each_serializer: order_serializer_class
       end
     else
       render json: @order.errors, status: :unprocessable_entity

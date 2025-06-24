@@ -16,6 +16,14 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
     Lounge
   end
 
+  def order_serializer_class
+    if current_user.sephcocco_user_role.name == "admin"
+      Lounge::Admin::SephcoccoLoungeOrderSerializer
+    else
+      Lounge::User::SephcoccoLoungeOrderSerializer
+    end
+  end
+
   def admin_notification_class
     Lounge::SephcoccoLoungeAdminNotification
   end
