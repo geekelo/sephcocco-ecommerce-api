@@ -19,7 +19,7 @@ module Api::V1::Concerns::OrdersControllerHelper
   end
 
   def create
-    unit_price = params[:unit_price] || product_class.find(order_params[:sephcocco_product_id]).price
+    unit_price = params[:unit_price] || product_class.find(order_params[:sephcocco_pharmacy_product_id]).price || product_class.find(order_params[:sephcocco_restaurant_product_id]).price || product_class.find(order_params[:sephcocco_lounge_product_id]).price
     if current_user&.sephcocco_user_role&.name == "admin"
       order = @customer&.send(order_association).new(order_params.merge(unit_price: unit_price))
     else
