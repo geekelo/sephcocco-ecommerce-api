@@ -56,11 +56,11 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
         :total_cost,
         :status,
         :order_number,
-        stages: [],
-        :current_stage
+        :current_stage,
         :address,
         :phone_number,
         :additional_notes,
+        stages: [],
       )
     else
       params.require(:sephcocco_lounge_order).permit(:quantity)

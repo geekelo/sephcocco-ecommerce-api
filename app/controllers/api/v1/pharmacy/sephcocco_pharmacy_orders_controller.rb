@@ -55,11 +55,11 @@ class Api::V1::Pharmacy::SephcoccoPharmacyOrdersController < ApplicationControll
         :shipping_cost,
         :total_cost,
         :status,
-        stages: [],
-        :current_stage
+        :current_stage,
         :address,
         :phone_number,
         :additional_notes,
+        stages: [],
       )
     else
       params.require(:sephcocco_pharmacy_order).permit(:quantity)

@@ -57,11 +57,11 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
         :total_cost,
         :status,
         :order_number,
-        stages: [],
-        :current_stage
+        :current_stage,
         :address,
         :phone_number,
         :additional_notes,
+        stages: [],
       )
     else
       params.require(:sephcocco_restaurant_order).permit(:quantity)
