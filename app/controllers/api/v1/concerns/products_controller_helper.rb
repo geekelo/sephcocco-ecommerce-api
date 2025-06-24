@@ -23,6 +23,14 @@ module Api::V1::Concerns::ProductsControllerHelper
       product_class.all
     end
 
+    if user&.sephcocco_user_role&.name == "admin"
+      products = products
+    elsif user&.sephcocco_user_role&.name == "user"
+      products = products.where(visible: true)
+    else
+      products = products.where(visible: true)
+    end
+
     # Apply pagination
     products = products.page(params[:page]).per(params[:per_page] || 20)
 
