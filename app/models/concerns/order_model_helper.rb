@@ -24,6 +24,7 @@ module OrderModelHelper
   end
 
   def set_unit_price
+    product = self.product
     self.unit_price = product.price if respond_to?(:product) && product.present?
   end
 

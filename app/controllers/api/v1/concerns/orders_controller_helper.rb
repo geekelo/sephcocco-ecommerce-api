@@ -19,10 +19,11 @@ module Api::V1::Concerns::OrdersControllerHelper
   end
 
   def create
-    if current_user.sephcocco_user_role.name == "admin"
-      order = @customer&.send(order_association).new(order_params)
+    unit_price = params[:unit_price] || product_class.find(order_params[:sephcocco_product_id]).price
+    if current_user&.sephcocco_user_role&.name == "admin"
+      order = @customer&.send(order_association).new(order_params.merge(unit_price: unit_price))
     else
-      order = current_user.send(order_association).new(order_params)
+      order = current_user.send(order_association).new(order_params.merge(unit_price: unit_price))
     end
 
     if order&.save

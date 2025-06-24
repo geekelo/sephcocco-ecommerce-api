@@ -40,6 +40,10 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
     "sephcocco_lounge"
   end
 
+  def product_class
+    SephcoccoLoungeProduct
+  end
+
   def order_params
     if current_user.sephcocco_user_role.name == "admin"
       params.require(:sephcocco_lounge_order).permit(

@@ -12,6 +12,10 @@ class Api::V1::Pharmacy::SephcoccoPharmacyOrdersController < ApplicationControll
     :sephcocco_pharmacy_orders
   end
 
+  def product_class
+    SephcoccoPharmacyProduct
+  end
+
   def order_serializer_class
     if current_user.sephcocco_user_role.name == "admin"
       Pharmacy::Admin::SephcoccoPharmacyOrderSerializer

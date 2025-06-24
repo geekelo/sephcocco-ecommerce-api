@@ -16,6 +16,10 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
     Restaurant
   end
 
+  def product_class
+    SephcoccoRestaurantProduct
+  end
+
   def order_serializer_class
     if current_user.sephcocco_user_role.name == "admin"
       Restaurant::Admin::SephcoccoRestaurantOrderSerializer
