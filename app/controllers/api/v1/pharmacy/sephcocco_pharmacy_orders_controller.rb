@@ -13,7 +13,7 @@ class Api::V1::Pharmacy::SephcoccoPharmacyOrdersController < ApplicationControll
   end
 
   def product_class
-    SephcoccoPharmacyProduct
+    Pharmacy::SephcoccoPharmacyProduct
   end
 
   def order_serializer_class

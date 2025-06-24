@@ -41,7 +41,7 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
   end
 
   def product_class
-    SephcoccoLoungeProduct
+    Lounge::SephcoccoLoungeProduct
   end
 
   def order_params
