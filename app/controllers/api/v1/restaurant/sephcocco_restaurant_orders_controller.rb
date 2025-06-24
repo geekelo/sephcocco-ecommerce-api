@@ -37,6 +37,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
     if current_user.sephcocco_user_role.name == "admin"
       params.require(:sephcocco_restaurant_order).permit(
         :sephcocco_user_id,
+        :sephcocco_restaurant_product_id,
         :quantity,
         :unit_price,
         :total_price,
@@ -44,7 +45,11 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
         :total_cost,
         :status,
         :order_number,
-        stages: []
+        stages: [],
+        :current_stage
+        :address,
+        :phone_number,
+        :additional_notes,
       )
     else
       params.require(:sephcocco_restaurant_order).permit(:quantity)
