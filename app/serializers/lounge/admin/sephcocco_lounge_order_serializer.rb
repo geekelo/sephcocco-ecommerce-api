@@ -9,5 +9,16 @@ class Lounge::Admin::SephcoccoLoungeOrderSerializer < ActiveModel::Serializer
               :total_cost,
               :total_price,
               :created_at,
-              :updated_at
+              :updated_at,
+              :product
+
+    def product
+      prod = object.sephcocco_lounge_product
+      return nil unless prod
+      {
+        id: prod.id,
+        name: prod.name,
+        main_image_url: prod.main_image_url,
+      }
+    end
 end
