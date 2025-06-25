@@ -72,6 +72,16 @@ module Api::V1::Concerns::OrdersControllerHelper
     end
   end
 
+  def paid_orders
+    if current_user&.sephcocco_user_role&.name == "admin"
+      order = order_class.where(status: "paid")
+      render json: orders, each_serializer: order_serializer_class
+    else
+      orders = current_user.send(order_association).where(status: "paid")
+      render json: orders, each_serializer: order_serializer_class
+    end
+  end
+
   def completed_orders
     if current_user&.sephcocco_user_role&.name == "admin"
       order = order_class.where(status: "completed")
