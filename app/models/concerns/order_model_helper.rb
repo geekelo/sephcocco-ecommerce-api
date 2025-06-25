@@ -25,7 +25,13 @@ module OrderModelHelper
   def set_order_total
     if unit_price.present?
       self.total_price = unit_price * quantity
-      self.total_cost = total_price + (shipping_cost || 0)
+      self.total_cost = total_price
     end
+  end
+
+  def set_total_cost(shipping_cost)
+    cost = self.total_price + (shipping_cost || 0)
+    self.total_cost = cost.round(2)
+    self.save!
   end
 end
