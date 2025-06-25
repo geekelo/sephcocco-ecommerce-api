@@ -3,7 +3,7 @@ module Api::V1::Concerns::OrdersControllerHelper
   extend ActiveSupport::Concern
 
   included do
-    before_action :authenticate_user!, only: [ :index, :create, :update, :destroy, :user_orders, :user_order_create, :user_order_update, :user_order_destroy, :pending_orders, :completed_orders ]
+    before_action :authenticate_user!, only: [ :index, :create, :update, :destroy,  :paid_orders, :pending_orders, :completed_orders ]
     before_action :set_order, only: [ :update, :destroy, :user_order_update, :user_order_destroy ]
     before_action :set_customer, only: [ :create ]
   end
