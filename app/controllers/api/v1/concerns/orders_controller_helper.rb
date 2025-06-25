@@ -96,11 +96,11 @@ module Api::V1::Concerns::OrdersControllerHelper
           adapter: :attributes,
           scope: current_user
         ).as_json,
-      }
-      meta: {
-        total_count: orders.total_count,
-        total_pages: orders.total_pages,
-        current_page: orders.current_page
+        meta: {
+          total_count: orders.total_count,
+          total_pages: orders.total_pages,
+          current_page: orders.current_page
+        }
       }
     end
   end
