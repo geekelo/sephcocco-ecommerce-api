@@ -29,9 +29,8 @@ module OrderModelHelper
     end
   end
 
-  def set_total_cost(shipping_cost)
-    cost = self.total_price + (shipping_cost || 0)
-    self.total_cost = cost.round(2)
+  def set_total_cost(shipping_cost = 0)
+    self.total_cost = (self.total_price + shipping_cost).round(2)
     self.save!
   end
 end
