@@ -38,7 +38,12 @@ Rails.application.routes.draw do
           post :add_product_to_category, on: :collection
         end
         resources :sephcocco_lounge_product_likes
-        resources :sephcocco_lounge_orders
+        resources :sephcocco_lounge_orders do
+          collection do
+            get "pending" => "sephcocco_lounge_orders#pending_orders"
+            get "completed" => "sephcocco_lounge_orders#completed_orders"
+          end
+        end
         resources :sephcocco_lounge_payments
       end
 
@@ -59,7 +64,12 @@ Rails.application.routes.draw do
           post :add_product_to_category, on: :collection
         end
         resources :sephcocco_pharmacy_product_likes
-        resources :sephcocco_pharmacy_orders
+        resources :sephcocco_pharmacy_orders do
+          collection do
+            get "pending" => "sephcocco_pharmacy_orders#pending_orders"
+            get "completed" => "sephcocco_pharmacy_orders#completed_orders"
+          end
+        end
         resources :sephcocco_pharmacy_payments
         resources :sephcocco_pharmacy_faqs do
           member do
@@ -86,7 +96,13 @@ Rails.application.routes.draw do
           post :add_product_to_category, on: :collection
         end
         resources :sephcocco_restaurant_product_likes
-        resources :sephcocco_restaurant_orders
+        resources :sephcocco_restaurant_orders do
+          collection do
+            get "pending" => "sephcocco_restaurant_orders#pending_orders"
+            get "completed" => "sephcocco_restaurant_orders#completed_orders"
+          end
+        end
+
         resources :sephcocco_restaurant_payments
         resources :sephcocco_restaurant_faqs do
           member do

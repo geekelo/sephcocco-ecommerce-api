@@ -3,7 +3,7 @@ module Api::V1::Concerns::OrdersControllerHelper
   extend ActiveSupport::Concern
 
   included do
-    before_action :authenticate_user!, only: [ :index, :create, :update, :destroy, :user_orders, :user_order_create, :user_order_update, :user_order_destroy ]
+    before_action :authenticate_user!, only: [ :index, :create, :update, :destroy, :user_orders, :user_order_create, :user_order_update, :user_order_destroy, :pending_orders, :completed_orders ]
     before_action :set_order, only: [ :update, :destroy, :user_order_update, :user_order_destroy ]
     before_action :set_customer, only: [ :create ]
   end
@@ -59,6 +59,39 @@ module Api::V1::Concerns::OrdersControllerHelper
       render json: { message: "Order deleted successfully" }, status: :ok
     else
       render json: { error: "Failed to delete order" }, status: :unprocessable_entity
+    end
+  end
+
+  def pending_orders
+    if current_user&.sephcocco_user_role&.name == "admin"
+      order = order_class.where(status: "pending")
+      render json: orders, each_serializer: order_serializer_class
+    else
+      orders = current_user.send(order_association).where(status: "pending")
+      render json: orders, each_serializer: order_serializer_class
+    end
+  end
+
+  def completed_orders
+    if current_user&.sephcocco_user_role&.name == "admin"
+      order = order_class.where(status: "completed")
+      render json: orders, each_serializer: order_serializer_class
+    else
+      orders = current_user.send(order_association).where(status: "completed")
+      orders = orders.page(params[:page]).per(params[:per_page] || 20)
+      render json: {
+        orders: ActiveModelSerializers::SerializableResource.new(
+          orders,
+          each_serializer: order_serializer_class,
+          adapter: :attributes,
+          scope: current_user
+        ).as_json,
+      }
+      meta: {
+        total_count: orders.total_count,
+        total_pages: orders.total_pages,
+        current_page: orders.current_page
+      }
     end
   end
 
