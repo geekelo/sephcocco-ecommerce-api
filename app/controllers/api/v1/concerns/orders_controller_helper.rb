@@ -15,6 +15,9 @@ module Api::V1::Concerns::OrdersControllerHelper
         if params[:filter][:status].present?
           orders = orders.where(status: params[:filter][:status])
         end
+        if params[:filter][:search_terms].present?
+          orders = orders.where("name ILIKE ?", "%#{params[:filter][:search_terms]}%")
+        end
         if params[:filter][:start_date].present? && params[:filter][:end_date].present?
           orders = orders.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
         elsif params[:filter][:start_date].present?
@@ -40,6 +43,9 @@ module Api::V1::Concerns::OrdersControllerHelper
       if params[:filter]
         if params[:filter][:status].present?
           orders = orders.where(status: params[:filter][:status])
+        end
+        if params[:filter][:search_terms].present?
+          orders = orders.where("name ILIKE ?", "%#{params[:filter][:search_terms]}%")
         end
         if params[:filter][:start_date].present? && params[:filter][:end_date].present?
           orders = orders.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
