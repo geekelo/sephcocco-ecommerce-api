@@ -14,13 +14,7 @@ class Lounge::Admin::SephcoccoLoungeOrderSerializer < ActiveModel::Serializer
               :customer
 
     def product
-      prod = object.sephcocco_lounge_product
-      return nil unless prod
-      {
-        id: prod.id,
-        name: prod.name,
-        main_image_url: prod.main_image_url,
-      }
+      object&.sephcocco_lounge_product
     end
 
   def customer

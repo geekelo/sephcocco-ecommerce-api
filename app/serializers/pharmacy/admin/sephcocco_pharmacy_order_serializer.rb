@@ -14,13 +14,7 @@ class Pharmacy::Admin::SephcoccoPharmacyOrderSerializer < ActiveModel::Serialize
               :customer
 
   def product
-    prod = object.sephcocco_pharmacy_product
-    return nil unless prod
-    {
-      id: prod.id,
-      name: prod.name,
-      main_image_url: prod.main_image_url,
-    }
+    object&.sephcocco_pharmacy_product
   end
 
   def customer

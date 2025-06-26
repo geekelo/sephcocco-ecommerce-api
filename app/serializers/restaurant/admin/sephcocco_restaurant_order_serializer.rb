@@ -14,13 +14,7 @@ class Restaurant::Admin::SephcoccoRestaurantOrderSerializer < ActiveModel::Seria
               :customer
 
   def product
-    prod = object.sephcocco_restaurant_product
-    return nil unless prod
-    {
-      id: prod.id,
-      name: prod.name,
-      main_image_url: prod.main_image_url,
-    }
+    object&.sephcocco_restaurant_product
   end
 
   def customer
