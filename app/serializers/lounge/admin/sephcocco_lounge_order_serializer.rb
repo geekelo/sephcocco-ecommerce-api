@@ -10,7 +10,8 @@ class Lounge::Admin::SephcoccoLoungeOrderSerializer < ActiveModel::Serializer
               :total_price,
               :created_at,
               :updated_at,
-              :product
+              :product,
+              :customer
 
     def product
       prod = object.sephcocco_lounge_product
@@ -21,4 +22,8 @@ class Lounge::Admin::SephcoccoLoungeOrderSerializer < ActiveModel::Serializer
         main_image_url: prod.main_image_url,
       }
     end
+
+  def customer
+    object&.sephcocco_user
+  end
 end

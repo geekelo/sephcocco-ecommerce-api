@@ -10,7 +10,8 @@ class Pharmacy::Admin::SephcoccoPharmacyOrderSerializer < ActiveModel::Serialize
               :total_price,
               :created_at,
               :updated_at,
-              :product
+              :product,
+              :customer
 
   def product
     prod = object.sephcocco_pharmacy_product
@@ -20,5 +21,9 @@ class Pharmacy::Admin::SephcoccoPharmacyOrderSerializer < ActiveModel::Serialize
       name: prod.name,
       main_image_url: prod.main_image_url,
     }
+  end
+
+  def customer
+    object&.sephcocco_user
   end
 end

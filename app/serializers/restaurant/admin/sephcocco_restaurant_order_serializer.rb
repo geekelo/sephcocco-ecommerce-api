@@ -10,7 +10,8 @@ class Restaurant::Admin::SephcoccoRestaurantOrderSerializer < ActiveModel::Seria
               :total_price,
               :created_at,
               :updated_at,
-              :product
+              :product,
+              :customer
 
   def product
     prod = object.sephcocco_restaurant_product
@@ -20,5 +21,9 @@ class Restaurant::Admin::SephcoccoRestaurantOrderSerializer < ActiveModel::Seria
       name: prod.name,
       main_image_url: prod.main_image_url,
     }
+  end
+
+  def customer
+    object&.sephcocco_user
   end
 end
