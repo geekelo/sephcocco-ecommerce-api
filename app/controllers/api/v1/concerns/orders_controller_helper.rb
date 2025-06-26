@@ -83,6 +83,14 @@ module Api::V1::Concerns::OrdersControllerHelper
     end
   end
 
+  def show
+    if current_user.sephcocco_user_role.name == "admin"
+      render json: @order, each_serializer: order_serializer_class
+    else
+      render json: @order, each_serializer: order_serializer_class
+    end
+  end
+
   def update
     if @order.update(order_params)
       if current_user.sephcocco_user_role.name == "admin"
