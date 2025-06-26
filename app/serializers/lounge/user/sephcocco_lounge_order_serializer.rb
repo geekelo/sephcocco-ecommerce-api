@@ -8,7 +8,10 @@ class Lounge::User::SephcoccoLoungeOrderSerializer < ActiveModel::Serializer
               :total_price,
               :created_at,
               :updated_at,
-              :product
+              :product,
+              :address,
+              :phone_number,
+              :additional_notes,
 
   def product
     prod = object.sephcocco_lounge_product

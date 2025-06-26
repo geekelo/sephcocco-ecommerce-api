@@ -11,7 +11,10 @@ class Restaurant::Admin::SephcoccoRestaurantOrderSerializer < ActiveModel::Seria
               :created_at,
               :updated_at,
               :product,
-              :customer
+              :customer,  
+              :address,
+              :phone_number,
+              :additional_notes,
 
   def product
     object&.sephcocco_restaurant_product
