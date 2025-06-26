@@ -5,7 +5,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
   private
 
   def order_class
-    SephcoccoRestaurantOrder
+    Restaurant::SephcoccoRestaurantOrder
   end
 
   def order_association

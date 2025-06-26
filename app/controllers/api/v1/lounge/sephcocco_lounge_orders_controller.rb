@@ -5,7 +5,7 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
   private
 
   def order_class
-    SephcoccoLoungeOrder
+    Lounge::SephcoccoLoungeOrder
   end
 
   def order_association

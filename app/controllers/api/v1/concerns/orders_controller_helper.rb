@@ -9,13 +9,48 @@ module Api::V1::Concerns::OrdersControllerHelper
   end
 
   def index
-      if current_user&.sephcocco_user_role&.name == "admin"
-        order = order_class.all
-        render json: orders, each_serializer: order_serializer_class
-      else
-        orders = current_user.send(order_association)
-        render json: orders, each_serializer: order_serializer_class
+    if current_user&.sephcocco_user_role&.name == "admin"
+      orders = order_class.all
+      if params[:filter]
+        if params[:filter][:status].present?
+          orders = orders.where(status: params[:filter][:status])
+        end
+        if params[:filter][:start_date].present? && params[:filter][:end_date].present?
+          orders = orders.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
+        elsif params[:filter][:start_date].present?
+          orders = orders.where('created_at >= ?', params[:filter][:start_date])
+        elsif params[:filter][:end_date].present?
+          orders = orders.where('created_at <= ?', params[:filter][:end_date])
+        end
       end
+      orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
+      render json: {
+        orders: ActiveModelSerializers::SerializableResource.new(
+        orders, 
+        each_serializer: order_serializer_class
+        ).as_json,
+        meta: {
+          total_count: orders.total_count,
+          total_pages: orders.total_pages,
+          current_page: orders.current_page
+        }
+      }
+    else
+      orders = current_user.send(order_association)
+      if params[:filter]
+        if params[:filter][:status].present?
+          orders = orders.where(status: params[:filter][:status])
+        end
+        if params[:filter][:start_date].present? && params[:filter][:end_date].present?
+          orders = orders.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
+        elsif params[:filter][:start_date].present?
+          orders = orders.where('created_at >= ?', params[:filter][:start_date])
+        elsif params[:filter][:end_date].present?
+          orders = orders.where('created_at <= ?', params[:filter][:end_date])
+        end
+      end
+      render json: orders, each_serializer: order_serializer_class
+    end
   end
 
   def create

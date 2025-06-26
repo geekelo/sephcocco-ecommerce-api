@@ -5,7 +5,7 @@ class Api::V1::Pharmacy::SephcoccoPharmacyOrdersController < ApplicationControll
   private
 
   def order_class
-    SephcoccoPharmacyOrder
+    Pharmacy::SephcoccoPharmacyOrder
   end
 
   def order_association
