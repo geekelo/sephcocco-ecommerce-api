@@ -19,7 +19,7 @@ module Api::V1::Concerns::OrdersControllerHelper
           search_term = "%#{params[:filter][:search_terms]}%"
           orders = orders.joins(:sephcocco_user, :sephcocco_pharmacy_product)
                          .where(
-                           "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet.downcase}_products.name ILIKE ?",
+                           "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet.name.downcase}_products.name ILIKE ?",
                            search_term, search_term
                          )        
         end
@@ -53,7 +53,7 @@ module Api::V1::Concerns::OrdersControllerHelper
           search_term = "%#{params[:filter][:search_terms]}%"
           orders = orders.joins(:sephcocco_user, :sephcocco_pharmacy_product)
                          .where(
-                           "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet.downcase}_products.name ILIKE ?",
+                           "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet.name.downcase}_products.name ILIKE ?",
                            search_term, search_term
                          )        
         end
