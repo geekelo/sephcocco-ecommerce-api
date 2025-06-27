@@ -102,13 +102,7 @@ module Api::V1::Concerns::OrdersControllerHelper
   end
 
   def update
-    if order_params[:status].present?
-      if order_params[:status] == "refunded" || order_params[:status] == "delivered"
-        order_params[:stages].push({"status": order_params[:status], "date": DateTime.now})
-      else
-        order_params[:stages].push({"status": order_params[:status], "date": DateTime.now})
-      end
-    end
+    update_stages(order_params[:status]) if order_params[:status].present?
     if @order.update(order_params)
       if current_user.sephcocco_user_role.name == "admin"
         render json: @order, each_serializer: order_serializer_class

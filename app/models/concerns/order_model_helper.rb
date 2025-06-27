@@ -22,6 +22,16 @@ module OrderModelHelper
     self.order_number = SecureRandom.uuid
   end
 
+  def update_stages(status)
+    if status == "refunded" || status == "delivered"
+      self.stages.push({"status": status, "date": DateTime.now})
+    else
+      self.stages.push({"status": status, "date": DateTime.now})
+    end
+    self.current_stage = self.stages.last.status
+    self.save!
+  end
+
   def set_order_total
     if unit_price.present?
       self.total_price = unit_price * quantity
