@@ -14,7 +14,7 @@ module OrderModelHelper
   def set_order_status
     self.status = "pending" # ['pending', 'processing', 'completed', 'cancelled']
     self.stages = [ {"status": "pending", "date": DateTime.now} ] #  ['pending', 'processing', 'shipped', 'delivered']
-    self.current_stage = self.stages.last
+    self.current_stage = "pending"
     self.quantity ||= 1
   end
 
