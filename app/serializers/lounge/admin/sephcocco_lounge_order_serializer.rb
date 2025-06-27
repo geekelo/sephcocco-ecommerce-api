@@ -3,6 +3,7 @@ class Lounge::Admin::SephcoccoLoungeOrderSerializer < ActiveModel::Serializer
               :sephcocco_user_id,
               :status,
               :stages,
+              :current_stage,
               :order_number,
               :quantity,
               :unit_price,

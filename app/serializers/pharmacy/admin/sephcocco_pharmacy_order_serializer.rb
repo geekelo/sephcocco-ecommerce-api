@@ -3,6 +3,7 @@ class Pharmacy::Admin::SephcoccoPharmacyOrderSerializer < ActiveModel::Serialize
               :sephcocco_user_id,
               :status,
               :stages,
+              :current_stage,
               :order_number,
               :quantity,
               :unit_price,
