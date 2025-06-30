@@ -26,6 +26,6 @@ module Api::V1::Concerns::AdminNotificationHandler
   end
 
   def notification_params
-    params.require(param_key.to_sym).permit(:viewed)
+    params.require(param_key).permit(:viewed)
   end
 end
