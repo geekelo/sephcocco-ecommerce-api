@@ -1,4 +1,4 @@
-class Api::V1::Pharmacy::Outlet1PharmacyAdminNotificationsController < ApplicationController
+class Api::V1::Pharmacy::PharmacyAdminNotificationsController < ApplicationController
   include Api::V1::Concerns::AdminNotificationHandler
 
   def index
