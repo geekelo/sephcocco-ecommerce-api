@@ -46,6 +46,7 @@ Rails.application.routes.draw do
           end
         end
         resources :sephcocco_lounge_payments
+        resources :sephcocco_lounge_admin_notifications, only: [ :index, :update ]
       end
 
       # PHARMACY
@@ -79,6 +80,7 @@ Rails.application.routes.draw do
           end
         end
         resources :sephcocco_pharmacy_faq_categories
+        resources :sephcocco_pharmacy_admin_notifications, only: [ :index, :update ]
       end
 
       # RESTAURANT
@@ -113,6 +115,7 @@ Rails.application.routes.draw do
           end
         end
         resources :sephcocco_restaurant_faq_categories
+        resources :sephcocco_restaurant_admin_notifications, only: [ :index, :update ]
       end
     end
   end
