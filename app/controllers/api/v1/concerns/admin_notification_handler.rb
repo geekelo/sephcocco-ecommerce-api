@@ -1,5 +1,5 @@
 # app/controllers/concerns/pharmacy_admin_notification_handler.rb
-module PharmacyAdminNotificationHandler
+module Api::V1::Concerns::PharmacyAdminNotificationHandler
   extend ActiveSupport::Concern
 
   included do
