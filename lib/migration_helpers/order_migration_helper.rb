@@ -18,7 +18,9 @@ module MigrationHelpers
         t.decimal :total_price, precision: 10, scale: 2, null: false
         t.decimal :total_cost, precision: 10, scale: 2, null: false
         t.string :address
-        
+        t.string :phone_number
+        t.text :additional_notes
+
         t.timestamps
       end
     end
