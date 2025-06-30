@@ -10,6 +10,6 @@ class Api::V1::Pharmacy::SephcoccoPharmacyAdminNotificationsController < Applica
   end
 
   def controller_name
-    "sephcocco_pharmacy_admin_notification"
+    "Pharmacy::SephcoccoPharmacyAdminNotification"
   end
 end

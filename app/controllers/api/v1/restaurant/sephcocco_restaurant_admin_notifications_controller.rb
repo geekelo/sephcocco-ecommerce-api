@@ -10,6 +10,6 @@ class Api::V1::Restaurant::SephcoccoRestaurantAdminNotificationsController < App
   end
 
   def controller_name
-    "sephcocco_restaurant_admin_notification"
+    "Restaurant::SephcoccoRestaurantAdminNotification"
   end
 end
