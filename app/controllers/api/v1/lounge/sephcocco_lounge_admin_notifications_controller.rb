@@ -2,14 +2,14 @@ class Api::V1::Lounge::SephcoccoLoungeAdminNotificationsController < Application
   include Api::V1::Concerns::AdminNotificationHandler
   
   def index
-    index_notifications(SephcoccoPharmacyAdminNotification)
+    index_notifications(Lounge::SephcoccoLoungeAdminNotification)
   end
 
   def update
     update_notification
   end
 
-  def controller_name
+  def controller_name_class
     "Lounge::SephcoccoLoungeAdminNotification"
   end
 

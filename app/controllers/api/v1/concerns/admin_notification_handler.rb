@@ -12,9 +12,13 @@ module Api::V1::Concerns::AdminNotificationHandler
   end
 
   def update_notification
+    Rails.logger.info "Updating notification: #{@notification.inspect}"
+    Rails.logger.info "Notification params: #{notification_params.inspect}"
+    
     if @notification.update(notification_params)
       render json: @notification, status: :ok
     else
+      Rails.logger.error "Failed to update notification: #{@notification.errors.full_messages}"
       render json: { errors: @notification.errors.full_messages }, status: :unprocessable_entity
     end
   end
@@ -22,7 +26,9 @@ module Api::V1::Concerns::AdminNotificationHandler
   private
 
   def set_notification
-    @notification = controller_name.classify.constantize.find(params[:id])
+    @notification = controller_name_class.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'Notification not found' }, status: :not_found
   end
 
   def notification_params
