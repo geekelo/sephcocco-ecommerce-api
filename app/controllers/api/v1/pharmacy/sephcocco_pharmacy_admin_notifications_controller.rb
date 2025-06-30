@@ -2,7 +2,7 @@ class Api::V1::Pharmacy::SephcoccoPharmacyAdminNotificationsController < Applica
   include Api::V1::Concerns::AdminNotificationHandler
 
   def index
-    index_notifications(SephcoccoPharmacyAdminNotification)
+    index_notifications(Pharmacy::SephcoccoPharmacyAdminNotification)
   end
 
   def update
