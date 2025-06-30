@@ -26,7 +26,7 @@ module Api::V1::Concerns::AdminNotificationHandler
   private
 
   def set_notification
-    @notification = controller_name_class.find(params[:id])
+    @notification = controller_name.classify.constantize.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     render json: { error: 'Notification not found' }, status: :not_found
   end

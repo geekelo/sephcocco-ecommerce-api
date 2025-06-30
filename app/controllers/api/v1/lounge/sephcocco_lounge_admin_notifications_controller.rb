@@ -9,7 +9,7 @@ class Api::V1::Lounge::SephcoccoLoungeAdminNotificationsController < Application
     update_notification
   end
 
-  def controller_name_class
+  def controller_name
     "Lounge::SephcoccoLoungeAdminNotification"
   end
 

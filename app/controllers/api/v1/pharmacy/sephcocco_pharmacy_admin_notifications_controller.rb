@@ -9,7 +9,7 @@ class Api::V1::Pharmacy::SephcoccoPharmacyAdminNotificationsController < Applica
     update_notification
   end
 
-  def controller_name_class
+  def controller_name
     "Pharmacy::SephcoccoPharmacyAdminNotification"
   end
 
