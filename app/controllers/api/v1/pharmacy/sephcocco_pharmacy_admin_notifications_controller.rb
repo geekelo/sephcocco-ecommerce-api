@@ -12,4 +12,8 @@ class Api::V1::Pharmacy::SephcoccoPharmacyAdminNotificationsController < Applica
   def controller_name
     "Pharmacy::SephcoccoPharmacyAdminNotification"
   end
+
+  def param_key
+    "sephcocco_pharmacy_admin_notification"
+  end
 end

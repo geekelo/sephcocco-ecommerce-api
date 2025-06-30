@@ -12,4 +12,8 @@ class Api::V1::Restaurant::SephcoccoRestaurantAdminNotificationsController < App
   def controller_name
     "Restaurant::SephcoccoRestaurantAdminNotification"
   end
+
+  def param_key
+    "sephcocco_restaurant_admin_notification"
+  end
 end

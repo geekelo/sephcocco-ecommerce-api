@@ -12,4 +12,8 @@ class Api::V1::Lounge::SephcoccoLoungeAdminNotificationsController < Application
   def controller_name
     "Lounge::SephcoccoLoungeAdminNotification"
   end
+
+  def param_key
+    "sephcocco_lounge_admin_notification"
+  end
 end
