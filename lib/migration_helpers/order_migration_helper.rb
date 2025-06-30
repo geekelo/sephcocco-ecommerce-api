@@ -17,7 +17,8 @@ module MigrationHelpers
         t.decimal :unit_price, precision: 10, scale: 2, null: false
         t.decimal :total_price, precision: 10, scale: 2, null: false
         t.decimal :total_cost, precision: 10, scale: 2, null: false
-
+        t.string :address
+        
         t.timestamps
       end
     end
