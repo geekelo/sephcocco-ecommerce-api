@@ -7,7 +7,7 @@ module Api::V1::Concerns::AdminNotificationHandler
   end
 
   def index_notifications(model)
-    notifications = model.where(visible: true)
+    notifications = model.where(viewed: false)
     render json: notifications, status: :ok
   end
 
