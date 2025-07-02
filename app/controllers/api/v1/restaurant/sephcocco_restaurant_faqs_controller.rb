@@ -5,7 +5,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantFaqsController < ApplicationContro
 
   private
 
-  def message_class
+  def faq_class
     Restaurant::SephcoccoRestaurantFaq
   end
 

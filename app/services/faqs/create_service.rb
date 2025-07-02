@@ -1,9 +1,9 @@
 module Faqs
   class CreateService
-    def initialize(user:, params:, message_class:, outlet:)
+    def initialize(user:, params:, faq_class:, outlet:)
       @user = user
       @params = params
-      @message_class = message_class
+      @faq_class = faq_class
       @outlet = outlet.downcase
     end
 
@@ -26,7 +26,7 @@ module Faqs
       
       Rails.logger.info "FAQ Create Service - Create Params: #{create_params.inspect}"
       
-      @message_class.create!(create_params)
+      @faq_class.create!(create_params)
     end
 
     private

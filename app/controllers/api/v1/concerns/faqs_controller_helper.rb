@@ -5,6 +5,18 @@ module Api::V1::Concerns::FaqsControllerHelper
     before_action :authenticate_user!
   end
 
+  def index
+    category_association = :"sephcocco_#{outlet}_faq_category"
+    
+    faqs = if current_user.sephcocco_user_role.name == "admin"
+      faq_class.includes(category_association).order(:position)
+    else
+      faq_class.includes(category_association).where(visibility: true).order(:position)
+    end
+
+    render json: faqs, each_serializer: faq_serializer_class
+  end
+
   def create
     # Setting these values because they are not required on the FE ATM
     category_key = :"sephcocco_#{outlet}_faq_category_id"
@@ -20,7 +32,7 @@ module Api::V1::Concerns::FaqsControllerHelper
     faq = Faqs::CreateService.new(
       user: current_user,
       params: service_params,
-      message_class: message_class,
+      faq_class: faq_class,
       outlet: outlet
     ).call
 
@@ -36,7 +48,7 @@ module Api::V1::Concerns::FaqsControllerHelper
       user: current_user,
       faq_id: params[:id],
       params: faq_params,
-      message_class: message_class,
+      faq_class: faq_class,
       outlet: outlet
     ).call
 
@@ -48,7 +60,7 @@ module Api::V1::Concerns::FaqsControllerHelper
   end
 
   def destroy
-    faq = message_class.find(params[:id])
+    faq = faq_class.find(params[:id])
     faq.destroy
     render json: { message: "FAQ deleted" }, status: :ok
   rescue ActiveRecord::RecordNotFound

@@ -5,7 +5,7 @@ class Api::V1::Lounge::SephcoccoLoungeFaqsController < ApplicationController
 
   private
 
-  def message_class
+  def faq_class
     Lounge::SephcoccoLoungeFaq
   end
 

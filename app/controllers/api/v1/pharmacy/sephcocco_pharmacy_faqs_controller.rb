@@ -5,7 +5,7 @@ class Api::V1::Pharmacy::SephcoccoPharmacyFaqsController < ApplicationController
 
   private
 
-  def message_class
+  def faq_class
     Pharmacy::SephcoccoPharmacyFaq
   end
 
