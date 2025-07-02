@@ -10,11 +10,6 @@ module Faqs
     def call
       category_key = :"sephcocco_#{@outlet}_faq_category_id"
       
-      # Debug logging
-      Rails.logger.info "FAQ Create Service - Params: #{@params.inspect}"
-      Rails.logger.info "FAQ Create Service - Category Key: #{category_key}"
-      Rails.logger.info "FAQ Create Service - Category ID: #{@params[category_key]}"
-      
       create_params = {
         title: @params[:title],
         answer: @params[:answer],

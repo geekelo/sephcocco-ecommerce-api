@@ -1,14 +1,14 @@
 module Faqs
   class UpdateService
-    def initialize(user:, faq_id:, params:, message_class:)
+    def initialize(user:, faq_id:, params:, faq_class:)
       @user = user
       @faq_id = faq_id
       @params = params
-      @message_class = message_class
+      @faq_class = faq_class
     end
 
     def call
-      faq = @message_class.find(@faq_id)
+      faq = @faq_class.find(@faq_id)
       faq.assign_attributes(permitted_attributes)
 
       # Append to update history
