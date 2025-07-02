@@ -1,10 +1,11 @@
 module Faqs
   class UpdateService
-    def initialize(user:, faq_id:, params:, faq_class:)
+    def initialize(user:, faq_id:, params:, faq_class:, outlet:)
       @user = user
       @faq_id = faq_id
       @params = params
       @faq_class = faq_class
+      @outlet = outlet.downcase
     end
 
     def call
@@ -12,8 +13,8 @@ module Faqs
       faq.assign_attributes(permitted_attributes)
 
       # Append to update history
-      history = faq.update_history || []
-      history << history_entry("updated")
+      history = faq.update_history || {}
+      history["updated"] = history_entry("updated")
       faq.update_history = history
 
       faq.save!
@@ -23,12 +24,14 @@ module Faqs
     private
 
     def permitted_attributes
+      category_key = :"sephcocco_#{@outlet}_faq_category_id"
+      
       @params.slice(
         :title,
         :answer,
         :visibility,
         :position,
-        :sephcocco_lounge_faq_category_id
+        category_key
       )
     end
 

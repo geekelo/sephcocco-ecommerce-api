@@ -8,7 +8,7 @@ module Api::V1::Concerns::FaqsControllerHelper
   def index
     category_association = :"sephcocco_#{outlet}_faq_category"
     
-    faqs = if current_user.sephcocco_user_role.name == "admin"
+    faqs = if admin?
       faq_class.includes(category_association).order(:position)
     else
       faq_class.includes(category_association).where(visibility: true).order(:position)
@@ -68,6 +68,10 @@ module Api::V1::Concerns::FaqsControllerHelper
   end
 
   private
+
+  def admin?
+    current_user.sephcocco_user_role.name == "admin"
+  end
 
   def ensure_all_category_exists
     all_category = faq_category_class.find_by(title: "all")
