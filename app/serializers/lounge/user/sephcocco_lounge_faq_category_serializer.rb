@@ -1,5 +1,5 @@
 class Lounge::User::SephcoccoLoungeFaqCategorySerializer < ActiveModel::Serializer
-  attributes :id, :name, :description, :position, :visibility
+  attributes :id, :title, :description, :position, :visibility
 
   def faqs
     object.sephcocco_lounge_faqs.where(visibility: true).order(:position).map do |faq|

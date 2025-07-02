@@ -1,5 +1,5 @@
 class Pharmacy::Admin::SephcoccoPharmacyFaqCategorySerializer < ActiveModel::Serializer
-  attributes :id, :name, :description, :position, :visibility
+  attributes :id, :title, :description, :position, :visibility
 
   def faqs
     object.sephcocco_pharmacy_faqs.order(:position).map do |faq|

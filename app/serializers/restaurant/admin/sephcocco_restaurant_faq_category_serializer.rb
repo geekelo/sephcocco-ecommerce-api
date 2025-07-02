@@ -1,5 +1,5 @@
 class Restaurant::Admin::SephcoccoRestaurantFaqCategorySerializer < ActiveModel::Serializer
-  attributes :id, :name, :description, :position, :visibility
+  attributes :id, :title, :description, :position, :visibility
 
   def faqs
     object.sephcocco_restaurant_faqs.order(:position).map do |faq|
