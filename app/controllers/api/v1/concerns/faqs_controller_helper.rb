@@ -10,13 +10,16 @@ module Api::V1::Concerns::FaqsControllerHelper
     category_key = :"sephcocco_#{outlet}_faq_category_id"
     all_category = ensure_all_category_exists
     
-    faq_params[category_key] = all_category.id
-    faq_params[:visibility] = true
-    faq_params[:position] = 1
+    # Create a new params hash with the additional values
+    service_params = faq_params.to_h.merge(
+      category_key => all_category.id,
+      visibility: true,
+      position: 1
+    )
 
     faq = Faqs::CreateService.new(
       user: current_user,
-      params: faq_params,
+      params: service_params,
       message_class: message_class,
       outlet: outlet
     ).call
