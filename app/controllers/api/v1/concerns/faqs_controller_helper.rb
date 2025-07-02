@@ -8,7 +8,9 @@ module Api::V1::Concerns::FaqsControllerHelper
   def create
     # Setting these values because they are not required on the FE ATM
     category_key = :"sephcocco_#{outlet}_faq_category_id"
-    faq_params[category_key] = faq_category_class.find_by(title: "all").id
+    all_category = ensure_all_category_exists
+    
+    faq_params[category_key] = all_category.id
     faq_params[:visibility] = true
     faq_params[:position] = 1
 
@@ -21,7 +23,9 @@ module Api::V1::Concerns::FaqsControllerHelper
 
     render json: faq, serializer: faq_serializer_class, status: :created
   rescue ActiveRecord::RecordInvalid => e
-    render json: e.record.errors, status: :unprocessable_entity
+    render json: { errors: e.record.errors.full_messages }, status: :unprocessable_entity
+  rescue => e
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   def update
@@ -46,5 +50,23 @@ module Api::V1::Concerns::FaqsControllerHelper
     render json: { message: "FAQ deleted" }, status: :ok
   rescue ActiveRecord::RecordNotFound
     render json: { error: "FAQ not found" }, status: :not_found
+  end
+
+  private
+
+  def ensure_all_category_exists
+    all_category = faq_category_class.find_by(title: "all")
+    
+    if all_category.nil?
+      # Create the "all" category if it doesn't exist
+      all_category = faq_category_class.create!(
+        title: "all",
+        description: "General FAQ category for all #{outlet}-related questions",
+        visibility: true,
+        position: 1
+      )
+    end
+    
+    all_category
   end
 end
