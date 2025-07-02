@@ -9,14 +9,24 @@ module Faqs
 
     def call
       category_key = :"sephcocco_#{@outlet}_faq_category_id"
-      @message_class.create!(
+      
+      # Debug logging
+      Rails.logger.info "FAQ Create Service - Params: #{@params.inspect}"
+      Rails.logger.info "FAQ Create Service - Category Key: #{category_key}"
+      Rails.logger.info "FAQ Create Service - Category ID: #{@params[category_key]}"
+      
+      create_params = {
         title: @params[:title],
         answer: @params[:answer],
         visibility: @params[:visibility],
         position: @params[:position],
-        update_history: [ history_entry("created") ],
+        update_history: { "created" => history_entry("created") },
         category_key => @params[category_key]
-      )
+      }
+      
+      Rails.logger.info "FAQ Create Service - Create Params: #{create_params.inspect}"
+      
+      @message_class.create!(create_params)
     end
 
     private
