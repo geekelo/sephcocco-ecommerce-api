@@ -1,5 +1,5 @@
 class Api::V1::Lounge::SephcoccoLoungeAdminActivitiesController < ApplicationController
-  include Api::V1::Concerns::AdminActivityController
+  include Api::V1::Concerns::AdminActivityControllerHelper
 
   def admin_activity_class
     Lounge::SephcoccoLoungeAdminActivity
@@ -10,6 +10,6 @@ class Api::V1::Lounge::SephcoccoLoungeAdminActivitiesController < ApplicationCon
   end
 
   def outlet
-    "Lounge"
+    "lounge"
   end
 end

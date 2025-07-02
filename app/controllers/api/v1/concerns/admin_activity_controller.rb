@@ -1,5 +1,9 @@
-class Api::V1::Concerns::AdminActivityController < ApplicationController
-  before_action :authenticate_user!
+module Api::V1::Concerns::AdminActivityControllerHelper
+  extend ActiveSupport::Concern
+
+  included do
+    before_action :authenticate_user!
+  end
 
   def index
     # spot for RBAC to give activities for the admin only or all to managers
@@ -23,7 +27,9 @@ class Api::V1::Concerns::AdminActivityController < ApplicationController
         }
     }
   end
-  
+
+  private
+
   def admin?
     current_user.sephcocco_user_role.name == "admin"
   end

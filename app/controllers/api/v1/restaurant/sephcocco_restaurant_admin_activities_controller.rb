@@ -1,5 +1,5 @@
 class Api::V1::Restaurant::SephcoccoRestaurantAdminActivitiesController < ApplicationController
-  include Api::V1::Concerns::AdminActivityController
+  include Api::V1::Concerns::AdminActivityControllerHelper
     
   def admin_activity_class
     Restaurant::SephcoccoRestaurantAdminActivity
@@ -10,7 +10,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantAdminActivitiesController < Applic
   end
     
   def outlet
-    "Restaurant"
+    "restaurant"
   end
 end
      
