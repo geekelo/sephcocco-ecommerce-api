@@ -44,16 +44,24 @@ module Api::V1::Concerns::FaqsControllerHelper
   end
 
   def update
+    Rails.logger.info "FAQ Controller - Update Action - ID from params: #{params[:id]}"
+    Rails.logger.info "FAQ Controller - Update Action - All params: #{params.inspect}"
+    
+    # Clean the ID if it has the "id=" prefix
+    faq_id = params[:id].to_s.gsub('id=', '')
+    Rails.logger.info "FAQ Controller - Update Action - Cleaned ID: #{faq_id}"
+    
     faq = Faqs::UpdateService.new(
       user: current_user,
-      faq_id: params[:id],
+      faq_id: faq_id,
       params: faq_params,
       faq_class: faq_class,
       outlet: outlet
     ).call
 
     render json: faq, serializer: faq_serializer_class
-  rescue ActiveRecord::RecordNotFound
+  rescue ActiveRecord::RecordNotFound => e
+    Rails.logger.error "FAQ Controller - FAQ not found: #{e.message}"
     render json: { error: "Not authorized or FAQ not found" }, status: :forbidden
   rescue ActiveRecord::RecordInvalid => e
     render json: e.record.errors, status: :unprocessable_entity
