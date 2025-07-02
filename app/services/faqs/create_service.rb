@@ -12,7 +12,7 @@ module Faqs
       @message_class.create!(
         title: @params[:title],
         answer: @params[:answer],
-        visibility: @params[:visibility]
+        visibility: @params[:visibility],
         position: @params[:position],
         update_history: [ history_entry("created") ],
         category_key => @params[category_key]
