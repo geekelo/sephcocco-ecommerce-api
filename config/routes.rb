@@ -46,6 +46,7 @@ Rails.application.routes.draw do
           end
         end
         resources :sephcocco_lounge_payments
+        resources :sephcocco_lounge_faqs
         resources :sephcocco_lounge_admin_notifications, only: [ :index, :update ]
       end
 
@@ -74,11 +75,7 @@ Rails.application.routes.draw do
           end
         end
         resources :sephcocco_pharmacy_payments
-        resources :sephcocco_pharmacy_faqs do
-          member do
-            post "like" => "sephcocco_pharmacy_faqs#like"
-          end
-        end
+        resources :sephcocco_pharmacy_faqs
         resources :sephcocco_pharmacy_faq_categories
         resources :sephcocco_pharmacy_admin_notifications, only: [ :index, :update ]
       end
@@ -109,11 +106,7 @@ Rails.application.routes.draw do
         end
 
         resources :sephcocco_restaurant_payments
-        resources :sephcocco_restaurant_faqs do
-          member do
-            post "like" => "sephcocco_restaurant_faqs#like"
-          end
-        end
+        resources :sephcocco_restaurant_faqs
         resources :sephcocco_restaurant_faq_categories
         resources :sephcocco_restaurant_admin_notifications, only: [ :index, :update ]
       end

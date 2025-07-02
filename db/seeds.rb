@@ -86,4 +86,35 @@ main_outlet = %w[restaurant lounge pharmacy]
 outlets = main_outlet.map { |name| SephcoccoOutlet.find_or_create_by(name: name) }
 puts "✅ Created/Found outlets: #{outlets.map(&:name).join(', ')}"
 
+
 puts "🎉 Sephcocco Users seeded successfully!"
+
+# db/seeds/faq_categories.rb
+
+puts "📚 Seeding FAQ Categories for all outlets..."
+
+# Create "all" FAQ category for Lounge
+lounge_all_category = Lounge::SephcoccoLoungeFaqCategory.find_or_create_by!(title: "all") do |category|
+  category.description = "General FAQ category for all lounge-related questions"
+  category.visibility = true
+  category.position = 1
+end
+puts "✅ Created/Found Lounge FAQ Category: #{lounge_all_category.title}"
+
+# Create "all" FAQ category for Restaurant
+restaurant_all_category = Restaurant::SephcoccoRestaurantFaqCategory.find_or_create_by!(title: "all") do |category|
+  category.description = "General FAQ category for all restaurant-related questions"
+  category.visibility = true
+  category.position = 1
+end
+puts "✅ Created/Found Restaurant FAQ Category: #{restaurant_all_category.title}"
+
+# Create "all" FAQ category for Pharmacy
+pharmacy_all_category = Pharmacy::SephcoccoPharmacyFaqCategory.find_or_create_by!(title: "all") do |category|
+  category.description = "General FAQ category for all pharmacy-related questions"
+  category.visibility = true
+  category.position = 1
+end
+puts "✅ Created/Found Pharmacy FAQ Category: #{pharmacy_all_category.title}"
+
+puts "🎉 FAQ Categories seeded successfully!"
