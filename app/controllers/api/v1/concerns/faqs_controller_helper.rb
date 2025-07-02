@@ -7,11 +7,10 @@ module Api::V1::Concerns::FaqsControllerHelper
 
   def create
     # Setting these values because they are not required on the FE ATM
-    if faq_params[:faq_category_id].blank?
-      faq_params[:faq_category_id] = faq_category_class.find_by(title: "all").id
-      faq_params[:visibility] = true
-      faq_params[:position] = 1
-    end
+    faq_params[:faq_category_id] = faq_category_class.find_by(title: "all").id
+    faq_params[:visibility] = true
+    faq_params[:position] = 1
+
 
 
     faq = Faqs::CreateService.new(
