@@ -1,5 +1,5 @@
 class Api::V1::Restaurant::SephcoccoRestaurantFaqsController < ApplicationController
-  include Api::V1::Concerns::MessageControllerHelper
+  include Api::V1::Concerns::FaqsControllerHelper
 
   before_action :authenticate_user!
 
@@ -10,26 +10,18 @@ class Api::V1::Restaurant::SephcoccoRestaurantFaqsController < ApplicationContro
   end
 
   def outlet
-    Restaurant
+    "restaurant"
   end
 
-  def faq_serializer_class_admin
+  def faq_serializer_class
     Restaurant::Admin::SephcoccoRestaurantFaqSerializer
-  end
-
-  def faq_serializer_class_user
-    Restaurant::User::SephcoccoRestaurantFaqSerializer
   end
 
   def faq_category_class
     Restaurant::SephcoccoRestaurantFaqCategory
   end
 
-  def faq_category_association
-    :sephcocco_restaurant_faq_categories
-  end
-
   def faq_params
-    params.require(:faq).permit(:title, :answer, :position, :visibility, :faq_category_id)
+    params.require(:faq).permit(:title, :answer, :position, :visibility, :sephcocco_restaurant_faq_category_id)
   end
 end

@@ -1,5 +1,5 @@
 class Api::V1::Lounge::SephcoccoLoungeFaqsController < ApplicationController
-  include Api::V1::Concerns::MessageControllerHelper
+  include Api::V1::Concerns::FaqsControllerHelper
 
   before_action :authenticate_user!
 
@@ -10,26 +10,18 @@ class Api::V1::Lounge::SephcoccoLoungeFaqsController < ApplicationController
   end
 
   def outlet
-    Lounge
+    "lounge"
   end
 
-  def faq_serializer_class_admin
+  def faq_serializer_class
     Lounge::Admin::SephcoccoLoungeFaqSerializer
-  end
-
-  def faq_serializer_class_user
-    Lounge::User::SephcoccoLoungeFaqSerializer
   end
 
   def faq_category_class
     Lounge::SephcoccoLoungeFaqCategory
   end
 
-  def faq_category_association
-    :sephcocco_lounge_faq_categories
-  end
-
   def faq_params
-    params.require(:faq).permit(:title, :answer, :position, :visibility, :faq_category_id)
+    params.require(:faq).permit(:title, :answer, :position, :visibility, :sephcocco_lounge_faq_category_id)
   end
 end
