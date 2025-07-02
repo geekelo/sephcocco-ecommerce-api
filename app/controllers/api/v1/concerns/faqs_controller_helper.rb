@@ -7,11 +7,10 @@ module Api::V1::Concerns::FaqsControllerHelper
 
   def create
     # Setting these values because they are not required on the FE ATM
-    faq_params[:faq_category_id] = faq_category_class.find_by(title: "all").id
+    category_key = :"sephcocco_#{outlet}_faq_category_id"
+    faq_params[category_key] = faq_category_class.find_by(title: "all").id
     faq_params[:visibility] = true
     faq_params[:position] = 1
-
-
 
     faq = Faqs::CreateService.new(
       user: current_user,
