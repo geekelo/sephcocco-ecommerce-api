@@ -9,6 +9,7 @@ class SephcoccoUser < ApplicationRecord
   has_many :lounge_orders, class_name: "SephcoccoLoungeOrder", foreign_key: :sephcocco_user_id
   has_many :ordered_lounge_products, through: :lounge_orders, source: :sephcocco_lounge_product
   has_many :sephcocco_lounge_orders, class_name: "Lounge::SephcoccoLoungeOrder", foreign_key: :sephcocco_user_id
+  has_many :sephcocco_lounge_admin_activities, class_name: "Lounge::SephcoccoLoungeAdminActivity", foreign_key: :sephcocco_user_id
 
   # Restaurant associations
   has_many :restaurant_product_likes, class_name: "Restaurant::SephcoccoRestaurantProductLike", foreign_key: :sephcocco_user_id, dependent: :destroy
@@ -16,6 +17,7 @@ class SephcoccoUser < ApplicationRecord
   has_many :restaurant_orders, class_name: "SephcoccoRestaurantOrder", foreign_key: :sephcocco_user_id
   has_many :ordered_restaurant_products, through: :restaurant_orders, source: :sephcocco_restaurant_product
   has_many :sephcocco_restaurant_orders, class_name: "Restaurant::SephcoccoRestaurantOrder", foreign_key: :sephcocco_user_id
+  has_many :sephcocco_restaurant_admin_activities, class_name: "Restaurant::SephcoccoRestaurantAdminActivity", foreign_key: :sephcocco_user_id
 
   # Pharmacy associations
   has_many :pharmacy_product_likes, class_name: "Pharmacy::SephcoccoPharmacyProductLike", foreign_key: :sephcocco_user_id, dependent: :destroy
@@ -23,6 +25,7 @@ class SephcoccoUser < ApplicationRecord
   has_many :pharmacy_orders, class_name: "SephcoccoPharmacyOrder", foreign_key: :sephcocco_user_id
   has_many :ordered_pharmacy_products, through: :pharmacy_orders, source: :sephcocco_pharmacy_product
   has_many :sephcocco_pharmacy_orders, class_name: "Pharmacy::SephcoccoPharmacyOrder", foreign_key: :sephcocco_user_id
+  has_many :sephcocco_pharmacy_admin_activities, class_name: "Pharmacy::SephcoccoPharmacyAdminActivity", foreign_key: :sephcocco_user_id
   
   # password reset token
   def generate_password_reset_token!
