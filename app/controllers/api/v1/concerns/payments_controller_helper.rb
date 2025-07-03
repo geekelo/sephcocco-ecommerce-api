@@ -20,13 +20,27 @@ module Api::V1::Concerns::PaymentsControllerHelper
     if current_user.sephcocco_user_role.name == "admin"
       payment = @customer.payment_association.new(payment_params)
       if payment.save
+        AdminActivities::CreateService.new(
+          user: current_user,
+          activity_type: "Create",
+          activity_name: "Payment",
+          activity_description: "Payment Created: #{payment.id}",
+          outlet: outlet
+        ).call
         render json: payment, each_serializer: Lounge::Admin::SephcoccoLoungePaymentSerializer, status: :created
       else
-          render json: payment.errors, status: :unprocessable_entity
+        render json: payment.errors, status: :unprocessable_entity
       end
     else
       payment = current_user.payment_association.new(payment_params)
       if payment.save
+        AdminNotifications::CreateService.new(
+          user: current_user,
+          activity_type: "Create",
+          activity_name: "Payment",
+          activity_description: "Payment Created: #{payment.id}",
+          outlet: outlet
+        ).call
         render json: payment, each_serializer: Lounge::Admin::SephcoccoLoungePaymentSerializer, status: :created
       else
           render json: payment.errors, status: :unprocessable_entity
@@ -37,8 +51,22 @@ module Api::V1::Concerns::PaymentsControllerHelper
   def update
     if @payment.update(payment_params)
       if current_user.sephcocco_user_role.name == "admin"
+        AdminActivities::CreateService.new(
+          user: current_user,
+          activity_type: "Update",
+          activity_name: "Payment",
+          activity_description: "Payment Updated: #{@payment.id}",
+          outlet: outlet
+        ).call
         render json: @payment, each_serializer: Lounge::Admin::SephcoccoLoungePaymentSerializer
       else
+        AdminNotifications::CreateService.new(
+          user: current_user,
+          activity_type: "Update",
+          activity_name: "Payment",
+          activity_description: "Payment Updated: #{@payment.id}",
+          outlet: outlet
+        ).call
         render json: @payment, each_serializer: Lounge::User::SephcoccoLoungePaymentSerializer
       end
     else
@@ -48,6 +76,23 @@ module Api::V1::Concerns::PaymentsControllerHelper
 
   def destroy
     if @payment.destroy
+      if admin?
+        AdminActivities::CreateService.new(
+          user: current_user,
+          activity_type: "Delete",
+          activity_name: "Payment",
+          activity_description: "Payment Deleted: #{@payment.id}",
+          outlet: outlet
+        ).call
+      else
+        AdminNotifications::CreateService.new(
+          user: current_user,
+          activity_type: "Delete",
+          activity_name: "Payment",
+          activity_description: "Payment Deleted: #{@payment.id}",
+          outlet: outlet
+        ).call
+      end
         render json: { message: "Payment deleted successfully" }, status: :ok
     else
         render json: { error: "Failed to delete payment" }, status: :unprocessable_entity

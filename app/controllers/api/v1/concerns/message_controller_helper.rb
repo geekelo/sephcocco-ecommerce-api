@@ -31,6 +31,7 @@ module Api::V1::Concerns::MessageControllerHelper
       outlet: outlet
     ).call
 
+
     render json: message, serializer: serializer_class, status: :created
   rescue ActiveRecord::RecordInvalid => e
     render json: e.record.errors, status: :unprocessable_entity

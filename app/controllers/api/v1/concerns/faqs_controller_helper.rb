@@ -36,6 +36,15 @@ module Api::V1::Concerns::FaqsControllerHelper
       outlet: outlet
     ).call
 
+    if admin?
+      AdminActivities::CreateService.new(
+        user: current_user,
+        activity_type: "Create",
+        activity_name: "FAQ",
+        activity_description: "FAQ Created: #{faq.title}",
+        outlet: outlet
+      ).call
+    end
     render json: faq, serializer: faq_serializer_class, status: :created
   rescue ActiveRecord::RecordInvalid => e
     render json: { errors: e.record.errors.full_messages }, status: :unprocessable_entity
@@ -44,12 +53,8 @@ module Api::V1::Concerns::FaqsControllerHelper
   end
 
   def update
-    Rails.logger.info "FAQ Controller - Update Action - ID from params: #{params[:id]}"
-    Rails.logger.info "FAQ Controller - Update Action - All params: #{params.inspect}"
-    
     # Clean the ID if it has the "id=" prefix
     faq_id = params[:id].to_s.gsub('id=', '')
-    Rails.logger.info "FAQ Controller - Update Action - Cleaned ID: #{faq_id}"
     
     faq = Faqs::UpdateService.new(
       user: current_user,
@@ -58,6 +63,16 @@ module Api::V1::Concerns::FaqsControllerHelper
       faq_class: faq_class,
       outlet: outlet
     ).call
+
+    if admin?
+      AdminActivities::CreateService.new(
+        user: current_user,
+        activity_type: "Update",
+        activity_name: "FAQ",
+        activity_description: "FAQ Updated: #{faq.title}",
+        outlet: outlet
+      ).call
+    end
 
     render json: faq, serializer: faq_serializer_class
   rescue ActiveRecord::RecordNotFound => e
@@ -70,6 +85,15 @@ module Api::V1::Concerns::FaqsControllerHelper
   def destroy
     faq = faq_class.find(params[:id])
     faq.destroy
+    if admin?
+      AdminActivities::CreateService.new(
+        user: current_user,
+        activity_type: "Delete",
+        activity_name: "FAQ",
+        activity_description: "FAQ Deleted: #{faq.title}",
+        outlet: outlet
+      ).call
+    end
     render json: { message: "FAQ deleted" }, status: :ok
   rescue ActiveRecord::RecordNotFound
     render json: { error: "FAQ not found" }, status: :not_found

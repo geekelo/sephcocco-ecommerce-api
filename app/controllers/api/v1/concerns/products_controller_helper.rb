@@ -62,6 +62,16 @@ module Api::V1::Concerns::ProductsControllerHelper
         # Assign categories using the association
         @product.send(category_association_name).replace(category_class.where(id: product_params[:category_ids]))
       end
+
+      if admin?
+        AdminActivities::CreateService.new(
+          user: current_user,
+          activity_type: "Create",
+          activity_name: "Product",
+          activity_description: "Product Created: #{@product.name}",
+          outlet: outlet
+        ).call
+      end
       render json: @product, serializer: product_serializer, scope: current_user, status: :created
     else
       render json: @product.errors, status: :unprocessable_entity
@@ -70,6 +80,15 @@ module Api::V1::Concerns::ProductsControllerHelper
 
   def update
     if @product.update(product_params.except(:category_ids))
+      if admin?
+        AdminActivities::CreateService.new(
+          user: current_user,
+          activity_type: "Update",
+          activity_name: "Product",
+          activity_description: "Product Updated: #{@product.name}",
+          outlet: outlet
+        ).call
+      end
       render json: @product, serializer: product_serializer, scope: current_user, status: :ok
     else
       render json: @product.errors, status: :unprocessable_entity

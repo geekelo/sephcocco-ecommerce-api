@@ -9,7 +9,7 @@ module Api::V1::Concerns::OrdersControllerHelper
   end
 
   def index
-    if current_user&.sephcocco_user_role&.name == "admin"
+    if admin?
       orders = order_class.all
       if params[:filter]
         if params[:filter][:status].present?
@@ -71,14 +71,14 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def create
     unit_price = params[:unit_price] || product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"]).price
-    if current_user&.sephcocco_user_role&.name == "admin"
+    if admin?
       order = @customer&.send(order_association).new(order_params.merge(unit_price: unit_price))
     else
       order = current_user.send(order_association).new(order_params.merge(unit_price: unit_price))
     end
 
     if order&.save
-      if current_user.sephcocco_user_role.name == "user"
+      if admin?
         AdminNotifications::CreateService.new(
           action_type: "order",
           action_id: order.id,
@@ -94,7 +94,7 @@ module Api::V1::Concerns::OrdersControllerHelper
   end
 
   def show
-    if current_user.sephcocco_user_role.name == "admin"
+    if admin?
       render json: @order, each_serializer: order_serializer_class
     else
       render json: @order, each_serializer: order_serializer_class
@@ -104,7 +104,14 @@ module Api::V1::Concerns::OrdersControllerHelper
   def update
     update_stages(order_params[:status]) if order_params[:status].present?
     if @order.update(order_params)
-      if current_user.sephcocco_user_role.name == "admin"
+      if admin?
+        AdminActivities::CreateService.new(
+          user: current_user,
+          activity_type: "Update",
+          activity_name: "Order",
+          activity_description: "Order Updated: #{@order.number}",
+          outlet: outlet
+        ).call
         render json: @order, each_serializer: order_serializer_class
       else
         render json: @order, each_serializer: order_serializer_class
@@ -116,6 +123,15 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def destroy
     if @order.destroy
+      if admin?
+        AdminActivities::CreateService.new(
+          user: current_user,
+          activity_type: "Delete",
+          activity_name: "Order",
+          activity_description: "Order Deleted: #{@order.number}",
+          outlet: outlet
+        ).call
+      end
       render json: { message: "Order deleted successfully" }, status: :ok
     else
       render json: { error: "Failed to delete order" }, status: :unprocessable_entity
@@ -177,5 +193,9 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def set_customer
     @customer = SephcoccoUser.find_by(id: order_params[:sephcocco_user_id])
+  end
+
+  def admin?
+    current_user.sephcocco_user_role.name == "admin"
   end
 end

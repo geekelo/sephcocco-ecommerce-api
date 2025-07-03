@@ -20,6 +20,15 @@ module Api::V1::Concerns::ProductCategoriesControllerHelper
     @product_category = category_class.new(product_category_params)
 
     if @product_category.save
+      if admin?
+        AdminActivities::CreateService.new(
+          user: current_user,
+          activity_type: "Create",
+          activity_name: "Product Category",
+          activity_description: "Product Category Created: #{@product_category.name}",
+          outlet: outlet
+        ).call
+      end
       render json: @product_category, serializer: product_category_serializer, status: :created
     else
       render json: @product_category.errors, status: :unprocessable_entity
@@ -28,6 +37,15 @@ module Api::V1::Concerns::ProductCategoriesControllerHelper
 
   def update
     if @product_category.update(product_category_params)
+      if admin?
+        AdminActivities::CreateService.new(
+          user: current_user,
+          activity_type: "Update",
+          activity_name: "Product Category",
+          activity_description: "Product Category Updated: #{@product_category.name}",
+          outlet: outlet
+        ).call
+      end
       render json: @product_category, serializer: product_category_serializer
     else
       render json: @product_category.errors, status: :unprocessable_entity
@@ -36,6 +54,15 @@ module Api::V1::Concerns::ProductCategoriesControllerHelper
 
   def destroy
     @product_category.destroy
+    if admin?
+      AdminActivities::CreateService.new(
+        user: current_user,
+        activity_type: "Delete",
+        activity_name: "Product Category",
+        activity_description: "Product Category Deleted: #{@product_category.name}",
+        outlet: outlet
+      ).call
+    end
     render json: { message: "Category deleted" }, status: :ok
   end
 
@@ -54,6 +81,10 @@ module Api::V1::Concerns::ProductCategoriesControllerHelper
   end
 
   private
+
+  def admin?
+    current_user.sephcocco_user_role.name == "admin"
+  end
 
   def set_product_category
     @product_category = category_class.find(params[:id])
