@@ -65,7 +65,7 @@ gem "jwt"
 gem "rack-cors"
 gem "kaminari"  # Pagination
 
-gem "twilio-ruby", "~> 7.4"
+gem "twilio-ruby", "~> 7.6"
 gem "prawn"
 gem "prawn-table"
 gem "aws-sdk-s3", require: false
