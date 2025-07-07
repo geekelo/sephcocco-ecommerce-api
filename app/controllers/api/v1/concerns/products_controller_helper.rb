@@ -209,6 +209,10 @@ module Api::V1::Concerns::ProductsControllerHelper
     @product = product_class.find(params[:id])
   end
 
+  def admin?
+    current_user.sephcocco_user_role.name == "admin"
+  end
+
   # The following methods must be overridden in each specific controller:
   def product_class; raise NotImplementedError; end
   def category_class; raise NotImplementedError; end
