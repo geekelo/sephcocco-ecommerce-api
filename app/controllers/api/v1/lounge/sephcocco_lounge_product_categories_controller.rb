@@ -28,6 +28,10 @@ class Api::V1::Lounge::SephcoccoLoungeProductCategoriesController < ApplicationC
     :sephcocco_lounge_product_categories
   end
 
+  def outlet
+    Lounge
+  end
+
   def product_category_params
     params.require(:product_category).permit(:name, :description, :slug)
   end

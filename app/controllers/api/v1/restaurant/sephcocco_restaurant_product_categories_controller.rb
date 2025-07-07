@@ -28,6 +28,10 @@ class Api::V1::Restaurant::SephcoccoRestaurantProductCategoriesController < Appl
     :sephcocco_restaurant_product_categories
   end
 
+  def outlet
+    Restaurant
+  end
+
   def product_category_params
     params.require(:product_category).permit(:name, :description, :slug)
   end

@@ -42,6 +42,10 @@ class Api::V1::Pharmacy::SephcoccoPharmacyProductsController < ApplicationContro
     :sephcocco_pharmacy_product_categories
   end
 
+  def outlet
+    Pharmacy
+  end
+
   def product_params
     params.require(:product).permit(
       :name,

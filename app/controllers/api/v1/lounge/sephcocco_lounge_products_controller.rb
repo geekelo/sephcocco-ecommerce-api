@@ -42,6 +42,10 @@ class Api::V1::Lounge::SephcoccoLoungeProductsController < ApplicationController
     :sephcocco_lounge_product_categories
   end
 
+  def outlet
+    Lounge
+  end
+
   def product_params
     params.require(:product).permit(
       :name,
