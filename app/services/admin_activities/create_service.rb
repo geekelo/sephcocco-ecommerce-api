@@ -5,7 +5,7 @@ module AdminActivities
       @activity_type = activity_type
       @activity_name = activity_name
       @activity_description = activity_description
-      @outlet = outlet.downcase
+      @outlet = outlet
     end
 
     def call
