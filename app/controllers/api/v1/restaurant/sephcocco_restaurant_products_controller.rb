@@ -43,7 +43,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantProductsController < ApplicationCo
   end
 
   def outlet
-    Restaurant
+    "restaurant"
   end
 
   def product_params

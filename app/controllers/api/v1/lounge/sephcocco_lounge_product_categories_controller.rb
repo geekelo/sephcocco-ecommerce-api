@@ -29,7 +29,7 @@ class Api::V1::Lounge::SephcoccoLoungeProductCategoriesController < ApplicationC
   end
 
   def outlet
-    Lounge
+    "lounge"
   end
 
   def product_category_params

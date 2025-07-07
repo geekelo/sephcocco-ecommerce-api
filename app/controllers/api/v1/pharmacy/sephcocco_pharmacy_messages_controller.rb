@@ -8,7 +8,7 @@ class Api::V1::Pharmacy::SephcoccoPharmacyMessagesController < ApplicationContro
   end
 
   def outlet
-    Pharmacy
+    "pharmacy"
   end
 
   def product_param_key

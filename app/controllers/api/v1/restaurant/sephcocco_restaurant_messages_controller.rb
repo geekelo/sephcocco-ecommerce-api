@@ -8,7 +8,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantMessagesController < ApplicationCo
   end
 
   def outlet
-    Restaurant
+    "restaurant"
   end
 
   def product_param_key

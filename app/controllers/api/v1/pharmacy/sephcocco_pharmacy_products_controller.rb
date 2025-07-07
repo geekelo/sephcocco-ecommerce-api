@@ -43,7 +43,7 @@ class Api::V1::Pharmacy::SephcoccoPharmacyProductsController < ApplicationContro
   end
 
   def outlet
-    Pharmacy
+    "pharmacy"
   end
 
   def product_params

@@ -8,7 +8,7 @@ class Api::V1::Lounge::SephcoccoLoungeMessagesController < ApplicationController
   end
 
   def outlet
-    Lounge
+    "lounge"
   end
 
   def product_param_key

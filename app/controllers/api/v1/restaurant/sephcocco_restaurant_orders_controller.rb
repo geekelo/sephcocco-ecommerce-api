@@ -13,7 +13,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
   end
 
   def outlet
-    Restaurant
+    "restaurant"
   end
 
   def product_class
