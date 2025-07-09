@@ -14,11 +14,11 @@ class Api::V1::Lounge::SephcoccoLoungePaymentsController < ApplicationController
   def payment_params
     params.require(:sephcocco_lounge_payment).permit(
       :sephcocco_user_id,
-      :order_id,
       :amount,
       :payment_method,
       :status,
-      :transaction_id
+      :transaction_id,
+      orders_ids: []
     )
   end
 end
