@@ -66,14 +66,14 @@ module Api::V1::Concerns::PaymentsControllerHelper
   def update
     status = payment_params[:status] if payment_params[:status].present?
     if @payment.update(payment_params)
-      payment_params[:orders_ids].each do |order_id|
-        order = order_class.find(order_id)
+      @payment.orders.each do |order|
         if status == "confirmed"
           order.update(status: "payment confirmed")
+          @payment.sephcocco_user.update(payment_ref: @payment.sephcocco_user.payment_ref.next)
         elsif status == "cancelled"
           order.update(status: "payment cancelled")
         elsif status == "pending"
-          order.update(status: "paid")
+          order.update(status: "payment pending")
         elsif status == "declined"
           order.update(status: "payment declined")
         end
