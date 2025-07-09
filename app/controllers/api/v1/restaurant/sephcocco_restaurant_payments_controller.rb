@@ -16,10 +16,8 @@ class Api::V1::Restaurant::SephcoccoRestaurantPaymentsController < ApplicationCo
   end
 
   def outlet
-    "Restaurant"
+    'restaurant'
   end
-
-  def payment_serializer
 
   def payment_serializer
     if current_user.sephcocco_user_role.name == "admin"
