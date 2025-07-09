@@ -30,11 +30,11 @@ class Api::V1::Pharmacy::SephcoccoPharmacyPaymentsController < ApplicationContro
   def payment_params
     params.require(:sephcocco_pharmacy_payment).permit(
       :sephcocco_user_id,
-      :order_id,
       :amount,
       :payment_method,
       :status,
-      :transaction_id
+      :transaction_id,
+      orders_ids: []
     )
   end
 end

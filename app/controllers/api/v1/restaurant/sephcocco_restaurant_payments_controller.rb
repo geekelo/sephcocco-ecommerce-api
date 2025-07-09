@@ -32,11 +32,11 @@ class Api::V1::Restaurant::SephcoccoRestaurantPaymentsController < ApplicationCo
   def payment_params
     params.require(:sephcocco_restaurant_payment).permit(
       :sephcocco_user_id,
-      :orders_ids,
       :amount,
       :payment_method,
       :status,
-      :transaction_id
+      :transaction_id,
+      orders_ids: []
     )
   end
 end
