@@ -4,5 +4,8 @@ class Lounge::Admin::SephcoccoLoungePaymentSerializer < ActiveModel::Serializer
                :amount,
                :status,
                :created_at,
-               :updated_at
+               :updated_at,
+               :transaction_id
+
+  has_many :orders, serializer: Lounge::Admin::SephcoccoLoungeOrderSerializer
 end

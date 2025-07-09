@@ -4,5 +4,8 @@ class Pharmacy::Admin::SephcoccoPharmacyPaymentSerializer < ActiveModel::Seriali
                :amount,
                :status,
                :created_at,
-               :updated_at
+               :updated_at,
+               :transaction_id
+
+  has_many :orders, serializer: Pharmacy::Admin::SephcoccoPharmacyOrderSerializer
 end

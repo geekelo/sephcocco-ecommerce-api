@@ -15,6 +15,18 @@ class Api::V1::Lounge::SephcoccoLoungePaymentsController < ApplicationController
     SephcoccoLoungeOrder
   end
 
+  def outlet
+    "Lounge"
+  end
+  
+  def payment_serializer
+    if current_user.sephcocco_user_role.name == "admin"
+      Lounge::Admin::SephcoccoLoungePaymentSerializer
+    else
+      Lounge::User::SephcoccoLoungePaymentSerializer
+    end
+  end
+
   def payment_params
     params.require(:sephcocco_lounge_payment).permit(
       :sephcocco_user_id,

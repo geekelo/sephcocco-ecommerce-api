@@ -15,6 +15,20 @@ class Api::V1::Restaurant::SephcoccoRestaurantPaymentsController < ApplicationCo
     SephcoccoRestaurantOrder
   end
 
+  def outlet
+    "Restaurant"
+  end
+
+  def payment_serializer
+
+  def payment_serializer
+    if current_user.sephcocco_user_role.name == "admin"
+      Restaurant::Admin::SephcoccoRestaurantPaymentSerializer
+    else
+      Restaurant::User::SephcoccoRestaurantPaymentSerializer
+    end
+  end
+
   def payment_params
     params.require(:sephcocco_restaurant_payment).permit(
       :sephcocco_user_id,

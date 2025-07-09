@@ -64,13 +64,27 @@ module Api::V1::Concerns::PaymentsControllerHelper
   end
 
   def update
+    status = payment_params[:status] if payment_params[:status].present?
     if @payment.update(payment_params)
+      payment_params[:orders_ids].each do |order_id|
+        order = order_class.find(order_id)
+        if status == "confirmed"
+          order.update(status: "payment confirmed")
+        elsif status == "cancelled"
+          order.update(status: "payment cancelled")
+        elsif status == "pending"
+          order.update(status: "paid")
+        elsif status == "declined"
+          order.update(status: "payment declined")
+        end
+      end
+      
       if current_user.sephcocco_user_role.name == "admin"
         AdminActivities::CreateService.new(
           user: current_user,
           activity_type: "Update",
           activity_name: "Payment",
-          activity_description: "Payment Updated: #{@payment.id}",
+          activity_description: "Payment #{status}ed: #{@payment.id}",
           outlet: outlet
         ).call
         render json: @payment, each_serializer: Lounge::Admin::SephcoccoLoungePaymentSerializer
@@ -79,7 +93,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
           user: current_user,
           activity_type: "Update",
           activity_name: "Payment",
-          activity_description: "Payment Updated: #{@payment.id}",
+          activity_description: "Payment Cancelled: #{@payment.id}",
           outlet: outlet
         ).call
         render json: @payment, each_serializer: Lounge::User::SephcoccoLoungePaymentSerializer

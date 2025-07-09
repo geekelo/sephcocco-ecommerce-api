@@ -15,6 +15,18 @@ class Api::V1::Pharmacy::SephcoccoPharmacyPaymentsController < ApplicationContro
     SephcoccoPharmacyOrder
   end
 
+  def outlet
+    "Pharmacy"
+  end
+
+  def payment_serializer
+    if current_user.sephcocco_user_role.name == "admin"
+      Pharmacy::Admin::SephcoccoPharmacyPaymentSerializer
+    else
+      Pharmacy::User::SephcoccoPharmacyPaymentSerializer
+    end
+  end
+
   def payment_params
     params.require(:sephcocco_pharmacy_payment).permit(
       :sephcocco_user_id,
