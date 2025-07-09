@@ -11,6 +11,10 @@ class Api::V1::Pharmacy::SephcoccoPharmacyPaymentsController < ApplicationContro
     :sephcocco_pharmacy_payments
   end
 
+  def order_class
+    SephcoccoPharmacyOrder
+  end
+
   def payment_params
     params.require(:sephcocco_pharmacy_payment).permit(
       :sephcocco_user_id,

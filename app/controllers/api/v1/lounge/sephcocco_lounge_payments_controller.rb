@@ -11,6 +11,10 @@ class Api::V1::Lounge::SephcoccoLoungePaymentsController < ApplicationController
     :sephcocco_lounge_payments
   end
 
+  def order_class
+    SephcoccoLoungeOrder
+  end
+
   def payment_params
     params.require(:sephcocco_lounge_payment).permit(
       :sephcocco_user_id,

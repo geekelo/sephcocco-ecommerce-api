@@ -11,6 +11,10 @@ class Api::V1::Restaurant::SephcoccoRestaurantPaymentsController < ApplicationCo
     :sephcocco_restaurant_payments
   end
 
+  def order_class
+    SephcoccoRestaurantOrder
+  end
+
   def payment_params
     params.require(:sephcocco_restaurant_payment).permit(
       :sephcocco_user_id,
