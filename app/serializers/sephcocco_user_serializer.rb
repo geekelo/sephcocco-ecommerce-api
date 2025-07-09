@@ -1,5 +1,5 @@
 class SephcoccoUserSerializer < ActiveModel::Serializer
-  attributes :id, :name, :email, :address, :phone_number, :whatsapp_number, :role, :outlets, :suspended, :last_login_at, :created_at, :updated_at
+  attributes :id, :name, :email, :address, :payment_ref, :phone_number, :whatsapp_number, :role, :outlets, :suspended, :last_login_at, :created_at, :updated_at
 
   def role
     object&.sephcocco_user_role&.name
