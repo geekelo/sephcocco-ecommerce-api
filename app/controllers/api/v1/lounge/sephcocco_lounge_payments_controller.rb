@@ -28,7 +28,7 @@ class Api::V1::Lounge::SephcoccoLoungePaymentsController < ApplicationController
   end
 
   def admin_notification_class
-    Lounge::Admin::SephcoccoLoungeAdminNotification
+    Lounge::SephcoccoLoungeAdminNotification
   end
 
   def payment_params

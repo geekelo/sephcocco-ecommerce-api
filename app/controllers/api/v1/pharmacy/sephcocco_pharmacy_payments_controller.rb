@@ -29,7 +29,7 @@ class Api::V1::Pharmacy::SephcoccoPharmacyPaymentsController < ApplicationContro
 
 
   def admin_notification_class
-    Pharmacy::Admin::SephcoccoPharmacyAdminNotification
+    Pharmacy::SephcoccoPharmacyAdminNotification
   end
 
   def payment_params

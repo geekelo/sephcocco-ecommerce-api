@@ -28,7 +28,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantPaymentsController < ApplicationCo
   end
 
   def admin_notification_class
-    Restaurant::Admin::SephcoccoRestaurantAdminNotification
+    Restaurant::SephcoccoRestaurantAdminNotification
   end
 
   def payment_params
