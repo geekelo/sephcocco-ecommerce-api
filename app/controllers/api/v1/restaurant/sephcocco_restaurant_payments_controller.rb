@@ -27,6 +27,10 @@ class Api::V1::Restaurant::SephcoccoRestaurantPaymentsController < ApplicationCo
     end
   end
 
+  def admin_notification_class
+    Restaurant::Admin::SephcoccoRestaurantAdminNotification
+  end
+
   def payment_params
     params.require(:sephcocco_restaurant_payment).permit(
       :sephcocco_user_id,

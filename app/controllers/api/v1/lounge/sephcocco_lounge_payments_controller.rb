@@ -27,6 +27,10 @@ class Api::V1::Lounge::SephcoccoLoungePaymentsController < ApplicationController
     end
   end
 
+  def admin_notification_class
+    Lounge::Admin::SephcoccoLoungeAdminNotification
+  end
+
   def payment_params
     params.require(:sephcocco_lounge_payment).permit(
       :sephcocco_user_id,

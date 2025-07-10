@@ -27,6 +27,11 @@ class Api::V1::Pharmacy::SephcoccoPharmacyPaymentsController < ApplicationContro
     end
   end
 
+
+  def admin_notification_class
+    Pharmacy::Admin::SephcoccoPharmacyAdminNotification
+  end
+
   def payment_params
     params.require(:sephcocco_pharmacy_payment).permit(
       :sephcocco_user_id,

@@ -56,10 +56,10 @@ module Api::V1::Concerns::PaymentsControllerHelper
       payment = current_user.send(payment_association).new(payment_params_with_user)
       if payment.save
         AdminNotifications::CreateService.new(
+          action_type: "payment",
+          action_id: payment.id,
           user: current_user,
-          activity_type: "Create",
-          activity_name: "Payment",
-          activity_description: "Payment Created: #{payment.id}",
+          notification_class: admin_notification_class,
           outlet: outlet
         ).call
         if order_ids.present?
@@ -103,10 +103,10 @@ module Api::V1::Concerns::PaymentsControllerHelper
         render json: @payment, each_serializer: payment_serializer
       else
         AdminNotifications::CreateService.new(
+          action_type: "payment",
+          action_id: @payment.id,
           user: current_user,
-          activity_type: "Update",
-          activity_name: "Payment",
-          activity_description: "Payment Cancelled: #{@payment.id}",
+          notification_class: admin_notification_class,
           outlet: outlet
         ).call
         render json: @payment, each_serializer: payment_serializer
@@ -128,10 +128,10 @@ module Api::V1::Concerns::PaymentsControllerHelper
         ).call
       else
         AdminNotifications::CreateService.new(
+          action_type: "payment",
+          action_id: @payment.id,
           user: current_user,
-          activity_type: "Delete",
-          activity_name: "Payment",
-          activity_description: "Payment Deleted: #{@payment.id}",
+          notification_class: admin_notification_class,
           outlet: outlet
         ).call
       end
@@ -162,4 +162,9 @@ module Api::V1::Concerns::PaymentsControllerHelper
   def payment_params
       raise NotImplementedError, "You must implement the payment_params method"
   end
+
+  def admin_notification_class
+    raise NotImplementedError, "You must implement the admin_notification_class method"
+  end
+end
 end
