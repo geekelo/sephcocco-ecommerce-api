@@ -4,6 +4,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
   included do
     before_action :authenticate_user!, only: [ :create, :update, :destroy ]
     before_action :set_payment, only: [ :update, :destroy ]
+    before_action :set_customer, only: [ :create ]
   end
 
   def index
@@ -18,8 +19,9 @@ module Api::V1::Concerns::PaymentsControllerHelper
 
   def create
     actual_payment_params = payment_params.except(:orders_ids)
+    order_ids = payment_params[:orders_ids]
     if current_user.sephcocco_user_role.name == "admin"
-      payment = @customer.send(payment_association).new(actual_payment_params)
+      payment = @customer&.send(payment_association)&.new(actual_payment_params) || payment_class.new(actual_payment_params)
       if payment.save
         AdminActivities::CreateService.new(
           user: current_user,
@@ -28,8 +30,8 @@ module Api::V1::Concerns::PaymentsControllerHelper
           activity_description: "Payment Created: #{payment.id}",
           outlet: outlet
         ).call
-        if payment_params[:orders_ids].present?
-          payment_params[:orders_ids].each do |order_id|
+        if order_ids.present?
+          order_ids.each do |order_id|
             order = order_class.find(order_id)
             order.update(status: "paid")
             payment.orders << order
@@ -49,8 +51,8 @@ module Api::V1::Concerns::PaymentsControllerHelper
           activity_description: "Payment Created: #{payment.id}",
           outlet: outlet
         ).call
-        if payment_params[:orders_ids].present?
-          payment_params[:orders_ids].each do |order_id|
+        if order_ids.present?
+          order_ids.each do |order_id|
             order = order_class.find(order_id)
             order.update(status: "paid")
             payment.orders << order
