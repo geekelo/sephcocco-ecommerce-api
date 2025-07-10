@@ -4,7 +4,8 @@ module PaymentModelHelper
   included do
     before_create :set_default_status
     after_save :set_status
-    after_save :update_order_status
+    # Temporarily disabled to debug the "can't cast Hash" error
+    # after_save :update_order_status
   end
 
   private
@@ -40,13 +41,19 @@ module PaymentModelHelper
   end
 
   def update_orders_to(new_status, remove:)
+    return unless orders.is_a?(Array)
+    
     orders.each do |order_id|
-      order = associated_order_class.find(order_id)
-      order.update(status: new_status)
-      order.stages ||= []
-      order.stages << { new_status => Time.current } unless order.stages.any? { |h| h.key?(new_status) }
-      order.stages.delete_if { |h| h.key?(remove) }
-      order.save if order.changed? || order.stages_changed?
+      begin
+        order = associated_order_class.find(order_id)
+        order.update(status: new_status)
+        order.stages ||= []
+        order.stages << { new_status => Time.current } unless order.stages.any? { |h| h.key?(new_status) }
+        order.stages.delete_if { |h| h.key?(remove) }
+        order.save if order.changed? || order.stages_changed?
+      rescue ActiveRecord::RecordNotFound
+        Rails.logger.warn "Order not found: #{order_id}"
+      end
     end
   end
 

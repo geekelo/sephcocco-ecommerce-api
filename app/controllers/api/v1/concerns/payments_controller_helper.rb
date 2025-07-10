@@ -52,6 +52,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
     else
       # For non-admin users, we need to set the user_id
       payment_params_with_user = actual_payment_params.to_h.merge(sephcocco_user_id: current_user.id)
+      Rails.logger.info "Payment Create - Final Params: #{payment_params_with_user.inspect}"
       payment = current_user.send(payment_association).new(payment_params_with_user)
       if payment.save
         AdminNotifications::CreateService.new(
