@@ -167,4 +167,3 @@ module Api::V1::Concerns::PaymentsControllerHelper
     raise NotImplementedError, "You must implement the admin_notification_class method"
   end
 end
-end
