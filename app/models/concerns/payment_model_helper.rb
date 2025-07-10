@@ -3,7 +3,7 @@ module PaymentModelHelper
 
   included do
     before_create :set_default_status
-    after_save :set_status
+    # after_save :set_status
     # Temporarily disabled to debug the "can't cast Hash" error
     # after_save :update_order_status
   end
