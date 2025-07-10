@@ -9,17 +9,17 @@ module Api::V1::Concerns::PaymentsControllerHelper
   def index
     if current_user.sephcocco_user_role.name == "admin"
       payments = payment_class.all
-      render json: payments, each_serializer: Lounge::Admin::SephcoccoLoungePaymentSerializer
+      render json: payments, each_serializer: payment_serializer
     else
-      payments = current_user.payment_association.all
-      render json: payments, each_serializer: Lounge::User::SephcoccoLoungePaymentSerializer
+      payments = current_user.send(payment_association).all
+      render json: payments, each_serializer: payment_serializer
     end
   end
 
   def create
     actual_payment_params = payment_params.except(:orders_ids)
     if current_user.sephcocco_user_role.name == "admin"
-      payment = @customer.payment_association.new(actual_payment_params)
+      payment = @customer.send(payment_association).new(actual_payment_params)
       if payment.save
         AdminActivities::CreateService.new(
           user: current_user,
@@ -35,12 +35,12 @@ module Api::V1::Concerns::PaymentsControllerHelper
             payment.orders << order
           end
         end
-        render json: payment, each_serializer: Lounge::Admin::SephcoccoLoungePaymentSerializer, status: :created
+        render json: payment, each_serializer: payment_serializer, status: :created
       else
         render json: payment.errors, status: :unprocessable_entity
       end
     else
-      payment = current_user.payment_association.new(actual_payment_params)
+      payment = current_user.send(payment_association).new(actual_payment_params)
       if payment.save
         AdminNotifications::CreateService.new(
           user: current_user,
@@ -56,7 +56,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
             payment.orders << order
           end
         end
-        render json: payment, each_serializer: Lounge::Admin::SephcoccoLoungePaymentSerializer, status: :created
+        render json: payment, each_serializer: payment_serializer, status: :created
       else
           render json: payment.errors, status: :unprocessable_entity
       end
@@ -87,7 +87,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
           activity_description: "Payment #{status}ed: #{@payment.id}",
           outlet: outlet
         ).call
-        render json: @payment, each_serializer: Lounge::Admin::SephcoccoLoungePaymentSerializer
+        render json: @payment, each_serializer: payment_serializer
       else
         AdminNotifications::CreateService.new(
           user: current_user,
@@ -96,7 +96,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
           activity_description: "Payment Cancelled: #{@payment.id}",
           outlet: outlet
         ).call
-        render json: @payment, each_serializer: Lounge::User::SephcoccoLoungePaymentSerializer
+        render json: @payment, each_serializer: payment_serializer
       end
     else
       render json: @payment.errors, status: :unprocessable_entity
@@ -134,7 +134,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
     if current_user.sephcocco_user_role.name == "admin"
         @payment = payment_class.find(params[:id])
     else
-        @payment = current_user.payment_association.find_by(id: params[:id])
+        @payment = current_user.send(payment_association).find_by(id: params[:id])
     end
   end
 
