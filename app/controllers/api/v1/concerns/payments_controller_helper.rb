@@ -18,8 +18,8 @@ module Api::V1::Concerns::PaymentsControllerHelper
   end
 
   def create
-    actual_payment_params = payment_params.except(:orders_ids)
     order_ids = payment_params[:orders_ids]
+    actual_payment_params = payment_params.except(:orders_ids).merge(orders: order_ids || [])
     if current_user.sephcocco_user_role.name == "admin"
       payment = @customer&.send(payment_association)&.new(actual_payment_params) || payment_class.new(actual_payment_params)
       if payment.save
