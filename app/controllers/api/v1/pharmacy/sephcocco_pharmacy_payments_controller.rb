@@ -4,7 +4,7 @@ class Api::V1::Pharmacy::SephcoccoPharmacyPaymentsController < ApplicationContro
   private
 
   def payment_class
-    SephcoccoPharmacyPayment
+    Pharmacy::SephcoccoPharmacyPayment
   end
 
   def payment_association
@@ -12,11 +12,11 @@ class Api::V1::Pharmacy::SephcoccoPharmacyPaymentsController < ApplicationContro
   end
 
   def order_class
-    SephcoccoPharmacyOrder
+    Pharmacy::SephcoccoPharmacyOrder
   end
 
   def outlet
-    "Pharmacy"
+    'pharmacy'
   end
 
   def payment_serializer

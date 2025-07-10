@@ -4,7 +4,7 @@ class Api::V1::Lounge::SephcoccoLoungePaymentsController < ApplicationController
   private
 
   def payment_class
-    SephcoccoLoungePayment
+    Lounge::SephcoccoLoungePayment
   end
 
   def payment_association
@@ -12,11 +12,11 @@ class Api::V1::Lounge::SephcoccoLoungePaymentsController < ApplicationController
   end
 
   def order_class
-    SephcoccoLoungeOrder
+    Lounge::SephcoccoLoungeOrder
   end
 
   def outlet
-    "Lounge"
+    'lounge'
   end
   
   def payment_serializer

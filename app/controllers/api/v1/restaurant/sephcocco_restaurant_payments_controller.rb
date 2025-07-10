@@ -4,7 +4,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantPaymentsController < ApplicationCo
   private
 
   def payment_class
-    SephcoccoRestaurantPayment
+    Restaurant::SephcoccoRestaurantPayment
   end
 
   def payment_association
@@ -12,7 +12,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantPaymentsController < ApplicationCo
   end
 
   def order_class
-    SephcoccoRestaurantOrder
+    Restaurant::SephcoccoRestaurantOrder
   end
 
   def outlet

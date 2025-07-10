@@ -28,9 +28,9 @@ class SephcoccoUser < ApplicationRecord
   has_many :sephcocco_pharmacy_admin_activities, class_name: "Pharmacy::SephcoccoPharmacyAdminActivity", foreign_key: :sephcocco_user_id
   
   # Payment associations
-  has_many :sephcocco_lounge_payments, class_name: "SephcoccoLoungePayment", foreign_key: :sephcocco_user_id
-  has_many :sephcocco_restaurant_payments, class_name: "SephcoccoRestaurantPayment", foreign_key: :sephcocco_user_id
-  has_many :sephcocco_pharmacy_payments, class_name: "SephcoccoPharmacyPayment", foreign_key: :sephcocco_user_id
+  has_many :sephcocco_lounge_payments, class_name: "Lounge::SephcoccoLoungePayment", foreign_key: :sephcocco_user_id
+  has_many :sephcocco_restaurant_payments, class_name: "Restaurant::SephcoccoRestaurantPayment", foreign_key: :sephcocco_user_id
+  has_many :sephcocco_pharmacy_payments, class_name: "Pharmacy::SephcoccoPharmacyPayment", foreign_key: :sephcocco_user_id
   
   # password reset token
   def generate_password_reset_token!
