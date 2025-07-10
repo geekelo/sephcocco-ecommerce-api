@@ -12,27 +12,22 @@ module PaymentModelHelper
   def set_default_status
     self.status ||= "pending"
     self.status_history ||= []
-    self.status_history << { "pending" => Time.current.iso8601 } unless status_history.any? { |h| h.key?("pending") }
+    self.status_history << { status: "pending", timestamp: Time.current.iso8601 } unless status_history.any? { |h| h[:status] == "pending" }
   end
 
   def set_status
     if saved_change_to_status? && status.present?
-      key = status.to_s
-      idx = status_history.index { |h| h.key?(key) }
-
-      if idx
-        self.status_history = status_history[0..idx]
-        self.status_history[idx][key] = Time.current.iso8601
-      else
-        self.status_history << { key => Time.current.iso8601 }
-      end
+      # Remove any existing entries with the same status
+      self.status_history = status_history.reject { |h| h[:status] == status }
+      # Add new status entry
+      self.status_history << { status: status, timestamp: Time.current.iso8601 }
     end
   end
 
   def update_order_status
     return unless respond_to?(:orders)
 
-    if self.status == "paid" || status_history.any? { |h| h.key?("paid") }
+    if self.status == "paid" || status_history.any? { |h| h[:status] == "paid" }
       update_orders_to("paid", remove: "pending")
     else
       update_orders_to("pending", remove: "paid")
@@ -47,8 +42,8 @@ module PaymentModelHelper
         order = associated_order_class.find(order_id)
         order.update(status: new_status)
         order.stages ||= []
-        order.stages << { new_status => Time.current.iso8601 } unless order.stages.any? { |h| h.key?(new_status) }
-        order.stages.delete_if { |h| h.key?(remove) }
+        order.stages << { status: new_status, timestamp: Time.current.iso8601 } unless order.stages.any? { |h| h[:status] == new_status }
+        order.stages.delete_if { |h| h[:status] == remove }
         order.save if order.changed? || order.stages_changed?
       rescue ActiveRecord::RecordNotFound
         Rails.logger.warn "Order not found: #{order_id}"

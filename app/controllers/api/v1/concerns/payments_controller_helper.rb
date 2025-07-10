@@ -21,8 +21,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
     order_ids = payment_params[:orders_ids]
     # Convert UUIDs to strings for the orders array field
     order_strings = order_ids&.map(&:to_s) || []
-    # Temporarily exclude orders field to debug the casting issue
-    actual_payment_params = payment_params.except(:orders_ids).merge(orders: order_ids)
+    actual_payment_params = payment_params.except(:orders_ids).merge(orders: order_strings)
     
     # Debug logging
     Rails.logger.info "Payment Create - Order IDs: #{order_ids.inspect}"
