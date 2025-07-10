@@ -18,5 +18,12 @@ module MigrationHelpers
     def drop_payments_table(prefix:)
       drop_table "#{prefix}_payments"
     end
+
+    def change_orders_and_status_history_to_jsonb(prefix:)
+      change_column "#{prefix}_payments", :orders, :jsonb, default: [], using: 'orders::jsonb'
+      change_column "#{prefix}_payments", :status_history, :jsonb, default: [], using: 'status_history::jsonb'
+    end
+  end
+end
   end
 end

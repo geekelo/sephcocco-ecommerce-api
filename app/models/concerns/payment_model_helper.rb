@@ -3,9 +3,8 @@ module PaymentModelHelper
 
   included do
     before_create :set_default_status
-    # after_save :set_status
-    # Temporarily disabled to debug the "can't cast Hash" error
-    # after_save :update_order_status
+    after_save :set_status
+    after_save :update_order_status
   end
 
   private
@@ -13,7 +12,7 @@ module PaymentModelHelper
   def set_default_status
     self.status ||= "pending"
     self.status_history ||= []
-    self.status_history << { "pending" => Time.current } unless status_history.any? { |h| h.key?("pending") }
+    self.status_history << { "pending" => Time.current.iso8601 } unless status_history.any? { |h| h.key?("pending") }
   end
 
   def set_status
@@ -23,9 +22,9 @@ module PaymentModelHelper
 
       if idx
         self.status_history = status_history[0..idx]
-        self.status_history[idx][key] = Time.current
+        self.status_history[idx][key] = Time.current.iso8601
       else
-        self.status_history << { key => Time.current }
+        self.status_history << { key => Time.current.iso8601 }
       end
     end
   end
@@ -48,7 +47,7 @@ module PaymentModelHelper
         order = associated_order_class.find(order_id)
         order.update(status: new_status)
         order.stages ||= []
-        order.stages << { new_status => Time.current } unless order.stages.any? { |h| h.key?(new_status) }
+        order.stages << { new_status => Time.current.iso8601 } unless order.stages.any? { |h| h.key?(new_status) }
         order.stages.delete_if { |h| h.key?(remove) }
         order.save if order.changed? || order.stages_changed?
       rescue ActiveRecord::RecordNotFound
