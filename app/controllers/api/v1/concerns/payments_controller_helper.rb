@@ -22,6 +22,11 @@ module Api::V1::Concerns::PaymentsControllerHelper
     # Convert UUIDs to strings for the orders array field
     order_strings = order_ids&.map(&:to_s) || []
     actual_payment_params = payment_params.except(:orders_ids).merge(orders: order_strings)
+    
+    # Debug logging
+    Rails.logger.info "Payment Create - Order IDs: #{order_ids.inspect}"
+    Rails.logger.info "Payment Create - Order Strings: #{order_strings.inspect}"
+    Rails.logger.info "Payment Create - Actual Params: #{actual_payment_params.inspect}"
     if current_user.sephcocco_user_role.name == "admin"
       payment = @customer&.send(payment_association)&.new(actual_payment_params) || payment_class.new(actual_payment_params)
       if payment.save
@@ -44,7 +49,9 @@ module Api::V1::Concerns::PaymentsControllerHelper
         render json: payment.errors, status: :unprocessable_entity
       end
     else
-      payment = current_user.send(payment_association).new(actual_payment_params)
+      # For non-admin users, we need to set the user_id
+      payment_params_with_user = actual_payment_params.merge(sephcocco_user_id: current_user.id)
+      payment = current_user.send(payment_association).new(payment_params_with_user)
       if payment.save
         AdminNotifications::CreateService.new(
           user: current_user,
