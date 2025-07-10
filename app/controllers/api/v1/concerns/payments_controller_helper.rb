@@ -19,7 +19,9 @@ module Api::V1::Concerns::PaymentsControllerHelper
 
   def create
     order_ids = payment_params[:orders_ids]
-    actual_payment_params = payment_params.except(:orders_ids).merge(orders: order_ids || [])
+    # Convert UUIDs to strings for the orders array field
+    order_strings = order_ids&.map(&:to_s) || []
+    actual_payment_params = payment_params.except(:orders_ids).merge(orders: order_strings)
     if current_user.sephcocco_user_role.name == "admin"
       payment = @customer&.send(payment_association)&.new(actual_payment_params) || payment_class.new(actual_payment_params)
       if payment.save
