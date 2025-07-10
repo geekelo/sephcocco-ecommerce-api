@@ -25,5 +25,3 @@ module MigrationHelpers
     end
   end
 end
-  end
-end
