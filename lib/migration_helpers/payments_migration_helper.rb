@@ -20,8 +20,13 @@ module MigrationHelpers
     end
 
     def change_orders_and_status_history_to_jsonb(prefix:)
-      change_column "#{prefix}_payments", :orders, :jsonb, default: [], using: 'to_json(orders)'
-      change_column "#{prefix}_payments", :status_history, :jsonb, default: [], using: 'to_json(status_history)'
+      # First change the column type without default
+      change_column "#{prefix}_payments", :orders, :jsonb, using: 'to_json(orders)'
+      change_column "#{prefix}_payments", :status_history, :jsonb, using: 'to_json(status_history)'
+      
+      # Then set the default values
+      change_column_default "#{prefix}_payments", :orders, from: [], to: []
+      change_column_default "#{prefix}_payments", :status_history, from: [], to: []
     end
   end
 end
