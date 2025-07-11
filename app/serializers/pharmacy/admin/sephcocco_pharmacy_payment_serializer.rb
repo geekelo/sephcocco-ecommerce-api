@@ -7,7 +7,7 @@ class Pharmacy::Admin::SephcoccoPharmacyPaymentSerializer < ActiveModel::Seriali
                :updated_at,
                :transaction_id,
                :orders,
-               :payment_method,
+               :payment_method
   attribute :paid_orders
 
 
