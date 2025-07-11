@@ -10,13 +10,33 @@ module Api::V1::Concerns::PaymentsControllerHelper
   def index
     if current_user&.sephcocco_user_role&.name == "admin"
       payments = payment_class.all
-      render json: payments, each_serializer: payment_serializer
     elsif current_user
       payments = current_user.send(payment_association).all
-      render json: payments, each_serializer: payment_serializer
     else
       render json: { error: "Authentication required" }, status: :unauthorized
+      return
     end
+
+    # Apply status filter
+    if params[:filter][:status].present?
+      payments = payments.where(status: params[:filter][:status])
+    end
+
+    # Apply pagination
+    payments = payments.page(params[:page]).per(params[:per_page] || 20)
+
+    render json: {
+      payments: ActiveModelSerializers::SerializableResource.new(
+        payments, 
+        each_serializer: payment_serializer
+      ).as_json,
+      meta: {
+        total_count: payments.total_count,
+        total_pages: payments.total_pages,
+        current_page: payments.current_page,
+        per_page: payments.limit_value
+      }
+    }
   end
 
   def create
