@@ -1,29 +1,31 @@
 class Pharmacy::User::SephcoccoPharmacyPaymentSerializer < ActiveModel::Serializer
-  attributes  :id,
+    attributes  :id,
               :amount,
               :status,
               :created_at,
               :updated_at,
               :sephcocco_user_id,
-              :transaction_id
+              :transaction_id,
+              :orders
 
-  attribute :orders,
-              :paid_orders
+  attribute :paid_orders
 
   def paid_orders
-    object.orders.map do |order|
-      {
-        id: order.id,
-        order_number: order.order_number,
-        status: order.status,
-        total_price: order.total_price,
-        created_at: order.created_at,
-        product: {
-          id: order.sephcocco_pharmacy_product.id,
-          name: order.sephcocco_pharmacy_product.name,
-          main_image_url: order.sephcocco_pharmacy_product.main_image_url,
-        },
-      }
+    return [] unless object.orders.is_a?(Array)
+    
+    object.orders.map do |order_id|
+      begin
+        order = Pharmacy::SephcoccoPharmacyOrder.find(order_id)
+        {
+          id: order.id,
+          order_number: order.order_number,
+          status: order.status,
+          total_price: order.total_price,
+          product_name: order.sephcocco_pharmacy_product.name,
+        }
+      rescue ActiveRecord::RecordNotFound
+        { id: order_id, error: "Order not found" }
+      end
     end
   end
 end
