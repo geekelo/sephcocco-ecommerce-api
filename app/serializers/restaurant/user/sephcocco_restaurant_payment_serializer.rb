@@ -1,5 +1,13 @@
 class Restaurant::User::SephcoccoRestaurantPaymentSerializer < ActiveModel::Serializer
-  attributes  :id, :amount, :status, :created_at, :transaction_id, :updated_at, :sephcocco_user_id, :orders
+  attributes  :id,
+              :amount,
+              :status,
+              :created_at,
+              :transaction_id,
+              :updated_at,
+              :sephcocco_user_id,
+              :orders,
+              :payment_method
 
   attribute :paid_orders
 
@@ -15,11 +23,7 @@ class Restaurant::User::SephcoccoRestaurantPaymentSerializer < ActiveModel::Seri
           status: order.status,
           total_price: order.total_price,
           created_at: order.created_at,
-          product: {
-            id: order.sephcocco_restaurant_product.id,
-            name: order.sephcocco_restaurant_product.name,
-            main_image_url: order.sephcocco_restaurant_product.main_image_url,
-          },
+          product: order.sephcocco_restaurant_product_serializer.as_json
         }
       rescue ActiveRecord::RecordNotFound
         { id: order_id, error: "Order not found" }

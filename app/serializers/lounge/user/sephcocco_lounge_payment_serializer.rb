@@ -1,5 +1,13 @@
 class Lounge::User::SephcoccoLoungePaymentSerializer < ActiveModel::Serializer
-  attributes :id, :amount, :status, :created_at, :transaction_id, :updated_at, :sephcocco_user_id, :orders
+  attributes :id,
+             :amount,
+             :status,
+             :created_at,
+             :transaction_id,
+             :updated_at,
+             :sephcocco_user_id,
+             :orders,
+             :payment_method
 
   attribute :paid_orders
 

@@ -6,8 +6,8 @@ class Pharmacy::Admin::SephcoccoPharmacyPaymentSerializer < ActiveModel::Seriali
                :created_at,
                :updated_at,
                :transaction_id,
-               :orders
-
+               :orders,
+               :payment_method,
   attribute :paid_orders
 
 
@@ -24,11 +24,7 @@ class Pharmacy::Admin::SephcoccoPharmacyPaymentSerializer < ActiveModel::Seriali
           status: order.status,
           total_price: order.total_price,
           created_at: order.created_at,
-          product: {
-            id: order.sephcocco_pharmacy_product.id,
-            name: order.sephcocco_pharmacy_product.name,
-            main_image_url: order.sephcocco_pharmacy_product.main_image_url,
-          },
+          product: order.sephcocco_pharmacy_product_serializer.as_json,
           customer: {
             id: order.sephcocco_user.id,
             name: order.sephcocco_user.name,
