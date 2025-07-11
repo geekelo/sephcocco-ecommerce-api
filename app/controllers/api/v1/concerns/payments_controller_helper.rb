@@ -44,7 +44,23 @@ module Api::V1::Concerns::PaymentsControllerHelper
     # Convert UUIDs to strings for the orders array field
     order_strings = order_ids&.map(&:to_s) || []
     actual_payment_params = payment_params.except(:orders_ids).merge(orders: order_strings)
-    
+    order_total_price = 0
+
+    if order_ids.present?
+      order_ids.each do |order_id|
+        order = order_class.find(order_id)
+        order_total_price += order.total_price
+      end
+    else
+      return render json: { error: "No orders found" }, status: :unprocessable_entity
+    end
+
+    if actual_payment_params[:amount] < order_total_price
+      return render json: { error: "Amount is less than the order total price" }, status: :unprocessable_entity
+    elsif actual_payment_params[:amount] > order_total_price 
+      return render json: { error: "Amount is greater than the order total price" }, status: :unprocessable_entity
+    end
+
     # Debug logging
     Rails.logger.info "Payment Create - Order IDs: #{order_ids.inspect}"
     Rails.logger.info "Payment Create - Order Strings: #{order_strings.inspect}"
