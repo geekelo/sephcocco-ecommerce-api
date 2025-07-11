@@ -2,18 +2,20 @@ module Api::V1::Concerns::PaymentsControllerHelper
   extend ActiveSupport::Concern
 
   included do
-    before_action :authenticate_user!, only: [ :create, :update, :destroy ]
+    before_action :authenticate_user!, only: [ :index, :create, :update, :destroy ]
     before_action :set_payment, only: [ :update, :destroy ]
     before_action :set_customer, only: [ :create ]
   end
 
   def index
-    if current_user.sephcocco_user_role.name == "admin"
+    if current_user&.sephcocco_user_role&.name == "admin"
       payments = payment_class.all
       render json: payments, each_serializer: payment_serializer
-    else
+    elsif current_user
       payments = current_user.send(payment_association).all
       render json: payments, each_serializer: payment_serializer
+    else
+      render json: { error: "Authentication required" }, status: :unauthorized
     end
   end
 
@@ -27,7 +29,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
     Rails.logger.info "Payment Create - Order IDs: #{order_ids.inspect}"
     Rails.logger.info "Payment Create - Order Strings: #{order_strings.inspect}"
     Rails.logger.info "Payment Create - Actual Params: #{actual_payment_params.inspect}"
-    if current_user.sephcocco_user_role.name == "admin"
+    if current_user&.sephcocco_user_role&.name == "admin"
       payment_params_hash = actual_payment_params.to_h
       payment = @customer&.send(payment_association)&.new(payment_params_hash) || payment_class.new(payment_params_hash)
       if payment.save
@@ -92,7 +94,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
         end
       end
       
-      if current_user.sephcocco_user_role.name == "admin"
+      if current_user&.sephcocco_user_role&.name == "admin"
         AdminActivities::CreateService.new(
           user: current_user,
           activity_type: "Update",
@@ -144,7 +146,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
   private
 
   def set_payment
-    if current_user.sephcocco_user_role.name == "admin"
+    if current_user&.sephcocco_user_role&.name == "admin"
         @payment = payment_class.find(params[:id])
     else
         @payment = current_user.send(payment_association).find_by(id: params[:id])
