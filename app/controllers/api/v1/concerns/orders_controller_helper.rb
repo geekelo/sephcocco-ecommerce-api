@@ -140,7 +140,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def pending_orders
     if current_user&.sephcocco_user_role&.name == "admin"
-      order = order_class.where(status: "pending")
+      orders = order_class.where(status: "pending")
       render json: orders, each_serializer: order_serializer_class
     else
       orders = current_user.send(order_association).where(status: "pending")
@@ -150,7 +150,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def paid_orders
     if current_user&.sephcocco_user_role&.name == "admin"
-      order = order_class.where(status: "paid")
+      orders = order_class.where(status: "paid")
       render json: orders, each_serializer: order_serializer_class
     else
       orders = current_user.send(order_association).where(status: "paid") || []
