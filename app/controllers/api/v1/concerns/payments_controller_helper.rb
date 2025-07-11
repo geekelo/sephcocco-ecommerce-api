@@ -22,6 +22,25 @@ module Api::V1::Concerns::PaymentsControllerHelper
       payments = payments.where(status: params[:filter][:status])
     end
 
+    # Apply date filter
+    if params[:filter]&.dig(:start_date).present? && params[:filter]&.dig(:end_date).present?
+      payments = payments.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
+    end
+
+    # Apply payment method filter
+    if params[:filter]&.dig(:payment_method).present?
+      payments = payments.where(payment_method: params[:filter][:payment_method])
+    end
+
+    # Apply search_param filter
+    if params[:filter]&.dig(:search_param).present?
+      term = "%#{params[:filter][:search_param]}%"
+      payments = payments.joins(:sephcocco_user).where(
+        "CAST(payments.amount AS TEXT) ILIKE :term OR payments.transaction_id ILIKE :term OR sephcocco_users.name ILIKE :term",
+        term: term
+      )
+    end    
+
     # Apply pagination
     payments = payments.page(params[:page]).per(params[:per_page] || 20)
 
