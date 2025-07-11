@@ -18,7 +18,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
     end
 
     # Apply status filter
-    if params[:filter][:status].present?
+    if params[:filter]&.dig(:status).present?
       payments = payments.where(status: params[:filter][:status])
     end
 
