@@ -4,7 +4,7 @@ module PaymentModelHelper
   included do
     before_create :set_default_status
     # after_save :set_status
-    after_save :update_order_status
+    # after_save :update_order_status
   end
 
   private

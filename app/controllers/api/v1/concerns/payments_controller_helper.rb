@@ -98,7 +98,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
         if order_ids.present?
           order_ids.each do |order_id|
             order = order_class.find(order_id)
-            order.update(status: "paid")
+            order.update(status: "awaiting payment approval")
             payment.orders << order
           end
         end
@@ -122,7 +122,11 @@ module Api::V1::Concerns::PaymentsControllerHelper
         if order_ids.present?
           order_ids.each do |order_id|
             order = order_class.find(order_id)
-            order.update(status: "paid")
+            if payment.status == "paid"
+              order.update(status: "awaiting payment approval")
+            elsif payment.status == "confirmed"
+              order.update(status: "paid")
+            end
             payment.orders << order
           end
         end
@@ -142,8 +146,8 @@ module Api::V1::Concerns::PaymentsControllerHelper
           @payment.sephcocco_user.update(payment_ref: @payment.sephcocco_user.payment_ref.next)
         elsif status == "cancelled"
           order.update(status: "payment cancelled")
-        elsif status == "pending"
-          order.update(status: "payment pending")
+        elsif status == "paid"
+          order.update(status: "awaiting payment approval")
         elsif status == "declined"
           order.update(status: "payment declined")
         end
