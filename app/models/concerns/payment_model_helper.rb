@@ -3,16 +3,16 @@ module PaymentModelHelper
 
   included do
     before_create :set_default_status
-    after_save :set_status
+    # after_save :set_status
     after_save :update_order_status
   end
 
   private
 
   def set_default_status
-    self.status ||= "pending"
+    self.status ||= "paid"
     self.status_history ||= []
-    self.status_history << { status: "pending", timestamp: Time.current.iso8601 } unless status_history.any? { |h| h[:status] == "pending" }
+    self.status_history << { status: "paid", timestamp: Time.current.iso8601 } unless status_history.any? { |h| h[:status] == "paid" }
   end
 
   def set_status
