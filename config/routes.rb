@@ -21,6 +21,15 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :sephcocco_users, only: [ :update ] do
+        collection do
+          patch "switch_user_role" => "sephcocco_users#switch_user_role"
+          patch "suspend_user" => "sephcocco_users#suspend_user"
+          patch "unsuspend_user" => "sephcocco_users#unsuspend_user"
+          patch "update_user_outlets" => "sephcocco_users#update_user_outlets"
+        end
+      end
+
       # LOUNGE
       namespace :lounge do
         resources :sephcocco_lounge_products do
