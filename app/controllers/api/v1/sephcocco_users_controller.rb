@@ -9,6 +9,7 @@ class Api::V1::SephcoccoUsersController < ApplicationController
       
       # Calculate summary statistics
       total_admins = SephcoccoUser.joins(:sephcocco_user_role).where(sephcocco_user_roles: { name: "admin" }).count
+      total_customers = SephcoccoUser.joins(:sephcocco_user_role).where(sephcocco_user_roles: { name: "user" }).count
       total_users = SephcoccoUser.count
       total_active_accounts = SephcoccoUser.where(suspended: false).count
       total_inactive_accounts = SephcoccoUser.where(suspended: true).count
