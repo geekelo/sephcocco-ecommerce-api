@@ -21,7 +21,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :sephcocco_users, only: [ :update ] do
+      resources :sephcocco_users, only: [ :index, :update ] do
         collection do
           patch "switch_user_role" => "sephcocco_users#switch_user_role"
           patch "suspend_user" => "sephcocco_users#suspend_user"

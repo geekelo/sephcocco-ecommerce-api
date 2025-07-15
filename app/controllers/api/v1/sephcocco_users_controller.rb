@@ -3,6 +3,15 @@ class Api::V1::SephcoccoUsersController < ApplicationController
   before_action :check_admin_role, only: [ :index, :create, :update_user_outlets ]
   before_action :set_user, only: [ :show, :update, :destroy ]
 
+  def index
+    if current_user.sephcocco_user_role.name == "admin"
+      @users = SephcoccoUser.all
+      render json: @users, each_serializer: SephcoccoUserSerializer
+    else
+      render json: { error: "Access denied. Admin role required." }, status: :forbidden
+    end
+  end
+
   def update
     if @user.update(user_params)
       render json: { message: "User outlets updated successfully" }, status: :ok
@@ -77,6 +86,6 @@ class Api::V1::SephcoccoUsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email, :password, :password_confirmation, :name, :address, :phone_number, :whatsapp_number, :role, :outlets)
+    params.require(:user).permit(:email, :password, :password_confirmation, :name, :address, :phone_number, :whatsapp_number, :role, outlets: [])
   end
 end
