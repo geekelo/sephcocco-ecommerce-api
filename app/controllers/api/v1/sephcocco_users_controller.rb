@@ -6,7 +6,26 @@ class Api::V1::SephcoccoUsersController < ApplicationController
   def index
     if current_user.sephcocco_user_role.name == "admin"
       @users = SephcoccoUser.all
-      render json: @users, each_serializer: SephcoccoUserSerializer
+      
+      # Calculate summary statistics
+      total_admins = SephcoccoUser.joins(:sephcocco_user_role).where(sephcocco_user_roles: { name: "admin" }).count
+      total_users = SephcoccoUser.count
+      total_active_accounts = SephcoccoUser.where(suspended: false).count
+      total_inactive_accounts = SephcoccoUser.where(suspended: true).count
+      total_suspended = SephcoccoUser.where(suspended: true).count
+      
+      user_data = {
+        users: ActiveModelSerializers::SerializableResource.new(@users, each_serializer: SephcoccoUserSerializer).as_json,
+        summary: {
+          total_admins: total_admins,
+          total_users: total_users,
+          total_active_accounts: total_active_accounts,
+          total_inactive_accounts: total_inactive_accounts,
+          total_suspended: total_suspended
+        }
+      }
+      
+      render json: user_data, status: :ok
     else
       render json: { error: "Access denied. Admin role required." }, status: :forbidden
     end
