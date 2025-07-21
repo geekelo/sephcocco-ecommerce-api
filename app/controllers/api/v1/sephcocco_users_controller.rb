@@ -1,7 +1,7 @@
 class Api::V1::SephcoccoUsersController < ApplicationController
   before_action :authenticate_user!
   before_action :check_admin_role, only: [ :index, :create, :update_user_outlets ]
-  before_action :set_user, only: [ :show, :update, :destroy ]
+  before_action :set_user, only: [ :show, :update, :destroy, :update_user_outlets, :switch_user_role, :suspend_user, :unsuspend_user ]
 
   def index
     if current_user.sephcocco_user_role.name == "admin"
@@ -34,19 +34,6 @@ class Api::V1::SephcoccoUsersController < ApplicationController
 
   def update
     if @user.update(user_params)
-      render json: { message: "User outlets updated successfully" }, status: :ok
-    else
-      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
-    end
-  end
-
-  def update_user_outlets
-    if params[:user][:outlets].present?
-      outlets = SephcoccoOutlet.where(name: params[:user][:outlets])
-      @user.sephcocco_outlets |= outlets if outlets.any?
-    end
-
-    if @user.save
       render json: { message: "User outlets updated successfully" }, status: :ok
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity

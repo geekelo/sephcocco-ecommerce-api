@@ -31,6 +31,8 @@ module Api::V1::Concerns::MessageControllerHelper
       outlet: outlet
     ).call
 
+    # Broadcast the message in real-time
+    Messaging::BroadcastService.new(message, outlet.name.downcase).call
 
     render json: message, serializer: serializer_class, status: :created
   rescue ActiveRecord::RecordInvalid => e
