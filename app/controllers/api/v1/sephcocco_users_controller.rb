@@ -22,7 +22,8 @@ class Api::V1::SephcoccoUsersController < ApplicationController
           total_users: total_users,
           total_active_accounts: total_active_accounts,
           total_inactive_accounts: total_inactive_accounts,
-          total_suspended: total_suspended
+          total_suspended: total_suspended,
+          total_customers: total_customers
         }
       }
       
