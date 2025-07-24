@@ -11,9 +11,9 @@ class RenameUserForeignKeyInMessages < ActiveRecord::Migration[7.2]
     rename_index :sephcocco_restaurant_messages, :restaurant_messages_on_sephcocco_users, :index_sephcocco_restaurant_messages_on_sephcocco_user_id
     
     # Update foreign key constraints
-    remove_foreign_key :sephcocco_lounge_messages, column: :sephcocco_user_id
-    remove_foreign_key :sephcocco_pharmacy_messages, column: :sephcocco_user_id
-    remove_foreign_key :sephcocco_restaurant_messages, column: :sephcocco_user_id
+    remove_foreign_key :sephcocco_lounge_messages, column: :sephcocco_users_id
+    remove_foreign_key :sephcocco_pharmacy_messages, column: :sephcocco_users_id
+    remove_foreign_key :sephcocco_restaurant_messages, column: :sephcocco_users_id
     
     add_foreign_key :sephcocco_lounge_messages, :sephcocco_users, column: :sephcocco_user_id
     add_foreign_key :sephcocco_pharmacy_messages, :sephcocco_users, column: :sephcocco_user_id
