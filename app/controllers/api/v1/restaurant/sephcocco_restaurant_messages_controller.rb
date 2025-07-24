@@ -30,4 +30,8 @@ class Api::V1::Restaurant::SephcoccoRestaurantMessagesController < ApplicationCo
   def user_serializer_class
     Restaurant::User::SephcoccoRestaurantMessageSerializer
   end
+
+  def product_association_name
+    :sephcocco_restaurant_product
+  end
 end

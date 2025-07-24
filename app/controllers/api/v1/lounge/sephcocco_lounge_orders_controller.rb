@@ -13,7 +13,7 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
   end
 
   def outlet
-    Lounge
+    "Lounge"
   end
 
   def order_serializer_class

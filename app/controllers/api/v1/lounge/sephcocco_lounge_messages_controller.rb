@@ -30,4 +30,8 @@ class Api::V1::Lounge::SephcoccoLoungeMessagesController < ApplicationController
   def user_serializer_class
     Lounge::User::SephcoccoLoungeMessageSerializer
   end
+
+  def product_association_name
+    :sephcocco_lounge_product
+  end
 end

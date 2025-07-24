@@ -30,4 +30,8 @@ class Api::V1::Pharmacy::SephcoccoPharmacyMessagesController < ApplicationContro
   def user_serializer_class
     Pharmacy::User::SephcoccoPharmacyMessageSerializer
   end
+
+  def product_association_name
+    :sephcocco_pharmacy_product
+  end
 end

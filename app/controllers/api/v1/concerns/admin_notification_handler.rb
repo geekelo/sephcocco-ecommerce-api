@@ -12,13 +12,18 @@ module Api::V1::Concerns::AdminNotificationHandler
   end
 
   def update_notification
-    Rails.logger.info "Updating notification: #{@notification.inspect}"
-    Rails.logger.info "Notification params: #{notification_params.inspect}"
-    
     if @notification.update(notification_params)
+      if admin?
+        AdminActivities::CreateService.new(
+          user: current_user,
+          activity_type: "Update",
+          activity_name: "Notification",
+          activity_description: "Notification Viewed: #{@notification.message}",
+          outlet: outlet
+        ).call
+      end
       render json: @notification, status: :ok
     else
-      Rails.logger.error "Failed to update notification: #{@notification.errors.full_messages}"
       render json: { errors: @notification.errors.full_messages }, status: :unprocessable_entity
     end
   end

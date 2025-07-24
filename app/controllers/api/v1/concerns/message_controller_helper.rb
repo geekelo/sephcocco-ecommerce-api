@@ -7,14 +7,91 @@ module Api::V1::Concerns::MessageControllerHelper
 
   def index
     messages = if admin?
-      message_class.pluck(:id, product_foreign_key, :created_at, :status)
+      # Admins can see all messages with filtering options
+      messages_query = message_class.includes(:sephcocco_user, product_association_name)
+      
+      # Apply filters
+      messages_query = messages_query.where(status: params[:status]) if params[:status].present?
+      messages_query = messages_query.where(product_foreign_key => params[:product_id]) if params[:product_id].present?
+      messages_query = messages_query.where(sephcocco_user_id: params[:user_id]) if params[:user_id].present?
+      
+      # Apply pagination
+      messages_query = messages_query.page(params[:page]).per(params[:per_page] || 20)
+      
+      messages_query
     else
+      # Regular users see only their own messages
       current_user.send(user_association_name)
-                  .where(status: "open")
-                  .pluck(:id, product_foreign_key, :created_at, :status)
+                  .includes(product_association_name)
+                  .where(status: params[:status] || "open")
+                  .page(params[:page])
+                  .per(params[:per_page] || 20)
     end
 
-    render json: messages, each_serializer: serializer_class
+    render json: {
+      messages: ActiveModelSerializers::SerializableResource.new(
+        messages,
+        each_serializer: serializer_class,
+        adapter: :attributes
+      ).as_json,
+      meta: {
+        total_count: messages.total_count,
+        total_pages: messages.total_pages,
+        current_page: messages.current_page,
+        per_page: messages.limit_value
+      }
+    }
+  end
+
+  def get_messages
+    # Get messages for a specific conversation/thread
+    message_id = params[:message_id]
+    product_id = params[:product_id]
+    
+    if message_id.present?
+      # Get messages from a specific thread
+      message = message_class.find(message_id)
+      authorize_message_access!(message)
+      
+      render json: {
+        message: ActiveModelSerializers::SerializableResource.new(
+          message,
+          serializer: user_serializer_class,
+          adapter: :attributes
+        ).as_json
+      }
+    elsif product_id.present?
+      # Get messages for a specific product
+      messages = if admin?
+        message_class.includes(:sephcocco_user)
+                    .where(product_foreign_key => product_id)
+                    .order(created_at: :desc)
+                    .page(params[:page])
+                    .per(params[:per_page] || 20)
+      else
+        current_user.send(user_association_name)
+                    .where(product_foreign_key => product_id)
+                    .order(created_at: :desc)
+                    .page(params[:page])
+                    .per(params[:per_page] || 20)
+      end
+      
+      render json: {
+        messages: ActiveModelSerializers::SerializableResource.new(
+          messages,
+          each_serializer: user_serializer_class,
+          adapter: :attributes
+        ).as_json,
+        meta: {
+          total_count: messages.total_count,
+          total_pages: messages.total_pages,
+          current_page: messages.current_page,
+          per_page: messages.limit_value
+        }
+      }
+    else
+      render json: { error: "Either message_id or product_id is required" }, status: :bad_request
+    end
   end
 
   def show
@@ -92,5 +169,15 @@ module Api::V1::Concerns::MessageControllerHelper
 
   def user_serializer_class
     raise NotImplementedError, "Define `user_serializer_class` in your controller"
+  end
+
+  def product_association_name
+    raise NotImplementedError, "Define `product_association_name` in your controller"
+  end
+
+  def authorize_message_access!(message)
+    unless admin? || message.sephcocco_user_id == current_user.id
+      raise ActiveRecord::RecordNotFound, "Not authorized to access this message"
+    end
   end
 end

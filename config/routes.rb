@@ -61,6 +61,11 @@ Rails.application.routes.draw do
         resources :sephcocco_lounge_faqs
         resources :sephcocco_lounge_admin_notifications, only: [ :index, :update ]
         resources :sephcocco_lounge_admin_activities, only: [ :index ]
+        resources :sephcocco_lounge_messages do
+          collection do
+            get :get_messages
+          end
+        end
         resources :sephcocco_lounge_analytics, only: [ :index ] do
           collection do
             get :total_products
@@ -105,6 +110,11 @@ Rails.application.routes.draw do
         resources :sephcocco_pharmacy_faq_categories
         resources :sephcocco_pharmacy_admin_notifications, only: [ :index, :update ]
         resources :sephcocco_pharmacy_admin_activities, only: [ :index ]
+        resources :sephcocco_pharmacy_messages do
+          collection do
+            get :get_messages
+          end
+        end
         resources :sephcocco_pharmacy_analytics, only: [ :index ] do
           collection do
             get :total_products
@@ -150,6 +160,11 @@ Rails.application.routes.draw do
         resources :sephcocco_restaurant_faq_categories
         resources :sephcocco_restaurant_admin_notifications, only: [ :index, :update ]
         resources :sephcocco_restaurant_admin_activities, only: [ :index ]
+        resources :sephcocco_restaurant_messages do
+          collection do
+            get :get_messages
+          end
+        end
         resources :sephcocco_restaurant_analytics, only: [ :index ] do
           collection do
             get :total_products
