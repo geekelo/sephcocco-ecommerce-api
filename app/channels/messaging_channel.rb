@@ -44,7 +44,7 @@ class MessagingChannel < ApplicationCable::Channel
         status: 'open'
       ) do |thread|
         # Set product reference if provided
-        if product_id
+        if product_id.present?
           product_class = case outlet_type
                          when 'lounge'
                            Lounge::SephcoccoLoungeProduct
@@ -53,7 +53,13 @@ class MessagingChannel < ApplicationCable::Channel
                          when 'restaurant'
                            Restaurant::SephcoccoRestaurantProduct
                          end
-          thread.send("#{product_class.table_name.singularize}=", product_class.find(product_id))
+          begin
+            product = product_class.find(product_id)
+            thread.send("#{product_class.table_name.singularize}=", product)
+          rescue ActiveRecord::RecordNotFound
+            # Product not found, continue without product association
+            Rails.logger.warn "Product with ID #{product_id} not found for #{outlet_type}"
+          end
         end
       end
 
