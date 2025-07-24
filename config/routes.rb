@@ -61,6 +61,19 @@ Rails.application.routes.draw do
         resources :sephcocco_lounge_faqs
         resources :sephcocco_lounge_admin_notifications, only: [ :index, :update ]
         resources :sephcocco_lounge_admin_activities, only: [ :index ]
+        resources :sephcocco_lounge_analytics, only: [ :index ] do
+          collection do
+            get :total_products
+            get :total_payment_received
+            get :total_orders
+            get :total_unresolved_chats
+            get :unresolved_chats
+            get :monthly_payments
+            get :monthly_orders
+            get :yearly_payments
+            get :yearly_orders
+          end
+        end
       end
 
       # PHARMACY
@@ -92,6 +105,19 @@ Rails.application.routes.draw do
         resources :sephcocco_pharmacy_faq_categories
         resources :sephcocco_pharmacy_admin_notifications, only: [ :index, :update ]
         resources :sephcocco_pharmacy_admin_activities, only: [ :index ]
+        resources :sephcocco_pharmacy_analytics, only: [ :index ] do
+          collection do
+            get :total_products
+            get :total_payment_received
+            get :total_orders
+            get :total_unresolved_chats
+            get :unresolved_chats
+            get :monthly_payments
+            get :monthly_orders
+            get :yearly_payments
+            get :yearly_orders
+          end
+        end
       end
 
       # RESTAURANT
@@ -124,6 +150,19 @@ Rails.application.routes.draw do
         resources :sephcocco_restaurant_faq_categories
         resources :sephcocco_restaurant_admin_notifications, only: [ :index, :update ]
         resources :sephcocco_restaurant_admin_activities, only: [ :index ]
+        resources :sephcocco_restaurant_analytics, only: [ :index ] do
+          collection do
+            get :total_products
+            get :total_payment_received
+            get :total_orders
+            get :total_unresolved_chats
+            get :unresolved_chats
+            get :monthly_payments
+            get :monthly_orders
+            get :yearly_payments
+            get :yearly_orders
+          end
+        end
       end
     end
   end
