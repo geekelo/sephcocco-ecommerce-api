@@ -71,6 +71,7 @@ class MessagingChannel < ApplicationCable::Channel
         user_id: current_user.id,
         user_name: current_user.name,
         user_email: current_user.email,
+        user_role: current_user.sephcocco_user_role.name,
         timestamp: Time.current.iso8601
       }
 
@@ -85,7 +86,8 @@ class MessagingChannel < ApplicationCable::Channel
         user: {
           id: current_user.id,
           name: current_user.name,
-          email: current_user.email
+          email: current_user.email,
+          role: current_user.sephcocco_user_role.name
         },
         created_at: new_chat[:timestamp],
         message_type: new_chat[:message_type],
