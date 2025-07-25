@@ -57,7 +57,11 @@ Rails.application.routes.draw do
             get "paid" => "sephcocco_lounge_orders#paid_orders"
           end
         end
-        resources :sephcocco_lounge_payments
+        resources :sephcocco_lounge_payments do
+          collection do
+            get :verify
+          end
+        end
         resources :sephcocco_lounge_faqs
         resources :sephcocco_lounge_admin_notifications, only: [ :index, :update ]
         resources :sephcocco_lounge_admin_activities, only: [ :index ]
@@ -105,7 +109,11 @@ Rails.application.routes.draw do
             get "paid" => "sephcocco_pharmacy_orders#paid_orders"
           end
         end
-        resources :sephcocco_pharmacy_payments
+        resources :sephcocco_pharmacy_payments do
+          collection do
+            get :verify
+          end
+        end
         resources :sephcocco_pharmacy_faqs
         resources :sephcocco_pharmacy_faq_categories
         resources :sephcocco_pharmacy_admin_notifications, only: [ :index, :update ]
@@ -155,7 +163,11 @@ Rails.application.routes.draw do
           end
         end
 
-        resources :sephcocco_restaurant_payments
+        resources :sephcocco_restaurant_payments do
+          collection do
+            get :verify
+          end
+        end
         resources :sephcocco_restaurant_faqs
         resources :sephcocco_restaurant_faq_categories
         resources :sephcocco_restaurant_admin_notifications, only: [ :index, :update ]

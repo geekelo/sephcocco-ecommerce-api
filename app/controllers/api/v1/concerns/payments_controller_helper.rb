@@ -1,8 +1,12 @@
+require 'net/http'
+require 'uri'
+require 'json'
+
 module Api::V1::Concerns::PaymentsControllerHelper
   extend ActiveSupport::Concern
 
   included do
-    before_action :authenticate_user!, only: [ :index, :create, :update, :destroy ]
+    before_action :authenticate_user!, only: [ :index, :create, :update, :destroy, :verify ]
     before_action :set_payment, only: [ :update, :destroy ]
     before_action :set_customer, only: [ :create ]
   end
@@ -200,6 +204,65 @@ module Api::V1::Concerns::PaymentsControllerHelper
     else
         render json: { error: "Failed to delete payment" }, status: :unprocessable_entity
     end
+  end
+
+  def verify
+    reference = params[:reference]
+
+    if reference.blank?
+      return render json: { error: 'Reference is required' }, status: :bad_request
+    end
+
+    uri = URI.parse("https://api.paystack.co/transaction/verify/#{reference}")
+    request = Net::HTTP::Get.new(uri)
+    request['Authorization'] = "Bearer #{ENV['PAYSTACK_SECRET_KEY']}"
+
+    response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+      http.request(request)
+    end
+
+    body = JSON.parse(response.body)
+
+    if body['data'] && body['data']['status'] == 'success'
+      # ✅ Payment is verified and successful
+      # Find the payment by reference and update it
+      payment = payment_class.find_by(id: params[:id])
+      
+      if payment
+        payment.update(status: "payment confirmed")
+        payment.orders.each do |order|
+          order.update(status: "payment confirmed")
+        end
+        payment.sephcocco_user.update(payment_ref: payment.sephcocco_user.payment_ref.next)
+        
+        # Create admin activity/notification
+        if current_user&.sephcocco_user_role&.name == "admin"
+          AdminActivities::CreateService.new(
+            user: current_user,
+            activity_type: "Update",
+            activity_name: "Payment",
+            activity_description: "Payment verified and confirmed: #{payment.id}",
+            outlet: outlet
+          ).call
+        else
+          AdminNotifications::CreateService.new(
+            action_type: "payment",
+            action_id: payment.id,
+            user: current_user,
+            notification_class: admin_notification_class,
+            outlet: outlet
+          ).call
+        end
+        
+        render json: { message: 'Payment verified and confirmed', data: body['data'], payment: payment }, status: :ok
+      else
+        render json: { error: 'Payment not found in database', data: body['data'] }, status: :not_found
+      end
+    else
+      render json: { error: 'Payment verification failed', data: body['data'] }, status: :unprocessable_entity
+    end
+  rescue StandardError => e
+    render json: { error: e.message }, status: :internal_server_error
   end
 
   private
