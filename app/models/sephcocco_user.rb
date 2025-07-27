@@ -10,6 +10,7 @@ class SephcoccoUser < ApplicationRecord
   has_many :ordered_lounge_products, through: :lounge_orders, source: :sephcocco_lounge_product
   has_many :sephcocco_lounge_orders, class_name: "Lounge::SephcoccoLoungeOrder", foreign_key: :sephcocco_user_id
   has_many :sephcocco_lounge_admin_activities, class_name: "Lounge::SephcoccoLoungeAdminActivity", foreign_key: :sephcocco_user_id
+  has_many :sephcocco_lounge_messages, class_name: "Lounge::SephcoccoLoungeMessage", foreign_key: :sephcocco_user_id
 
   # Restaurant associations
   has_many :restaurant_product_likes, class_name: "Restaurant::SephcoccoRestaurantProductLike", foreign_key: :sephcocco_user_id, dependent: :destroy
@@ -18,6 +19,7 @@ class SephcoccoUser < ApplicationRecord
   has_many :ordered_restaurant_products, through: :restaurant_orders, source: :sephcocco_restaurant_product
   has_many :sephcocco_restaurant_orders, class_name: "Restaurant::SephcoccoRestaurantOrder", foreign_key: :sephcocco_user_id
   has_many :sephcocco_restaurant_admin_activities, class_name: "Restaurant::SephcoccoRestaurantAdminActivity", foreign_key: :sephcocco_user_id
+  has_many :sephcocco_restaurant_messages, class_name: "Restaurant::SephcoccoRestaurantMessage", foreign_key: :sephcocco_user_id
 
   # Pharmacy associations
   has_many :pharmacy_product_likes, class_name: "Pharmacy::SephcoccoPharmacyProductLike", foreign_key: :sephcocco_user_id, dependent: :destroy
@@ -26,6 +28,7 @@ class SephcoccoUser < ApplicationRecord
   has_many :ordered_pharmacy_products, through: :pharmacy_orders, source: :sephcocco_pharmacy_product
   has_many :sephcocco_pharmacy_orders, class_name: "Pharmacy::SephcoccoPharmacyOrder", foreign_key: :sephcocco_user_id
   has_many :sephcocco_pharmacy_admin_activities, class_name: "Pharmacy::SephcoccoPharmacyAdminActivity", foreign_key: :sephcocco_user_id
+  has_many :sephcocco_pharmacy_messages, class_name: "Pharmacy::SephcoccoPharmacyMessage", foreign_key: :sephcocco_user_id
   
   # Payment associations
   has_many :sephcocco_lounge_payments, class_name: "Lounge::SephcoccoLoungePayment", foreign_key: :sephcocco_user_id
