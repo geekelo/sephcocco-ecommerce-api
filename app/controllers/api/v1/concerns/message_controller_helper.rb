@@ -43,6 +43,59 @@ module Api::V1::Concerns::MessageControllerHelper
     }
   end
 
+  # Admin-specific endpoint to get all user threads
+  def user_threads
+    return render json: { error: "Admin access required" }, status: :forbidden unless admin?
+
+    # Get all unique users who have message threads
+    user_threads = message_class.includes(:sephcocco_user)
+                                .group(:sephcocco_user_id)
+                                .select('sephcocco_user_id, MAX(created_at) as last_activity, COUNT(*) as message_count')
+                                .order('last_activity DESC')
+
+    # Apply status filter
+    user_threads = user_threads.where(status: params[:status]) if params[:status].present?
+
+    # Apply pagination
+    user_threads = user_threads.page(params[:page]).per(params[:per_page] || 20)
+
+    # Get detailed thread information for each user
+    threads_data = user_threads.map do |thread_info|
+      user = SephcoccoUser.find(thread_info.sephcocco_user_id)
+      latest_message = message_class.where(sephcocco_user_id: thread_info.sephcocco_user_id)
+                                   .order(created_at: :desc)
+                                   .first
+
+      # Extract last message content from chats JSONB array
+      last_message_content = nil
+      if latest_message&.chats&.present?
+        chats_array = latest_message.chats.is_a?(String) ? JSON.parse(latest_message.chats) : latest_message.chats
+        last_message_content = chats_array.last&.dig('content') if chats_array.any?
+      end
+
+      {
+        user_id: thread_info.sephcocco_user_id,
+        user_name: user.name,
+        user_email: user.email,
+        last_activity: thread_info.last_activity,
+        message_count: thread_info.message_count,
+        status: latest_message&.status || 'open',
+        last_message: last_message_content,
+        unread_count: message_class.where(sephcocco_user_id: thread_info.sephcocco_user_id, status: 'unread').count
+      }
+    end
+
+    render json: {
+      user_threads: threads_data,
+      meta: {
+        total_count: user_threads.total_count,
+        total_pages: user_threads.total_pages,
+        current_page: user_threads.current_page,
+        per_page: user_threads.limit_value
+      }
+    }
+  end
+
   def get_messages
     # Get messages for a specific conversation/thread
     message_id = params[:message_id]

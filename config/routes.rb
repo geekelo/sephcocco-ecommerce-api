@@ -68,6 +68,7 @@ Rails.application.routes.draw do
         resources :sephcocco_lounge_messages do
           collection do
             get :get_messages
+            get :user_threads
           end
         end
         resources :sephcocco_lounge_analytics, only: [ :index ] do
@@ -121,6 +122,7 @@ Rails.application.routes.draw do
         resources :sephcocco_pharmacy_messages do
           collection do
             get :get_messages
+            get :user_threads
           end
         end
         resources :sephcocco_pharmacy_analytics, only: [ :index ] do
@@ -175,6 +177,7 @@ Rails.application.routes.draw do
         resources :sephcocco_restaurant_messages do
           collection do
             get :get_messages
+            get :user_threads
           end
         end
         resources :sephcocco_restaurant_analytics, only: [ :index ] do
