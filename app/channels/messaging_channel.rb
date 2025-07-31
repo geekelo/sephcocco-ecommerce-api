@@ -26,10 +26,15 @@ class MessagingChannel < ApplicationCable::Channel
 
   def receive(data)
     # Handle incoming messages from clients
-    message_data = data['message']
+    Rails.logger.info "Received WebSocket data: #{data.inspect}"
+    
+    # Support both formats: data['message'] and direct data
+    message_data = data['message'] || data
     outlet_type = data['outlet_type'] # 'lounge', 'pharmacy', 'restaurant'
     product_id = data['product_id'] # Optional product reference
     message_id = data['message_id'] # Optional: for admin responding to existing thread
+    
+    Rails.logger.info "Processed data - message_data: #{message_data.inspect}, outlet_type: #{outlet_type}"
     
     # Create the message in the database
     message_class = case outlet_type
@@ -41,7 +46,7 @@ class MessagingChannel < ApplicationCable::Channel
                      Restaurant::SephcoccoRestaurantMessage
                    end
 
-    if message_class && current_user
+    if message_class && current_user && message_data && message_data['content'].present?
       # Find or create message thread
       if message_id.present?
         # Admin responding to existing thread
@@ -122,58 +127,8 @@ class MessagingChannel < ApplicationCable::Channel
       message_thread.chats << new_chat
       message_thread.save!
 
-      # Broadcast the message to relevant subscribers
-      broadcast_data = {
-        id: message_thread.id,
-        chat_id: new_chat[:id],
-        content: new_chat[:content],
-        user: {
-          id: current_user.id,
-          name: current_user.name,
-          email: current_user.email,
-          role: current_user.sephcocco_user_role.name
-        },
-        created_at: new_chat[:timestamp],
-        message_type: new_chat[:message_type],
-        status: message_thread.status,
-        outlet_type: outlet_type,
-        message_thread_id: message_thread.id,
-        user_id: message_thread.sephcocco_user_id
-      }
-
-      if current_user.sephcocco_user_role.name == "admin"
-        # Admin message - broadcast to the specific user
-        ActionCable.server.broadcast(
-          "messaging_user_#{message_thread.sephcocco_user_id}",
-          broadcast_data
-        )
-        
-        # Also broadcast to admin channel for admin UI updates
-        ActionCable.server.broadcast(
-          "messaging_admin_#{outlet_type}",
-          broadcast_data
-        )
-      else
-        # User message - broadcast to the user
-        ActionCable.server.broadcast(
-          "messaging_user_#{current_user.id}",
-          broadcast_data
-        )
-        
-        # Broadcast to admin channel with user-specific data
-        # This allows admins to see which user sent the message
-        admin_broadcast_data = broadcast_data.merge({
-          action: 'new_user_message',
-          user_thread_id: message_thread.id,
-          user_name: current_user.name,
-          user_email: current_user.email
-        })
-        
-        ActionCable.server.broadcast(
-          "messaging_admin_#{outlet_type}",
-          admin_broadcast_data
-        )
-      end
+      # Use the broadcast service to ensure consistent broadcasting
+      Messaging::BroadcastService.new(message_thread, outlet_type).call
     end
   end
 end 
