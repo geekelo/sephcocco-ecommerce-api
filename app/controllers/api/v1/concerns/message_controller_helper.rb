@@ -178,6 +178,9 @@ module Api::V1::Concerns::MessageControllerHelper
       outlet: outlet
     ).call
 
+    # Broadcast the message update in real-time
+    Messaging::BroadcastService.new(message, outlet.name.downcase).call
+
     render json: message, serializer: serializer_class
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Not authorized or message not found" }, status: :forbidden

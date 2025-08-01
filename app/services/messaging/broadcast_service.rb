@@ -43,14 +43,16 @@ class Messaging::BroadcastService
       user: {
         id: @message.sephcocco_user&.id || 'unknown',
         name: @message.sephcocco_user&.name || 'Unknown',
-        email: @message.sephcocco_user&.email || ''
+        email: @message.sephcocco_user&.email || '',
+        role: @message.sephcocco_user&.role || 'user'
       },
       created_at: latest_chat['timestamp'] || Time.current.iso8601,
       message_type: latest_chat['message_type'] || 'text',
       status: @message.status,
       outlet_type: 'lounge',
       message_thread_id: @message.id,
-      user_id: @message.sephcocco_user_id
+      user_id: @message.sephcocco_user_id,
+      user_role: @message.sephcocco_user&.role || 'user'
     }
     
     # Broadcast to the specific user
@@ -67,7 +69,21 @@ class Messaging::BroadcastService
     Messaging::UserThreadService.new('lounge').broadcast_user_thread_update(
       @message, 
       latest_chat
-    )
+    );
+    
+    # Broadcast message update event
+    message_update_data = {
+      type: 'message_updated',
+      id: @message.id,
+      user_id: @message.sephcocco_user_id,
+      content: latest_chat['content'],
+      created_at: latest_chat['timestamp'],
+      message_type: latest_chat['message_type'] || 'text',
+      status: @message.status,
+      outlet_type: 'lounge'
+    }
+    
+    ActionCable.server.broadcast(admin_channel, message_update_data);
   end
 
   def broadcast_pharmacy_message
@@ -92,14 +108,16 @@ class Messaging::BroadcastService
       user: {
         id: @message.sephcocco_user&.id || 'unknown',
         name: @message.sephcocco_user&.name || 'Unknown',
-        email: @message.sephcocco_user&.email || ''
+        email: @message.sephcocco_user&.email || '',
+        role: @message.sephcocco_user&.role || 'user'
       },
       created_at: latest_chat['timestamp'] || Time.current.iso8601,
       message_type: latest_chat['message_type'] || 'text',
       status: @message.status,
       outlet_type: 'pharmacy',
       message_thread_id: @message.id,
-      user_id: @message.sephcocco_user_id
+      user_id: @message.sephcocco_user_id,
+      user_role: @message.sephcocco_user&.role || 'user'
     }
     
     # Broadcast to the specific user
@@ -116,7 +134,21 @@ class Messaging::BroadcastService
     Messaging::UserThreadService.new('pharmacy').broadcast_user_thread_update(
       @message, 
       latest_chat
-    )
+    );
+    
+    # Broadcast message update event
+    message_update_data = {
+      type: 'message_updated',
+      id: @message.id,
+      user_id: @message.sephcocco_user_id,
+      content: latest_chat['content'],
+      created_at: latest_chat['timestamp'],
+      message_type: latest_chat['message_type'] || 'text',
+      status: @message.status,
+      outlet_type: 'pharmacy'
+    }
+    
+    ActionCable.server.broadcast(admin_channel, message_update_data);
   end
 
   def broadcast_restaurant_message
@@ -141,14 +173,16 @@ class Messaging::BroadcastService
       user: {
         id: @message.sephcocco_user&.id || 'unknown',
         name: @message.sephcocco_user&.name || 'Unknown',
-        email: @message.sephcocco_user&.email || ''
+        email: @message.sephcocco_user&.email || '',
+        role: @message.sephcocco_user&.role || 'user'
       },
       created_at: latest_chat['timestamp'] || Time.current.iso8601,
       message_type: latest_chat['message_type'] || 'text',
       status: @message.status,
       outlet_type: 'restaurant',
       message_thread_id: @message.id,
-      user_id: @message.sephcocco_user_id
+      user_id: @message.sephcocco_user_id,
+      user_role: @message.sephcocco_user&.role || 'user'
     }
     
     # Broadcast to the specific user
@@ -165,6 +199,20 @@ class Messaging::BroadcastService
     Messaging::UserThreadService.new('restaurant').broadcast_user_thread_update(
       @message, 
       latest_chat
-    )
+    );
+    
+    # Broadcast message update event
+    message_update_data = {
+      type: 'message_updated',
+    id: @message.id,
+      user_id: @message.sephcocco_user_id,
+      content: latest_chat['content'],
+      created_at: latest_chat['timestamp'],
+      message_type: latest_chat['message_type'] || 'text',
+      status: @message.status,
+      outlet_type: 'restaurant'
+    }
+    
+    ActionCable.server.broadcast(admin_channel, message_update_data);
   end
 end 
