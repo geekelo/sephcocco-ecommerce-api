@@ -44,7 +44,7 @@ class Messaging::BroadcastService
         id: @message.sephcocco_user&.id || 'unknown',
         name: @message.sephcocco_user&.name || 'Unknown',
         email: @message.sephcocco_user&.email || '',
-        role: @message.sephcocco_user&.role || 'user'
+        role: @message.sephcocco_user&.sephcocco_user_role&.name || 'user'
       },
       created_at: latest_chat['timestamp'] || Time.current.iso8601,
       message_type: latest_chat['message_type'] || 'text',
@@ -52,7 +52,7 @@ class Messaging::BroadcastService
       outlet_type: 'lounge',
       message_thread_id: @message.id,
       user_id: @message.sephcocco_user_id,
-      user_role: @message.sephcocco_user&.role || 'user'
+      user_role: @message.sephcocco_user&.sephcocco_user_role&.name || 'user'
     }
     
     # Broadcast to the specific user
@@ -109,7 +109,7 @@ class Messaging::BroadcastService
         id: @message.sephcocco_user&.id || 'unknown',
         name: @message.sephcocco_user&.name || 'Unknown',
         email: @message.sephcocco_user&.email || '',
-        role: @message.sephcocco_user&.role || 'user'
+        role: @message.sephcocco_user&.sephcocco_user_role&.name || 'user'
       },
       created_at: latest_chat['timestamp'] || Time.current.iso8601,
       message_type: latest_chat['message_type'] || 'text',
@@ -117,7 +117,7 @@ class Messaging::BroadcastService
       outlet_type: 'pharmacy',
       message_thread_id: @message.id,
       user_id: @message.sephcocco_user_id,
-      user_role: @message.sephcocco_user&.role || 'user'
+      user_role: @message.sephcocco_user&.sephcocco_user_role&.name || 'user'
     }
     
     # Broadcast to the specific user
@@ -174,7 +174,7 @@ class Messaging::BroadcastService
         id: @message.sephcocco_user&.id || 'unknown',
         name: @message.sephcocco_user&.name || 'Unknown',
         email: @message.sephcocco_user&.email || '',
-        role: @message.sephcocco_user&.role || 'user'
+        role: @message.sephcocco_user&.sephcocco_user_role&.name || 'user'
       },
       created_at: latest_chat['timestamp'] || Time.current.iso8601,
       message_type: latest_chat['message_type'] || 'text',
@@ -182,7 +182,7 @@ class Messaging::BroadcastService
       outlet_type: 'restaurant',
       message_thread_id: @message.id,
       user_id: @message.sephcocco_user_id,
-      user_role: @message.sephcocco_user&.role || 'user'
+      user_role: @message.sephcocco_user&.sephcocco_user_role&.name || 'user'
     }
     
     # Broadcast to the specific user
@@ -204,7 +204,7 @@ class Messaging::BroadcastService
     # Broadcast message update event
     message_update_data = {
       type: 'message_updated',
-    id: @message.id,
+      id: @message.id,
       user_id: @message.sephcocco_user_id,
       content: latest_chat['content'],
       created_at: latest_chat['timestamp'],
