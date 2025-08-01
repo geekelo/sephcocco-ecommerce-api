@@ -21,18 +21,31 @@ class Messaging::BroadcastService
     # Get the latest chat from the message thread
     latest_chat = @message.chats.last
     
+    Rails.logger.info "Broadcasting lounge message: #{@message.id}"
+    Rails.logger.info "Message chats: #{@message.chats.inspect}"
+    Rails.logger.info "Latest chat: #{latest_chat.inspect}"
+    
+    # Safety check for latest_chat
+    if latest_chat.nil?
+      Rails.logger.error "No latest chat found for message #{@message.id}"
+      return
+    end
+    
+    # Ensure latest_chat is a hash
+    latest_chat = latest_chat.is_a?(String) ? JSON.parse(latest_chat) : latest_chat
+    
     # Create standardized broadcast data
     broadcast_data = {
       type: 'new_message',
       id: @message.id,
-      chat_id: latest_chat['id'],
-      content: latest_chat['content'],
+      chat_id: latest_chat['id'] || SecureRandom.uuid,
+      content: latest_chat['content'] || 'No content',
       user: {
-        id: @message.sephcocco_user.id,
-        name: @message.sephcocco_user.name,
-        email: @message.sephcocco_user.email
+        id: @message.sephcocco_user&.id || 'unknown',
+        name: @message.sephcocco_user&.name || 'Unknown',
+        email: @message.sephcocco_user&.email || ''
       },
-      created_at: latest_chat['timestamp'],
+      created_at: latest_chat['timestamp'] || Time.current.iso8601,
       message_type: latest_chat['message_type'] || 'text',
       status: @message.status,
       outlet_type: 'lounge',
@@ -41,15 +54,19 @@ class Messaging::BroadcastService
     }
     
     # Broadcast to the specific user
-    ActionCable.server.broadcast(
-      "messaging_user_#{@message.sephcocco_user_id}",
-      broadcast_data
-    )
+    user_channel = "messaging_user_#{@message.sephcocco_user_id}"
+    Rails.logger.info "Broadcasting to user channel: #{user_channel}"
+    ActionCable.server.broadcast(user_channel, broadcast_data)
     
     # Broadcast to admin channel
-    ActionCable.server.broadcast(
-      "messaging_admin_lounge",
-      broadcast_data
+    admin_channel = "messaging_admin_lounge"
+    Rails.logger.info "Broadcasting to admin channel: #{admin_channel}"
+    ActionCable.server.broadcast(admin_channel, broadcast_data)
+    
+    # Also broadcast user thread update to admin
+    Messaging::UserThreadService.new('lounge').broadcast_user_thread_update(
+      @message, 
+      latest_chat
     )
   end
 
@@ -57,18 +74,27 @@ class Messaging::BroadcastService
     # Get the latest chat from the message thread
     latest_chat = @message.chats.last
     
+    # Safety check for latest_chat
+    if latest_chat.nil?
+      Rails.logger.error "No latest chat found for message #{@message.id}"
+      return
+    end
+    
+    # Ensure latest_chat is a hash
+    latest_chat = latest_chat.is_a?(String) ? JSON.parse(latest_chat) : latest_chat
+    
     # Create standardized broadcast data
     broadcast_data = {
       type: 'new_message',
       id: @message.id,
-      chat_id: latest_chat['id'],
-      content: latest_chat['content'],
+      chat_id: latest_chat['id'] || SecureRandom.uuid,
+      content: latest_chat['content'] || 'No content',
       user: {
-        id: @message.sephcocco_user.id,
-        name: @message.sephcocco_user.name,
-        email: @message.sephcocco_user.email
+        id: @message.sephcocco_user&.id || 'unknown',
+        name: @message.sephcocco_user&.name || 'Unknown',
+        email: @message.sephcocco_user&.email || ''
       },
-      created_at: latest_chat['timestamp'],
+      created_at: latest_chat['timestamp'] || Time.current.iso8601,
       message_type: latest_chat['message_type'] || 'text',
       status: @message.status,
       outlet_type: 'pharmacy',
@@ -77,15 +103,19 @@ class Messaging::BroadcastService
     }
     
     # Broadcast to the specific user
-    ActionCable.server.broadcast(
-      "messaging_user_#{@message.sephcocco_user_id}",
-      broadcast_data
-    )
+    user_channel = "messaging_user_#{@message.sephcocco_user_id}"
+    Rails.logger.info "Broadcasting to user channel: #{user_channel}"
+    ActionCable.server.broadcast(user_channel, broadcast_data)
     
     # Broadcast to admin channel
-    ActionCable.server.broadcast(
-      "messaging_admin_pharmacy",
-      broadcast_data
+    admin_channel = "messaging_admin_pharmacy"
+    Rails.logger.info "Broadcasting to admin channel: #{admin_channel}"
+    ActionCable.server.broadcast(admin_channel, broadcast_data)
+    
+    # Also broadcast user thread update to admin
+    Messaging::UserThreadService.new('pharmacy').broadcast_user_thread_update(
+      @message, 
+      latest_chat
     )
   end
 
@@ -93,18 +123,27 @@ class Messaging::BroadcastService
     # Get the latest chat from the message thread
     latest_chat = @message.chats.last
     
+    # Safety check for latest_chat
+    if latest_chat.nil?
+      Rails.logger.error "No latest chat found for message #{@message.id}"
+      return
+    end
+    
+    # Ensure latest_chat is a hash
+    latest_chat = latest_chat.is_a?(String) ? JSON.parse(latest_chat) : latest_chat
+    
     # Create standardized broadcast data
     broadcast_data = {
       type: 'new_message',
       id: @message.id,
-      chat_id: latest_chat['id'],
-      content: latest_chat['content'],
+      chat_id: latest_chat['id'] || SecureRandom.uuid,
+      content: latest_chat['content'] || 'No content',
       user: {
-        id: @message.sephcocco_user.id,
-        name: @message.sephcocco_user.name,
-        email: @message.sephcocco_user.email
+        id: @message.sephcocco_user&.id || 'unknown',
+        name: @message.sephcocco_user&.name || 'Unknown',
+        email: @message.sephcocco_user&.email || ''
       },
-      created_at: latest_chat['timestamp'],
+      created_at: latest_chat['timestamp'] || Time.current.iso8601,
       message_type: latest_chat['message_type'] || 'text',
       status: @message.status,
       outlet_type: 'restaurant',
@@ -113,15 +152,19 @@ class Messaging::BroadcastService
     }
     
     # Broadcast to the specific user
-    ActionCable.server.broadcast(
-      "messaging_user_#{@message.sephcocco_user_id}",
-      broadcast_data
-    )
+    user_channel = "messaging_user_#{@message.sephcocco_user_id}"
+    Rails.logger.info "Broadcasting to user channel: #{user_channel}"
+    ActionCable.server.broadcast(user_channel, broadcast_data)
     
     # Broadcast to admin channel
-    ActionCable.server.broadcast(
-      "messaging_admin_restaurant",
-      broadcast_data
+    admin_channel = "messaging_admin_restaurant"
+    Rails.logger.info "Broadcasting to admin channel: #{admin_channel}"
+    ActionCable.server.broadcast(admin_channel, broadcast_data)
+    
+    # Also broadcast user thread update to admin
+    Messaging::UserThreadService.new('restaurant').broadcast_user_thread_update(
+      @message, 
+      latest_chat
     )
   end
 end 

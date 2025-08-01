@@ -1,22 +1,39 @@
 class MessagingChannel < ApplicationCable::Channel
   def subscribed
     # Subscribe to a room based on user or outlet
+    Rails.logger.info "MessagingChannel#subscribed called"
+    Rails.logger.info "Current user: #{current_user&.id}"
+    Rails.logger.info "User role: #{current_user&.sephcocco_user_role&.name}"
+    Rails.logger.info "Outlet type param: #{params[:outlet_type]}"
+    
     if current_user
       if current_user.sephcocco_user_role.name == "admin"
         # Admins subscribe to all user channels for their outlet type
         outlet_type = params[:outlet_type] # 'lounge', 'pharmacy', 'restaurant'
+        Rails.logger.info "Admin user subscribing to outlet: #{outlet_type}"
+        
         if outlet_type
           # Admin subscribes to all user channels for this outlet
-          stream_from "messaging_admin_#{outlet_type}"
+          admin_channel = "messaging_admin_#{outlet_type}"
+          Rails.logger.info "Admin subscribing to channel: #{admin_channel}"
+          stream_from admin_channel
+          
           # Also subscribe to individual user channels to receive messages
-          stream_from "messaging_admin_#{outlet_type}_users"
+          admin_users_channel = "messaging_admin_#{outlet_type}_users"
+          Rails.logger.info "Admin subscribing to users channel: #{admin_users_channel}"
+          stream_from admin_users_channel
         else
+          Rails.logger.info "Admin subscribing to all channels"
           stream_from "messaging_admin_all"
         end
       else
         # Regular users subscribe to their personal messages
-        stream_from "messaging_user_#{current_user.id}"
+        user_channel = "messaging_user_#{current_user.id}"
+        Rails.logger.info "Regular user subscribing to channel: #{user_channel}"
+        stream_from user_channel
       end
+    else
+      Rails.logger.warn "No current_user found in MessagingChannel#subscribed"
     end
   end
 
@@ -129,6 +146,16 @@ class MessagingChannel < ApplicationCable::Channel
 
       # Use the broadcast service to ensure consistent broadcasting
       Messaging::BroadcastService.new(message_thread, outlet_type).call
+      
+      # Also broadcast new user thread to admin if this is a new thread
+      if current_user.sephcocco_user_role.name != "admin"
+        # This is a user creating a new thread, notify admin
+        Messaging::UserThreadService.new(outlet_type).broadcast_new_user_thread(
+          current_user, 
+          message_thread, 
+          new_chat
+        )
+      end
     end
   end
 end 
