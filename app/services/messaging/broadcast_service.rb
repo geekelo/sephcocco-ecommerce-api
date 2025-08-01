@@ -117,7 +117,7 @@ class Messaging::BroadcastService
       outlet_type: 'pharmacy',
       message_thread_id: @message.id,
       user_id: @message.sephcocco_user_id,
-      user_role: @message.sephcocco_user&.sephcocco_user_role&.name || 'user'
+      user_role: @message.user_role || 'user'
     }
     
     # Broadcast to the specific user
