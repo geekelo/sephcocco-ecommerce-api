@@ -99,6 +99,20 @@ class MessagingChannel < ApplicationCable::Channel
       return
     end
     
+    # Handle direct request_user_messages action
+    if data['action'] == 'request_user_messages'
+      Rails.logger.info "📨 Received request_user_messages action via receive method"
+      request_user_messages_main(data)
+      return
+    end
+    
+    # Handle broadcast message action
+    if data['action'] == 'broadcast_message'
+      Rails.logger.info "📢 Received broadcast_message action"
+      broadcast_message_main(data)
+      return
+    end
+    
     # Support both formats: data['message'] and direct data
     message_data = data['message'] || data
     outlet_type = data['outlet_type'] # 'lounge', 'pharmacy', 'restaurant'
@@ -531,14 +545,60 @@ class MessagingChannel < ApplicationCable::Channel
     end
   end
 
+  # Simple test method to verify ActionCable is working
+  def test_method(data)
+    Rails.logger.info "🧪 test_method called via perform"
+    Rails.logger.info "🧪 Data received: #{data.inspect}"
+    
+    ActionCable.server.broadcast(
+      "messaging_admin_#{data['outlet_type'] || 'pharmacy'}",
+      {
+        type: 'test_method_response',
+        message: 'Test method called successfully!',
+        data: data
+      }
+    )
+  end
+
   # Handle request_user_messages via perform method
+  def broadcast_message(data)
+    Rails.logger.info "📢 broadcast_message method called via perform"
+    Rails.logger.info "📢 Data received: #{data.inspect}"
+    Rails.logger.info "📢 Data class: #{data.class}"
+    Rails.logger.info "📢 Data keys: #{data.keys if data.respond_to?(:keys)}"
+    
+    # Extract data from perform method format
+    message_data = data['message'] || data
+    user_id = message_data['user_id'] || data['user_id']
+    content = message_data['content'] || data['content']
+    outlet_type = message_data['outlet_type'] || data['outlet_type']
+    
+    Rails.logger.info "📢 Extracted user_id: #{user_id}"
+    Rails.logger.info "📢 Extracted content: #{content}"
+    Rails.logger.info "📢 Extracted outlet_type: #{outlet_type}"
+    
+    # Call the main method with proper data structure
+    broadcast_message_main({
+      'message' => {
+        'user_id' => user_id,
+        'content' => content,
+        'outlet_type' => outlet_type,
+        'message_type' => message_data['message_type'] || 'text',
+        'user_role' => message_data['user_role'] || 'admin'
+      },
+      'outlet_type' => outlet_type
+    })
+  end
+
   def request_user_messages(data)
     Rails.logger.info "📨 request_user_messages method called via perform"
     Rails.logger.info "📨 Data received: #{data.inspect}"
+    Rails.logger.info "📨 Data class: #{data.class}"
+    Rails.logger.info "📨 Data keys: #{data.keys if data.respond_to?(:keys)}"
     
     # Extract data from perform method format
-    user_id = data['user_id'] || data[:user_id]
-    outlet_type = data['outlet_type'] || data[:outlet_type]
+    user_id = data['user_id'] || data[:user_id] || data.user_id
+    outlet_type = data['outlet_type'] || data[:outlet_type] || data.outlet_type
     
     Rails.logger.info "📨 Extracted user_id: #{user_id}"
     Rails.logger.info "📨 Extracted outlet_type: #{outlet_type}"
@@ -548,6 +608,105 @@ class MessagingChannel < ApplicationCable::Channel
       'user_id' => user_id,
       'outlet_type' => outlet_type
     })
+  end
+
+  def broadcast_message_main(data)
+    Rails.logger.info "📢 Broadcasting message to all connected users"
+    Rails.logger.info "📢 Current user: #{current_user&.id}"
+    Rails.logger.info "📢 User role: #{current_user&.sephcocco_user_role&.name}"
+    Rails.logger.info "📢 Data received: #{data.inspect}"
+    
+    return unless current_user&.sephcocco_user_role&.name == "admin"
+    
+    message_data = data['message'] || data
+    user_id = message_data['user_id']
+    content = message_data['content']
+    outlet_type = message_data['outlet_type'] || data['outlet_type']
+    
+    Rails.logger.info "📢 Processing broadcast message: user_id=#{user_id}, content=#{content}, outlet_type=#{outlet_type}"
+    
+    # Get the message class
+    message_class = case outlet_type
+                   when 'lounge'
+                     Lounge::SephcoccoLoungeMessage
+                   when 'pharmacy'
+                     Pharmacy::SephcoccoPharmacyMessage
+                   when 'restaurant'
+                     Restaurant::SephcoccoRestaurantMessage
+                   end
+    
+    if message_class && user_id && content.present?
+      begin
+        # Find or create message thread
+        message_thread = message_class.find_by(sephcocco_user_id: user_id, status: 'open')
+        
+        if !message_thread
+          # Create new thread if it doesn't exist
+          user = SephcoccoUser.find(user_id)
+          message_thread = message_class.create!(
+            sephcocco_user_id: user_id,
+            status: 'open',
+            chats: []
+          )
+          Rails.logger.info "📢 Created new message thread: #{message_thread.id}"
+        end
+        
+        # Add new chat to thread
+        new_chat = {
+          id: SecureRandom.uuid,
+          content: content,
+          message_type: message_data['message_type'] || 'text',
+          user_id: current_user.id,
+          user_name: current_user.name || 'Admin',
+          user_email: current_user.email || '',
+          user_role: current_user.sephcocco_user_role&.name || 'admin',
+          timestamp: Time.current.iso8601
+        }
+        
+        message_thread.chats << new_chat
+        message_thread.save!
+        
+        Rails.logger.info "📢 Added new chat to thread: #{new_chat[:id]}"
+        
+        # Broadcast to all connected users (both user and admin channels)
+        broadcast_data = {
+          type: 'broadcast_message',
+          id: new_chat[:id],
+          content: content,
+          message_type: new_chat[:message_type],
+          user_id: user_id,
+          user: {
+            id: current_user.id,
+            name: current_user.name || 'Admin',
+            email: current_user.email || '',
+            role: current_user.sephcocco_user_role&.name || 'admin'
+          },
+          user_role: new_chat[:user_role],
+          created_at: new_chat[:timestamp],
+          broadcast: true
+        }
+        
+        # Broadcast to user's channel
+        ActionCable.server.broadcast(
+          "messaging_user_#{user_id}",
+          broadcast_data
+        )
+        
+        # Broadcast to admin channel
+        ActionCable.server.broadcast(
+          "messaging_admin_#{outlet_type}",
+          broadcast_data
+        )
+        
+        Rails.logger.info "✅ Message broadcasted to all connected users"
+        
+      rescue => e
+        Rails.logger.error "❌ Error broadcasting message: #{e.message}"
+        Rails.logger.error "❌ Backtrace: #{e.backtrace.first(5)}"
+      end
+    else
+      Rails.logger.error "❌ Invalid message class, user_id, or content"
+    end
   end
 
   def request_user_messages_main(data)
