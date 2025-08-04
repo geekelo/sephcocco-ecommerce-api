@@ -46,6 +46,8 @@ class MessagingChannel < ApplicationCable::Channel
     Rails.logger.info "📨 Received WebSocket data: #{data.inspect}"
     Rails.logger.info "📨 Data keys: #{data.keys}"
     Rails.logger.info "📨 Action: #{data['action']}"
+    Rails.logger.info "📨 Current user: #{current_user&.id}"
+    Rails.logger.info "📨 User role: #{current_user&.sephcocco_user_role&.name}"
     
     # Check if this is a request for initial threads
     if data['action'] == 'request_initial_threads'
@@ -65,6 +67,20 @@ class MessagingChannel < ApplicationCable::Channel
     if data['action'] == 'request_user_messages'
       Rails.logger.info "📨 Processing request_user_messages request"
       request_user_messages(data)
+      return
+    end
+    
+    # Handle ping for connection testing
+    if data['type'] == 'ping'
+      Rails.logger.info "🏓 Received ping, sending pong response"
+      ActionCable.server.broadcast(
+        "messaging_admin_#{data['outlet_type'] || 'pharmacy'}",
+        {
+          type: 'pong',
+          timestamp: data['timestamp'],
+          message: 'Connection is working!'
+        }
+      )
       return
     end
     
@@ -504,6 +520,7 @@ class MessagingChannel < ApplicationCable::Channel
     Rails.logger.info "📨 Admin requesting user messages for user: #{data['user_id']}"
     Rails.logger.info "📨 Current user: #{current_user&.id}"
     Rails.logger.info "📨 User role: #{current_user&.sephcocco_user_role&.name}"
+    Rails.logger.info "📨 Data received: #{data.inspect}"
     
     return unless current_user&.sephcocco_user_role&.name == "admin"
     
