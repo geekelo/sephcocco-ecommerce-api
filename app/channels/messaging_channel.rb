@@ -364,4 +364,111 @@ class MessagingChannel < ApplicationCable::Channel
       )
     end
   end
+
+  def update_message(data)
+    Rails.logger.info "📝 Admin updating message for outlet: #{data['outlet_type']}"
+    Rails.logger.info "📝 Current user: #{current_user&.id}"
+    Rails.logger.info "📝 User role: #{current_user&.sephcocco_user_role&.name}"
+    Rails.logger.info "📝 Data received: #{data.inspect}"
+    
+    return unless current_user&.sephcocco_user_role&.name == "admin"
+    
+    outlet_type = data['outlet_type']
+    message_id = data['message_id']
+    update_data = data['update_data'] || {}
+    
+    Rails.logger.info "📝 Processing message update: message_id=#{message_id}, outlet_type=#{outlet_type}"
+    
+    # Get the message class
+    message_class = case outlet_type
+                   when 'lounge'
+                     Lounge::SephcoccoLoungeMessage
+                   when 'pharmacy'
+                     Pharmacy::SephcoccoPharmacyMessage
+                   when 'restaurant'
+                     Restaurant::SephcoccoRestaurantMessage
+                   end
+    
+    if message_class && message_id
+      begin
+        # Find the message
+        message = message_class.find(message_id)
+        Rails.logger.info "📝 Found message: #{message.id}"
+        
+        # Update the message based on update_data
+        if update_data['status'].present?
+          message.update!(status: update_data['status'])
+          Rails.logger.info "📝 Updated status to: #{update_data['status']}"
+        end
+        
+        if update_data['chat'].present?
+          # Add new chat to existing chats
+          new_chat = {
+            id: SecureRandom.uuid,
+            content: update_data['chat']['content'],
+            message_type: update_data['chat']['message_type'] || 'text',
+            user_id: current_user.id,
+            user_name: current_user.name,
+            user_email: current_user.email,
+            user_role: current_user.sephcocco_user_role.name,
+            timestamp: Time.current.iso8601
+          }
+          
+          message.chats << new_chat
+          message.save!
+          Rails.logger.info "📝 Added new chat to message"
+        end
+        
+        # Broadcast the update to all connected clients
+        Messaging::BroadcastService.new(message, outlet_type).call
+        
+        Rails.logger.info "✅ Message update completed and broadcasted"
+        
+        # Send confirmation back to the sender
+        ActionCable.server.broadcast(
+          "messaging_admin_#{outlet_type}",
+          {
+            type: 'message_update_confirmation',
+            message_id: message_id,
+            status: 'success',
+            updated_at: message.updated_at.iso8601
+          }
+        )
+        
+      rescue ActiveRecord::RecordNotFound => e
+        Rails.logger.error "❌ Message not found: #{e.message}"
+        ActionCable.server.broadcast(
+          "messaging_admin_#{outlet_type}",
+          {
+            type: 'message_update_confirmation',
+            message_id: message_id,
+            status: 'error',
+            error: 'Message not found'
+          }
+        )
+      rescue => e
+        Rails.logger.error "❌ Error updating message: #{e.message}"
+        ActionCable.server.broadcast(
+          "messaging_admin_#{outlet_type}",
+          {
+            type: 'message_update_confirmation',
+            message_id: message_id,
+            status: 'error',
+            error: e.message
+          }
+        )
+      end
+    else
+      Rails.logger.error "❌ Invalid message class or message_id"
+      ActionCable.server.broadcast(
+        "messaging_admin_#{outlet_type}",
+        {
+          type: 'message_update_confirmation',
+          message_id: message_id,
+          status: 'error',
+          error: 'Invalid message class or message_id'
+        }
+      )
+    end
+  end
 end
