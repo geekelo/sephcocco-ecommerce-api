@@ -54,6 +54,13 @@ class MessagingChannel < ApplicationCable::Channel
       return
     end
     
+    # Check if this is an update message request
+    if data['action'] == 'update_message'
+      Rails.logger.info "📝 Processing update_message request"
+      update_message(data)
+      return
+    end
+    
     # Support both formats: data['message'] and direct data
     message_data = data['message'] || data
     outlet_type = data['outlet_type'] # 'lounge', 'pharmacy', 'restaurant'
@@ -89,6 +96,20 @@ class MessagingChannel < ApplicationCable::Channel
             )
             return
           end
+          
+          # Validate that the user exists
+          begin
+            target_user = SephcoccoUser.find(user_id)
+            Rails.logger.info "✅ Found target user: #{target_user.id} (#{target_user.name})"
+          rescue ActiveRecord::RecordNotFound
+            Rails.logger.error "❌ User not found: #{user_id}"
+            ActionCable.server.broadcast(
+              "messaging_admin_#{outlet_type}",
+              { error: "User not found: #{user_id}" }
+            )
+            return
+          end
+          
           message_thread = message_class.find_or_create_by(
             sephcocco_user_id: user_id,
             status: 'open'
