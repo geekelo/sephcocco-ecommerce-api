@@ -66,6 +66,7 @@ class MessagingChannel < ApplicationCable::Channel
     # Check if this is a request for user messages
     if data['action'] == 'request_user_messages'
       Rails.logger.info "📨 Processing request_user_messages request"
+      Rails.logger.info "📨 Data structure: #{data.inspect}"
       request_user_messages(data)
       return
     end
@@ -79,6 +80,20 @@ class MessagingChannel < ApplicationCable::Channel
           type: 'pong',
           timestamp: data['timestamp'],
           message: 'Connection is working!'
+        }
+      )
+      return
+    end
+    
+    # Handle test action for debugging
+    if data['action'] == 'test_action'
+      Rails.logger.info "🧪 Received test action, sending response"
+      ActionCable.server.broadcast(
+        "messaging_admin_#{data['outlet_type'] || 'pharmacy'}",
+        {
+          type: 'test_response',
+          message: 'Test action received and processed!',
+          data: data
         }
       )
       return
@@ -516,7 +531,26 @@ class MessagingChannel < ApplicationCable::Channel
     end
   end
 
+  # Handle request_user_messages via perform method
   def request_user_messages(data)
+    Rails.logger.info "📨 request_user_messages method called via perform"
+    Rails.logger.info "📨 Data received: #{data.inspect}"
+    
+    # Extract data from perform method format
+    user_id = data['user_id'] || data[:user_id]
+    outlet_type = data['outlet_type'] || data[:outlet_type]
+    
+    Rails.logger.info "📨 Extracted user_id: #{user_id}"
+    Rails.logger.info "📨 Extracted outlet_type: #{outlet_type}"
+    
+    # Call the main method with proper data structure
+    request_user_messages_main({
+      'user_id' => user_id,
+      'outlet_type' => outlet_type
+    })
+  end
+
+  def request_user_messages_main(data)
     Rails.logger.info "📨 Admin requesting user messages for user: #{data['user_id']}"
     Rails.logger.info "📨 Current user: #{current_user&.id}"
     Rails.logger.info "📨 User role: #{current_user&.sephcocco_user_role&.name}"
