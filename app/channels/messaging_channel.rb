@@ -223,11 +223,21 @@ class MessagingChannel < ApplicationCable::Channel
         timestamp: Time.current.iso8601
       }
 
+      Rails.logger.info "📝 Adding new chat to message thread: #{message_thread.id}"
+      Rails.logger.info "📝 Chat data: #{new_chat.inspect}"
+      Rails.logger.info "📝 Current user role: #{current_user.sephcocco_user_role.name}"
+      Rails.logger.info "📝 Message thread user_id: #{message_thread.sephcocco_user_id}"
+
       message_thread.chats << new_chat
       message_thread.save!
 
+      Rails.logger.info "✅ Message thread saved with #{message_thread.chats.count} chats"
+      Rails.logger.info "✅ Latest chat: #{message_thread.chats.last.inspect}"
+
       # Use the broadcast service to ensure consistent broadcasting
+      Rails.logger.info "📢 Calling broadcast service for outlet: #{outlet_type}"
       Messaging::BroadcastService.new(message_thread, outlet_type).call
+      Rails.logger.info "✅ Broadcast service completed"
       
       # Also broadcast new user thread to admin if this is a new thread
       if current_user.sephcocco_user_role.name != "admin"

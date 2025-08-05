@@ -46,6 +46,12 @@ class Messaging::BroadcastService
     # Ensure latest_chat is a hash
     latest_chat = latest_chat.is_a?(String) ? JSON.parse(latest_chat) : latest_chat
     
+    # Determine the sender info from the latest chat
+    sender_id = latest_chat['user_id']
+    sender_role = latest_chat['user_role']
+    sender_name = latest_chat['user_name']
+    sender_email = latest_chat['user_email']
+    
     # Create standardized broadcast data
     broadcast_data = {
       type: 'new_message',
@@ -53,28 +59,30 @@ class Messaging::BroadcastService
       chat_id: latest_chat['id'] || SecureRandom.uuid,
       content: latest_chat['content'] || 'No content',
       user: {
-        id: @message.sephcocco_user&.id || 'unknown',
-        name: @message.sephcocco_user&.name || 'Unknown',
-        email: @message.sephcocco_user&.email || '',
-        role: @message.sephcocco_user&.sephcocco_user_role&.name || 'user'
+        id: sender_id || 'unknown',
+        name: sender_name || 'Unknown',
+        email: sender_email || '',
+        role: sender_role || 'user'
       },
       created_at: latest_chat['timestamp'] || Time.current.iso8601,
       message_type: latest_chat['message_type'] || 'text',
       status: @message.status,
       outlet_type: 'lounge',
       message_thread_id: @message.id,
-      user_id: @message.sephcocco_user_id,
-      user_role: @message.sephcocco_user&.sephcocco_user_role&.name || 'user'
+      user_id: sender_id, # Use the actual sender's user_id
+      user_role: sender_role || 'user'
     }
     
-    # Broadcast to the specific user
+    # Broadcast to the specific user (the thread owner)
     user_channel = "messaging_user_#{@message.sephcocco_user_id}"
     Rails.logger.info "Broadcasting to user channel: #{user_channel}"
+    Rails.logger.info "Broadcast data for user: #{broadcast_data.inspect}"
     ActionCable.server.broadcast(user_channel, broadcast_data)
     
     # Broadcast to admin channel
     admin_channel = "messaging_admin_lounge"
     Rails.logger.info "Broadcasting to admin channel: #{admin_channel}"
+    Rails.logger.info "Broadcast data for admin: #{broadcast_data.inspect}"
     ActionCable.server.broadcast(admin_channel, broadcast_data)
     
     # Also broadcast user thread update to admin
@@ -111,6 +119,12 @@ class Messaging::BroadcastService
     # Ensure latest_chat is a hash
     latest_chat = latest_chat.is_a?(String) ? JSON.parse(latest_chat) : latest_chat
     
+    # Determine the sender info from the latest chat
+    sender_id = latest_chat['user_id']
+    sender_role = latest_chat['user_role']
+    sender_name = latest_chat['user_name']
+    sender_email = latest_chat['user_email']
+    
     # Create standardized broadcast data
     broadcast_data = {
       type: 'new_message',
@@ -118,28 +132,30 @@ class Messaging::BroadcastService
       chat_id: latest_chat['id'] || SecureRandom.uuid,
       content: latest_chat['content'] || 'No content',
       user: {
-        id: @message.sephcocco_user&.id || 'unknown',
-        name: @message.sephcocco_user&.name || 'Unknown',
-        email: @message.sephcocco_user&.email || '',
-        role: @message.sephcocco_user&.sephcocco_user_role&.name || 'user'
+        id: sender_id || 'unknown',
+        name: sender_name || 'Unknown',
+        email: sender_email || '',
+        role: sender_role || 'user'
       },
       created_at: latest_chat['timestamp'] || Time.current.iso8601,
       message_type: latest_chat['message_type'] || 'text',
       status: @message.status,
       outlet_type: 'pharmacy',
       message_thread_id: @message.id,
-      user_id: @message.sephcocco_user_id,
-      user_role: @message.sephcocco_user&.sephcocco_user_role&.name || 'user'
+      user_id: sender_id, # Use the actual sender's user_id
+      user_role: sender_role || 'user'
     }
     
-    # Broadcast to the specific user
+    # Broadcast to the specific user (the thread owner)
     user_channel = "messaging_user_#{@message.sephcocco_user_id}"
     Rails.logger.info "Broadcasting to user channel: #{user_channel}"
+    Rails.logger.info "Broadcast data for user: #{broadcast_data.inspect}"
     ActionCable.server.broadcast(user_channel, broadcast_data)
     
     # Broadcast to admin channel
     admin_channel = "messaging_admin_pharmacy"
     Rails.logger.info "Broadcasting to admin channel: #{admin_channel}"
+    Rails.logger.info "Broadcast data for admin: #{broadcast_data.inspect}"
     ActionCable.server.broadcast(admin_channel, broadcast_data)
     
     # Also broadcast user thread update to admin
@@ -176,6 +192,12 @@ class Messaging::BroadcastService
     # Ensure latest_chat is a hash
     latest_chat = latest_chat.is_a?(String) ? JSON.parse(latest_chat) : latest_chat
     
+    # Determine the sender info from the latest chat
+    sender_id = latest_chat['user_id']
+    sender_role = latest_chat['user_role']
+    sender_name = latest_chat['user_name']
+    sender_email = latest_chat['user_email']
+    
     # Create standardized broadcast data
     broadcast_data = {
       type: 'new_message',
@@ -183,28 +205,30 @@ class Messaging::BroadcastService
       chat_id: latest_chat['id'] || SecureRandom.uuid,
       content: latest_chat['content'] || 'No content',
       user: {
-        id: @message.sephcocco_user&.id || 'unknown',
-        name: @message.sephcocco_user&.name || 'Unknown',
-        email: @message.sephcocco_user&.email || '',
-        role: @message.sephcocco_user&.sephcocco_user_role&.name || 'user'
+        id: sender_id || 'unknown',
+        name: sender_name || 'Unknown',
+        email: sender_email || '',
+        role: sender_role || 'user'
       },
       created_at: latest_chat['timestamp'] || Time.current.iso8601,
       message_type: latest_chat['message_type'] || 'text',
       status: @message.status,
       outlet_type: 'restaurant',
       message_thread_id: @message.id,
-      user_id: @message.sephcocco_user_id,
-      user_role: @message.sephcocco_user&.sephcocco_user_role&.name || 'user'
+      user_id: sender_id, # Use the actual sender's user_id
+      user_role: sender_role || 'user'
     }
     
-    # Broadcast to the specific user
+    # Broadcast to the specific user (the thread owner)
     user_channel = "messaging_user_#{@message.sephcocco_user_id}"
     Rails.logger.info "Broadcasting to user channel: #{user_channel}"
+    Rails.logger.info "Broadcast data for user: #{broadcast_data.inspect}"
     ActionCable.server.broadcast(user_channel, broadcast_data)
     
     # Broadcast to admin channel
     admin_channel = "messaging_admin_restaurant"
     Rails.logger.info "Broadcasting to admin channel: #{admin_channel}"
+    Rails.logger.info "Broadcast data for admin: #{broadcast_data.inspect}"
     ActionCable.server.broadcast(admin_channel, broadcast_data)
     
     # Also broadcast user thread update to admin
