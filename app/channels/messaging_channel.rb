@@ -113,6 +113,14 @@ class MessagingChannel < ApplicationCable::Channel
       return
     end
     
+    # Handle user requesting their own messages
+    if data['action'] == 'request_my_messages'
+      Rails.logger.info "📨 Processing request_my_messages request"
+      Rails.logger.info "📨 Data structure: #{data.inspect}"
+      request_my_messages(data)
+      return
+    end
+    
     # Support both formats: data['message'] and direct data
     message_data = data['message'] || data
     outlet_type = data['outlet_type'] # 'lounge', 'pharmacy', 'restaurant'
@@ -818,6 +826,110 @@ class MessagingChannel < ApplicationCable::Channel
           user_id: user_id,
           messages: [],
           error: "Invalid message class or user_id"
+        }
+      )
+    end
+  end
+
+  # Handle user requesting their own messages
+  def request_my_messages(data)
+    Rails.logger.info "📨 User requesting their own messages"
+    Rails.logger.info "📨 Current user: #{current_user&.id}"
+    Rails.logger.info "📨 User role: #{current_user&.sephcocco_user_role&.name}"
+    Rails.logger.info "📨 Data received: #{data.inspect}"
+    
+    return unless current_user # Only authenticated users
+    
+    outlet_type = data['outlet_type']
+    
+    Rails.logger.info "📨 Processing user messages request: user_id=#{current_user.id}, outlet_type=#{outlet_type}"
+    
+    # Get the message class
+    message_class = case outlet_type
+                   when 'lounge'
+                     Lounge::SephcoccoLoungeMessage
+                   when 'pharmacy'
+                     Pharmacy::SephcoccoPharmacyMessage
+                   when 'restaurant'
+                     Restaurant::SephcoccoRestaurantMessage
+                   end
+    
+    if message_class
+      begin
+        # Find the message thread for current user
+        message_thread = message_class.find_by(sephcocco_user_id: current_user.id, status: 'open')
+        
+        if message_thread
+          Rails.logger.info "📨 Found message thread: #{message_thread.id} with #{message_thread.chats.count} chats"
+          
+          # Transform chats to frontend format
+          messages = message_thread.chats.map do |chat|
+            {
+              id: chat['id'],
+              content: chat['content'],
+              message_type: chat['message_type'] || 'text',
+              user_id: chat['user_id'],
+              user_name: chat['user_name'],
+              user_email: chat['user_email'],
+              user_role: chat['user_role'],
+              timestamp: chat['timestamp'],
+              created_at: chat['timestamp']
+            }
+          end
+          
+          Rails.logger.info "📨 Sending #{messages.count} messages to user"
+          
+          # Send messages to user's channel
+          ActionCable.server.broadcast(
+            "messaging_user_#{current_user.id}",
+            {
+              type: 'user_messages_response',
+              user_id: current_user.id,
+              messages: messages
+            }
+          )
+          
+          Rails.logger.info "✅ User messages sent to user"
+        else
+          Rails.logger.info "📨 No message thread found for user: #{current_user.id}"
+          
+          # Send empty response
+          ActionCable.server.broadcast(
+            "messaging_user_#{current_user.id}",
+            {
+              type: 'user_messages_response',
+              user_id: current_user.id,
+              messages: []
+            }
+          )
+        end
+        
+      rescue => e
+        Rails.logger.error "❌ Error loading user messages: #{e.message}"
+        Rails.logger.error "❌ Backtrace: #{e.backtrace.first(5)}"
+        
+        # Send error response
+        ActionCable.server.broadcast(
+          "messaging_user_#{current_user.id}",
+          {
+            type: 'user_messages_response',
+            user_id: current_user.id,
+            messages: [],
+            error: "Error loading user messages: #{e.message}"
+          }
+        )
+      end
+    else
+      Rails.logger.error "❌ Invalid message class for outlet type: #{outlet_type}"
+      
+      # Send error response
+      ActionCable.server.broadcast(
+        "messaging_user_#{current_user.id}",
+        {
+          type: 'user_messages_response',
+          user_id: current_user.id,
+          messages: [],
+          error: "Invalid message class for outlet type: #{outlet_type}"
         }
       )
     end
