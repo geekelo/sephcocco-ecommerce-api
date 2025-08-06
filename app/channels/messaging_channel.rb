@@ -113,13 +113,15 @@ class MessagingChannel < ApplicationCable::Channel
       return
     end
     
-    # Handle user requesting their own messages
-    if data['action'] == 'request_my_messages'
-      Rails.logger.info "📨 Processing request_my_messages request"
-      Rails.logger.info "📨 Data structure: #{data.inspect}"
-      request_my_messages(data)
-      return
-    end
+      # Handle user requesting their own messages
+  if data['action'] == 'request_my_messages'
+    Rails.logger.info "📨 Processing request_my_messages request"
+    Rails.logger.info "📨 Data structure: #{data.inspect}"
+    Rails.logger.info "📨 Current user: #{current_user&.id}"
+    Rails.logger.info "📨 User role: #{current_user&.sephcocco_user_role&.name}"
+    request_my_messages(data)
+    return
+  end
     
     # Support both formats: data['message'] and direct data
     message_data = data['message'] || data
@@ -856,28 +858,42 @@ class MessagingChannel < ApplicationCable::Channel
     
     if message_class
       begin
-        # Find the message thread for current user
-        message_thread = message_class.find_by(sephcocco_user_id: current_user.id, status: 'open')
+        # Find ALL message threads for current user (no status restriction)
+        message_threads = message_class.where(sephcocco_user_id: current_user.id)
         
-        if message_thread
-          Rails.logger.info "📨 Found message thread: #{message_thread.id} with #{message_thread.chats.count} chats"
+        Rails.logger.info "📨 Found #{message_threads.count} message threads for user: #{current_user.id}"
+        
+        if message_threads.any?
+          # Collect all messages from all threads
+          all_messages = []
           
-          # Transform chats to frontend format
-          messages = message_thread.chats.map do |chat|
-            {
-              id: chat['id'],
-              content: chat['content'],
-              message_type: chat['message_type'] || 'text',
-              user_id: chat['user_id'],
-              user_name: chat['user_name'],
-              user_email: chat['user_email'],
-              user_role: chat['user_role'],
-              timestamp: chat['timestamp'],
-              created_at: chat['timestamp']
-            }
+          message_threads.each do |thread|
+            Rails.logger.info "📨 Processing thread #{thread.id} with #{thread.chats.count} chats (status: #{thread.status})"
+            
+            # Transform chats to frontend format
+            thread_messages = thread.chats.map do |chat|
+              {
+                id: chat['id'],
+                content: chat['content'],
+                message_type: chat['message_type'] || 'text',
+                user_id: chat['user_id'],
+                user_name: chat['user_name'],
+                user_email: chat['user_email'],
+                user_role: chat['user_role'],
+                timestamp: chat['timestamp'],
+                created_at: chat['timestamp'],
+                thread_id: thread.id,
+                thread_status: thread.status
+              }
+            end
+            
+            all_messages.concat(thread_messages)
           end
           
-          Rails.logger.info "📨 Sending #{messages.count} messages to user"
+          # Sort messages by timestamp
+          all_messages.sort_by! { |msg| msg[:timestamp] || msg[:created_at] }
+          
+          Rails.logger.info "📨 Sending #{all_messages.count} total messages to user"
           
           # Send messages to user's channel
           ActionCable.server.broadcast(
@@ -885,13 +901,13 @@ class MessagingChannel < ApplicationCable::Channel
             {
               type: 'user_messages_response',
               user_id: current_user.id,
-              messages: messages
+              messages: all_messages
             }
           )
           
           Rails.logger.info "✅ User messages sent to user"
         else
-          Rails.logger.info "📨 No message thread found for user: #{current_user.id}"
+          Rails.logger.info "📨 No message threads found for user: #{current_user.id}"
           
           # Send empty response
           ActionCable.server.broadcast(
