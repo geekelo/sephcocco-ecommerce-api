@@ -213,18 +213,26 @@ module Api::V1::Concerns::PaymentsControllerHelper
       return render json: { error: 'Reference is required' }, status: :bad_request
     end
 
+    Rails.logger.info "Payment verification - Reference: #{reference}"
+    Rails.logger.info "Payment verification - PAYSTACK_SECRET_KEY present: #{ENV['PAYSTACK_SECRET_KEY'].present?}"
+
     uri = URI.parse("https://api.paystack.co/transaction/verify/#{reference}")
     request = Net::HTTP::Get.new(uri)
     request['Authorization'] = "Bearer #{ENV['PAYSTACK_SECRET_KEY']}"
+
+    Rails.logger.info "Payment verification - Making request to: #{uri}"
 
     response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
       http.request(request)
     end
 
+    Rails.logger.info "Payment verification - Response code: #{response.code}"
+    Rails.logger.info "Payment verification - Response body: #{response.body}"
+
     body = JSON.parse(response.body)
     Rails.logger.info "Payment verification response: #{body.inspect}"
 
-    if body['status'] == true && body['data']['status'] == 'success'
+    if body['status'] == true && body['data'] && body['data']['status'] == 'success'
       # ✅ Payment is verified and successful
       # Find the payment by reference and update it
       payment = payment_class.find_by(transaction_id: reference)
@@ -232,10 +240,20 @@ module Api::V1::Concerns::PaymentsControllerHelper
       if payment
         Rails.logger.info "Payment verified and confirmed: #{payment.id}"
         payment.update(status: "payment confirmed")
-        payment.orders.each do |order|
-          Rails.logger.info "Updating order status to payment confirmed: #{order.id}"
-          order.update(status: "payment confirmed")
+        
+        # Handle orders - they might be stored as strings in a JSONB array
+        if payment.orders.is_a?(Array) && payment.orders.any?
+          payment.orders.each do |order_id|
+            order = order_class.find_by(id: order_id)
+            if order
+              Rails.logger.info "Updating order status to payment confirmed: #{order_id}"
+              order.update(status: "payment confirmed")
+            else
+              Rails.logger.warn "Order not found with ID: #{order_id}"
+            end
+          end
         end
+        
         payment.sephcocco_user.update(payment_ref: payment.sephcocco_user.payment_ref.next)
         
         # Create admin activity/notification
@@ -265,6 +283,8 @@ module Api::V1::Concerns::PaymentsControllerHelper
       render json: { error: 'Payment verification failed', data: body['data'] }, status: :unprocessable_entity
     end
   rescue StandardError => e
+    Rails.logger.error "Payment verification error: #{e.message}"
+    Rails.logger.error "Payment verification error backtrace: #{e.backtrace.first(5).join("\n")}"
     render json: { error: e.message }, status: :internal_server_error
   end
 
