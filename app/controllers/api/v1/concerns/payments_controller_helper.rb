@@ -223,7 +223,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
 
     body = JSON.parse(response.body)
 
-    if body['data'] && body['data']['status'] == 'success'
+    if body['status'] == true && body['data']['status'] == 'success'
       # ✅ Payment is verified and successful
       # Find the payment by reference and update it
       payment = payment_class.find_by(transaction_id: reference)

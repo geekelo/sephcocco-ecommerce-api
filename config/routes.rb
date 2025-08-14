@@ -60,6 +60,7 @@ Rails.application.routes.draw do
         resources :sephcocco_lounge_payments do
           collection do
             get :verify
+            post :verify
           end
         end
         resources :sephcocco_lounge_faqs
@@ -113,6 +114,7 @@ Rails.application.routes.draw do
         resources :sephcocco_pharmacy_payments do
           collection do
             get :verify
+            post :verify
           end
         end
         resources :sephcocco_pharmacy_faqs
@@ -168,6 +170,7 @@ Rails.application.routes.draw do
         resources :sephcocco_restaurant_payments do
           collection do
             get :verify
+            post :verify
           end
         end
         resources :sephcocco_restaurant_faqs
