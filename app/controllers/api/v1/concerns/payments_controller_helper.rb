@@ -226,7 +226,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
     if body['data'] && body['data']['status'] == 'success'
       # ✅ Payment is verified and successful
       # Find the payment by reference and update it
-      payment = payment_class.find_by(id: params[:id])
+      payment = payment_class.find_by(reference: reference)
       
       if payment
         payment.update(status: "payment confirmed")
