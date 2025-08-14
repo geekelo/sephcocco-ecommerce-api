@@ -1,16 +1,16 @@
 class Restaurant::SephcoccoRestaurantProductSerializer < ActiveModel::Serializer
   attributes  :id,
               :name,
-              :main_image_url,
               :short_description,
               :long_description,
-              :discount_price,
-              :liked_by_user,
-              :other_image_urls,
               :amount_in_stock,
               :out_of_stock_status,
               :likes,
+              :liked_by_user,
               :price,
+              :discount_price,
+              :main_image_url,
+              :other_image_urls,
               :visible,
               :categories,
               :created_at,
@@ -23,17 +23,13 @@ class Restaurant::SephcoccoRestaurantProductSerializer < ActiveModel::Serializer
         id: category.id, 
         name: category.name,
         description: category.description,
-        slug: category.slug,
+        slug: category.slug
       }
     end
   end
 
   def out_of_stock_status
-    if object.amount_in_stock > 0
-      false
-    else
-      true
-    end
+    object.amount_in_stock <= 0
   end
 
   def liked_by_user

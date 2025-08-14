@@ -1,20 +1,20 @@
 class Lounge::SephcoccoLoungeProductSerializer < ActiveModel::Serializer
   attributes  :id,
               :name,
-              :main_image_url,
               :short_description,
               :long_description,
-              :other_image_urls,
               :amount_in_stock,
               :out_of_stock_status,
               :likes,
               :liked_by_user,
-              :discount_price,
               :price,
+              :discount_price,
+              :main_image_url,
+              :other_image_urls,
               :visible,
               :categories,
               :created_at,
-              :updated_at,
+              :updated_at
 
   def categories
     return [] unless object.sephcocco_lounge_product_categories.any?
@@ -23,17 +23,13 @@ class Lounge::SephcoccoLoungeProductSerializer < ActiveModel::Serializer
         id: category.id, 
         name: category.name,
         description: category.description,
-        slug: category.slug,
+        slug: category.slug
       }
     end
   end
 
   def out_of_stock_status
-    if object.amount_in_stock > 0
-      false
-    else
-      true
-    end
+    object.amount_in_stock <= 0
   end
 
   def liked_by_user

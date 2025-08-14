@@ -29,7 +29,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantProductCategoriesController < Appl
   end
 
   def outlet
-    "restaurant"
+    Restaurant
   end
 
   def product_category_params

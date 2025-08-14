@@ -12,8 +12,8 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
     :sephcocco_lounge_orders
   end
 
-  def outlet
-    "Lounge"
+  def product_class
+    Lounge::SephcoccoLoungeProduct
   end
 
   def order_serializer_class
@@ -22,6 +22,10 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
     else
       Lounge::User::SephcoccoLoungeOrderSerializer
     end
+  end
+
+  def outlet
+    Lounge
   end
 
   def admin_notification_class
@@ -37,11 +41,7 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
   end
 
   def order_association_prefix
-    "sephcocco_lounge"
-  end
-
-  def product_class
-    Lounge::SephcoccoLoungeProduct
+    "sephcocco_Lounge"
   end
 
   def order_params
@@ -55,7 +55,6 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
         :shipping_cost,
         :total_cost,
         :status,
-        :order_number,
         :current_stage,
         :address,
         :phone_number,

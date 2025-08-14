@@ -12,10 +12,6 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
     :sephcocco_restaurant_orders
   end
 
-  def outlet
-    "restaurant"
-  end
-
   def product_class
     Restaurant::SephcoccoRestaurantProduct
   end
@@ -26,6 +22,10 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
     else
       Restaurant::User::SephcoccoRestaurantOrderSerializer
     end
+  end
+
+  def outlet
+    Restaurant
   end
 
   def admin_notification_class
@@ -41,9 +41,8 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
   end
 
   def order_association_prefix
-    "sephcocco_restaurant"
+    "sephcocco_Restaurant"
   end
-
 
   def order_params
     if current_user.sephcocco_user_role.name == "admin"
@@ -56,7 +55,6 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
         :shipping_cost,
         :total_cost,
         :status,
-        :order_number,
         :current_stage,
         :address,
         :phone_number,

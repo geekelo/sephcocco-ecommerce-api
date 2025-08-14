@@ -43,7 +43,7 @@ class Api::V1::Lounge::SephcoccoLoungeProductsController < ApplicationController
   end
 
   def outlet
-    Lounge
+    "lounge"
   end
 
   def product_params
@@ -53,6 +53,7 @@ class Api::V1::Lounge::SephcoccoLoungeProductsController < ApplicationController
       :long_description,
       :main_image_url,
       :amount_in_stock,
+      :discount_price,
       :price,
       :visible,
       category_ids: [],
