@@ -222,6 +222,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
     end
 
     body = JSON.parse(response.body)
+    Rails.logger.info "Payment verification response: #{body.inspect}"
 
     if body['status'] == true && body['data']['status'] == 'success'
       # ✅ Payment is verified and successful
@@ -229,8 +230,10 @@ module Api::V1::Concerns::PaymentsControllerHelper
       payment = payment_class.find_by(transaction_id: reference)
       
       if payment
+        Rails.logger.info "Payment verified and confirmed: #{payment.id}"
         payment.update(status: "payment confirmed")
         payment.orders.each do |order|
+          Rails.logger.info "Updating order status to payment confirmed: #{order.id}"
           order.update(status: "payment confirmed")
         end
         payment.sephcocco_user.update(payment_ref: payment.sephcocco_user.payment_ref.next)
