@@ -12,6 +12,16 @@ class Pharmacy::User::SephcoccoPharmacyOrderSerializer < ActiveModel::Serializer
               :address,
               :phone_number,
               :additional_notes,
+              :payment_details,
+              :shipping_details
+
+  def payment_details
+    object&.sephcocco_pharmacy_payment
+  end
+
+  def shipping_details
+    object&.sephcocco_pharmacy_shipping
+  end
 
   def product
     prod = object.sephcocco_pharmacy_product

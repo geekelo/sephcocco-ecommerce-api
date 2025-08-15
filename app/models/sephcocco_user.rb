@@ -11,6 +11,8 @@ class SephcoccoUser < ApplicationRecord
   has_many :sephcocco_lounge_orders, class_name: "Lounge::SephcoccoLoungeOrder", foreign_key: :sephcocco_user_id
   has_many :sephcocco_lounge_admin_activities, class_name: "Lounge::SephcoccoLoungeAdminActivity", foreign_key: :sephcocco_user_id
   has_many :sephcocco_lounge_messages, class_name: "Lounge::SephcoccoLoungeMessage", foreign_key: :sephcocco_user_id
+  has_many :sephcocco_lounge_shippings, class_name: "Lounge::SephcoccoLoungeShipping", foreign_key: :sephcocco_user_id
+  has_many :assigned_lounge_shippings, class_name: "Lounge::SephcoccoLoungeShipping", foreign_key: :rider_id
 
   # Restaurant associations
   has_many :restaurant_product_likes, class_name: "Restaurant::SephcoccoRestaurantProductLike", foreign_key: :sephcocco_user_id, dependent: :destroy
@@ -20,6 +22,8 @@ class SephcoccoUser < ApplicationRecord
   has_many :sephcocco_restaurant_orders, class_name: "Restaurant::SephcoccoRestaurantOrder", foreign_key: :sephcocco_user_id
   has_many :sephcocco_restaurant_admin_activities, class_name: "Restaurant::SephcoccoRestaurantAdminActivity", foreign_key: :sephcocco_user_id
   has_many :sephcocco_restaurant_messages, class_name: "Restaurant::SephcoccoRestaurantMessage", foreign_key: :sephcocco_user_id
+  has_many :sephcocco_restaurant_shippings, class_name: "Restaurant::SephcoccoRestaurantShipping", foreign_key: :sephcocco_user_id
+  has_many :assigned_restaurant_shippings, class_name: "Restaurant::SephcoccoRestaurantShipping", foreign_key: :rider_id
 
   # Pharmacy associations
   has_many :pharmacy_product_likes, class_name: "Pharmacy::SephcoccoPharmacyProductLike", foreign_key: :sephcocco_user_id, dependent: :destroy
@@ -29,6 +33,8 @@ class SephcoccoUser < ApplicationRecord
   has_many :sephcocco_pharmacy_orders, class_name: "Pharmacy::SephcoccoPharmacyOrder", foreign_key: :sephcocco_user_id
   has_many :sephcocco_pharmacy_admin_activities, class_name: "Pharmacy::SephcoccoPharmacyAdminActivity", foreign_key: :sephcocco_user_id
   has_many :sephcocco_pharmacy_messages, class_name: "Pharmacy::SephcoccoPharmacyMessage", foreign_key: :sephcocco_user_id
+  has_many :sephcocco_pharmacy_shippings, class_name: "Pharmacy::SephcoccoPharmacyShipping", foreign_key: :sephcocco_user_id
+  has_many :assigned_pharmacy_shippings, class_name: "Pharmacy::SephcoccoPharmacyShipping", foreign_key: :rider_id
   
   # Payment associations
   has_many :sephcocco_lounge_payments, class_name: "Lounge::SephcoccoLoungePayment", foreign_key: :sephcocco_user_id

@@ -12,6 +12,16 @@ class Restaurant::User::SephcoccoRestaurantOrderSerializer < ActiveModel::Serial
               :address,
               :phone_number,
               :additional_notes,
+              :payment_details,
+              :shipping_details
+
+  def payment_details
+    object&.sephcocco_restaurant_payment
+  end
+
+  def shipping_details
+    object&.sephcocco_restaurant_shipping
+  end
 
   def product
     prod = object.sephcocco_restaurant_product

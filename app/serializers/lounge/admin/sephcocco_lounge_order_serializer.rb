@@ -16,10 +16,20 @@ class Lounge::Admin::SephcoccoLoungeOrderSerializer < ActiveModel::Serializer
               :address,
               :phone_number,
               :additional_notes,
+              :payment_details,
+              :shipping_details
 
-    def product
-      object&.sephcocco_lounge_product
-    end
+  def payment_details
+    object&.sephcocco_lounge_payment
+  end
+
+  def shipping_details
+    object&.sephcocco_lounge_shipping
+  end
+
+  def product
+    object&.sephcocco_lounge_product
+  end
 
   def customer
     object&.sephcocco_user

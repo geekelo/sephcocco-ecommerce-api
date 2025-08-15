@@ -16,6 +16,8 @@ class Pharmacy::Admin::SephcoccoPharmacyOrderSerializer < ActiveModel::Serialize
               :address,
               :phone_number,
               :additional_notes,
+              :payment_details,
+              :shipping_details
 
   def product
     object&.sephcocco_pharmacy_product
@@ -23,5 +25,13 @@ class Pharmacy::Admin::SephcoccoPharmacyOrderSerializer < ActiveModel::Serialize
 
   def customer
     object&.sephcocco_user
+  end
+
+  def payment_details
+    object&.sephcocco_pharmacy_payment
+  end
+
+  def shipping_details
+    object&.sephcocco_pharmacy_shipping
   end
 end

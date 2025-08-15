@@ -63,6 +63,13 @@ Rails.application.routes.draw do
             post :verify
           end
         end
+        resources :sephcocco_lounge_shippings do
+          member do
+            post :assign_rider
+            post :start_delivery
+            post :complete_delivery
+          end
+        end
         resources :sephcocco_lounge_faqs
         resources :sephcocco_lounge_admin_notifications, only: [ :index, :update ]
         resources :sephcocco_lounge_admin_activities, only: [ :index ]
@@ -115,6 +122,13 @@ Rails.application.routes.draw do
           collection do
             get :verify
             post :verify
+          end
+        end
+        resources :sephcocco_pharmacy_shippings do
+          member do
+            post :assign_rider
+            post :start_delivery
+            post :complete_delivery
           end
         end
         resources :sephcocco_pharmacy_faqs
@@ -171,6 +185,13 @@ Rails.application.routes.draw do
           collection do
             get :verify
             post :verify
+          end
+        end
+        resources :sephcocco_restaurant_shippings do
+          member do
+            post :assign_rider
+            post :start_delivery
+            post :complete_delivery
           end
         end
         resources :sephcocco_restaurant_faqs
