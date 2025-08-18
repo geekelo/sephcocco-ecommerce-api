@@ -110,7 +110,7 @@ module Api::V1::Concerns::OrdersControllerHelper
         shipping_class = "#{outlet.name.capitalize}::Sephcocco#{outlet.name.capitalize}Shipping".constantize
         shipping_class.create(
           "sephcocco_#{outlet.name.downcase}_order_id" => @order.id,
-          status: "pending dispatch",
+          status: "pending",
           tracking_number: @order.order_number
         )
       end
