@@ -10,12 +10,8 @@ module OrderModelHelper
   end
 
   def update_stages(status)
-    if status == "refunded" || status == "delivered"
-      self.stages.push({"status": status, "date": DateTime.now})
-    else
-      self.stages.push({"status": status, "date": DateTime.now})
-    end
-    self.current_stage = self.stages.last["status"]
+    self.stages.push({"status": status, "date": DateTime.now})
+    self.current_stage = status
     self.save!
   end
 
