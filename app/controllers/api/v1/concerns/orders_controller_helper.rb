@@ -103,7 +103,18 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def update
     update_stages(order_params[:status]) if order_params[:status].present?
+
     if @order.update(order_params)
+
+      if @order.status == "delivering"
+        # create shipping for order
+        `Sephcocco#{outlet}Shipping`.create(
+          `sephcocco_#{outlet.name.downcase}_order_id`: @order.id,
+          status: "pending dispatch",
+          tracking_number: @order.order_number,
+        )
+      end
+
       if admin?
         AdminActivities::CreateService.new(
           user: current_user,
