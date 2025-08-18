@@ -120,7 +120,7 @@ module Api::V1::Concerns::OrdersControllerHelper
           user: current_user,
           activity_type: "Update",
           activity_name: "Order",
-          activity_description: "Order Updated: #{@order.number}",
+          activity_description: "Order Updated: #{@order.order_number}",
           outlet: outlet
         ).call
         render json: @order, each_serializer: order_serializer_class
@@ -139,7 +139,7 @@ module Api::V1::Concerns::OrdersControllerHelper
           user: current_user,
           activity_type: "Delete",
           activity_name: "Order",
-          activity_description: "Order Deleted: #{@order.number}",
+          activity_description: "Order Deleted: #{@order.order_number}",
           outlet: outlet
         ).call
       end
