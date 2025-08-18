@@ -351,10 +351,12 @@ class MessagingChannel < ApplicationCable::Channel
           Rails.logger.info "🧪 No threads found, creating a test thread for demonstration..."
           begin
             # Create a test user if needed
+            default_role = SephcoccoUserRole.find_by(name: 'user')
             test_user = SephcoccoUser.find_or_create_by(email: 'test@example.com') do |user|
               user.name = 'Test User'
               user.password = 'password123'
               user.password_confirmation = 'password123'
+              user.sephcocco_user_role_id = default_role.id
             end
             
             # Create a test thread

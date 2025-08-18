@@ -3,7 +3,10 @@ class SephcoccoUser < ApplicationRecord
   belongs_to :sephcocco_user_role, optional: true
   has_and_belongs_to_many :sephcocco_outlets
   
-  # Lounge associations
+  validates :sephcocco_user_role, presence: true
+  
+  before_validation :set_default_role, on: :create
+ 
   has_many :lounge_product_likes, class_name: "Lounge::SephcoccoLoungeProductLike", foreign_key: :sephcocco_user_id, dependent: :destroy
   has_many :liked_lounge_products, through: :lounge_product_likes, source: :sephcocco_lounge_product
   has_many :lounge_orders, class_name: "SephcoccoLoungeOrder", foreign_key: :sephcocco_user_id
@@ -58,5 +61,11 @@ class SephcoccoUser < ApplicationRecord
 
   def clear_reset_generated_token!
     update!(reset_password_token: nil, reset_password_sent_at: nil)
+  end
+  
+  private
+  
+  def set_default_role
+    self.sephcocco_user_role ||= SephcoccoUserRole.find_by(name: 'user')
   end
 end
