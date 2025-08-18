@@ -22,7 +22,7 @@ module OrderModelHelper
     self.order_number = SecureRandom.uuid
   end
 
-  def update_stages(status)
+  def self.update_stages(status)
     if status == "refunded" || status == "delivered"
       self.stages.push({"status": status, "date": DateTime.now})
     else

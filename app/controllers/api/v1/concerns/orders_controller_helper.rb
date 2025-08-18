@@ -102,9 +102,8 @@ module Api::V1::Concerns::OrdersControllerHelper
   end
 
   def update
-    update_stages(order_params[:status]) if order_params[:status].present?
-
     if @order.update(order_params)
+      @order.update_stages(order_params[:status]) if order_params[:status].present?
 
       if @order.status == "delivering"
         # create shipping for order
