@@ -108,10 +108,11 @@ module Api::V1::Concerns::OrdersControllerHelper
 
       if @order.status == "delivering"
         # create shipping for order
-        `Sephcocco#{outlet}Shipping`.create(
-          `sephcocco_#{outlet.name.downcase}_order_id`: @order.id,
+        shipping_class = "Sephcocco#{outlet.name.capitalize}Shipping".constantize
+        shipping_class.create(
+          "sephcocco_#{outlet.name.downcase}_order_id" => @order.id,
           status: "pending dispatch",
-          tracking_number: @order.order_number,
+          tracking_number: @order.order_number
         )
       end
 
@@ -171,7 +172,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def completed_orders
     if current_user&.sephcocco_user_role&.name == "admin"
-      order = order_class.where(status: "completed")
+      orders = order_class.where(status: "completed")
       render json: orders, each_serializer: order_serializer_class
     else
       orders = current_user.send(order_association).where(status: "completed") || []
