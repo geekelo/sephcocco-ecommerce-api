@@ -9,6 +9,16 @@ module OrderModelHelper
     before_create :set_shipping_details, if: -> { respond_to?(:set_shipping_details, true) }
   end
 
+  def update_stages(status)
+    if status == "refunded" || status == "delivered"
+      self.stages.push({"status": status, "date": DateTime.now})
+    else
+      self.stages.push({"status": status, "date": DateTime.now})
+    end
+    self.current_stage = self.stages.last["status"]
+    self.save!
+  end
+
   private
 
   def set_order_status
@@ -20,16 +30,6 @@ module OrderModelHelper
 
   def set_order_number
     self.order_number = SecureRandom.uuid
-  end
-
-  def self.update_stages(status)
-    if status == "refunded" || status == "delivered"
-      self.stages.push({"status": status, "date": DateTime.now})
-    else
-      self.stages.push({"status": status, "date": DateTime.now})
-    end
-    self.current_stage = self.stages.last.status
-    self.save!
   end
 
   def set_order_total
