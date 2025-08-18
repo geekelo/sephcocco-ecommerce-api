@@ -107,7 +107,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
       if @order.status == "delivering"
         # create shipping for order
-        shipping_class = "Sephcocco#{outlet.name.capitalize}Shipping".constantize
+        shipping_class = "#{outlet.name.capitalize}::Sephcocco#{outlet.name.capitalize}Shipping".constantize
         shipping_class.create(
           "sephcocco_#{outlet.name.downcase}_order_id" => @order.id,
           status: "pending dispatch",
