@@ -5,6 +5,7 @@ class Pharmacy::Admin::SephcoccoPharmacyShippingSerializer < ActiveModel::Serial
              :rider,
              :datetime_delivered,
              :dispatching,
+             :customer,
              :created_at,
              :updated_at
 
@@ -19,5 +20,9 @@ class Pharmacy::Admin::SephcoccoPharmacyShippingSerializer < ActiveModel::Serial
       email: object.rider.email,
       phone: object.rider.phone
     }
+  end
+
+  def customer
+    object&.sephcocco_pharmacy_order&.sephcocco_user
   end
 end 

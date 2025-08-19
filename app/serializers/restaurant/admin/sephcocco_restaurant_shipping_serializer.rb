@@ -5,6 +5,7 @@ class Restaurant::Admin::SephcoccoRestaurantShippingSerializer < ActiveModel::Se
              :rider,
              :datetime_delivered,
              :dispatching,
+             :customer,
              :created_at,
              :updated_at
 
@@ -19,5 +20,10 @@ class Restaurant::Admin::SephcoccoRestaurantShippingSerializer < ActiveModel::Se
       email: object.rider.email,
       phone: object.rider.phone
     }
+  end
+
+
+  def customer
+    object&.sephcocco_lounge_order&.sephcocco_user
   end
 end 

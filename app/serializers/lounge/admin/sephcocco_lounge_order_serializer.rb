@@ -16,12 +16,8 @@ class Lounge::Admin::SephcoccoLoungeOrderSerializer < ActiveModel::Serializer
               :address,
               :phone_number,
               :additional_notes,
-              :payment_details,
               :shipping_details
 
-  def payment_details
-    object&.sephcocco_lounge_payment
-  end
 
   def shipping_details
     object&.sephcocco_lounge_shipping

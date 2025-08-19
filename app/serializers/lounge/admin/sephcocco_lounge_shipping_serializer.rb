@@ -5,6 +5,7 @@ class Lounge::Admin::SephcoccoLoungeShippingSerializer < ActiveModel::Serializer
              :rider,
              :datetime_delivered,
              :dispatching,
+             :customer,
              :created_at,
              :updated_at
 
@@ -19,5 +20,9 @@ class Lounge::Admin::SephcoccoLoungeShippingSerializer < ActiveModel::Serializer
       email: object.rider.email,
       phone: object.rider.phone
     }
+  end
+
+  def customer
+    object&.sephcocco_lounge_order&.sephcocco_user
   end
 end 
