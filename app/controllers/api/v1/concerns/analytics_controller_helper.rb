@@ -90,6 +90,31 @@ module Api::V1::Concerns::AnalyticsControllerHelper
     }
   end
 
+  def overview_performance
+    year = params[:year]&.to_i || Date.current.year
+  
+    # Get range for the whole year
+    start_date = Date.new(year, 1, 1)
+    end_date   = start_date.end_of_year
+  
+    # Group completed orders by month
+    orders_count = order_class
+                     .where(status: 'completed', created_at: start_date..end_date)
+                     .group_by_month(:created_at, format: "%m", time_zone: "UTC")
+                     .count
+  
+    # Map all 12 months to ensure missing months return 0
+    months_data = (1..12).map do |m|
+      {
+        month: Date::MONTHNAMES[m],
+        orders_count: orders_count[m.to_s] || 0
+      }
+    end
+  
+    render json: months_data
+  end  
+
+
   private
 
   def total_products_count

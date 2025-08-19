@@ -90,6 +90,7 @@ Rails.application.routes.draw do
             get :monthly_orders
             get :yearly_payments
             get :yearly_orders
+            get :overview_performance
           end
         end
       end
@@ -152,6 +153,7 @@ Rails.application.routes.draw do
             get :monthly_orders
             get :yearly_payments
             get :yearly_orders
+            get :overview_performance
           end
         end
       end
@@ -215,6 +217,7 @@ Rails.application.routes.draw do
             get :monthly_orders
             get :yearly_payments
             get :yearly_orders
+            get :overview_performance
           end
         end
       end
