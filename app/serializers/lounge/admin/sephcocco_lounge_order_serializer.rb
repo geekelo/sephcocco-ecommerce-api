@@ -34,4 +34,6 @@ class Lounge::Admin::SephcoccoLoungeOrderSerializer < ActiveModel::Serializer
   def customer
     object&.sephcocco_user
   end
+
+  belongs_to :sephcocco_lounge_payment, serializer: Lounge::Admin::SephcoccoLoungePaymentSerializer
 end

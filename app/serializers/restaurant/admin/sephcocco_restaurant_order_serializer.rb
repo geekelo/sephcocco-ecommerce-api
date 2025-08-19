@@ -35,4 +35,5 @@ class Restaurant::Admin::SephcoccoRestaurantOrderSerializer < ActiveModel::Seria
     object&.sephcocco_restaurant_shipping
   end
 
+  belongs_to :sephcocco_restaurant_payment, serializer: Restaurant::Admin::SephcoccoRestaurantPaymentSerializer
 end

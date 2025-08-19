@@ -27,11 +27,9 @@ class Pharmacy::Admin::SephcoccoPharmacyOrderSerializer < ActiveModel::Serialize
     object&.sephcocco_user
   end
 
-  def payment_details
-    object&.sephcocco_pharmacy_payment
-  end
-
   def shipping_details
     object&.sephcocco_pharmacy_shipping
   end
+
+  belongs_to :sephcocco_pharmacy_payment, serializer: Pharmacy::Admin::SephcoccoPharmacyPaymentSerializer
 end
