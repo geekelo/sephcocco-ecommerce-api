@@ -19,6 +19,10 @@ class Lounge::Admin::SephcoccoLoungeOrderSerializer < ActiveModel::Serializer
               :shipping_details
 
 
+  def payment_details
+    object&.sephcocco_lounge_payment
+  end
+
   def shipping_details
     object&.sephcocco_lounge_shipping
   end

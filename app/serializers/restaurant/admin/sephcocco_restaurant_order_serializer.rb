@@ -26,6 +26,10 @@ class Restaurant::Admin::SephcoccoRestaurantOrderSerializer < ActiveModel::Seria
     object&.sephcocco_user
   end
 
+  def payment_details
+    object&.sephcocco_restaurant_payment
+  end
+
   def shipping_details
     object&.sephcocco_restaurant_shipping
   end
