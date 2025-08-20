@@ -18,7 +18,7 @@ class Pharmacy::Admin::SephcoccoPharmacyShippingSerializer < ActiveModel::Serial
       id: object.rider.id,
       name: object.rider.name,
       email: object.rider.email,
-      phone: object.rider.phone
+      phone: object.rider.phone_number
     }
   end
 

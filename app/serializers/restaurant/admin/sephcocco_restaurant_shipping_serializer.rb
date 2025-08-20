@@ -18,12 +18,12 @@ class Restaurant::Admin::SephcoccoRestaurantShippingSerializer < ActiveModel::Se
       id: object.rider.id,
       name: object.rider.name,
       email: object.rider.email,
-      phone: object.rider.phone
+      phone: object.rider.phone_number
     }
   end
 
 
   def customer
-    object&.sephcocco_lounge_order&.sephcocco_user
+    object&.sephcocco_restaurant_order&.sephcocco_user
   end
 end 
