@@ -34,6 +34,12 @@ module Api::V1::Concerns::ShippingControllerHelper
         each_serializer: shipping_serializer_class
       ).as_json,
       meta: {
+        total_delivered: shippings.where(status: "delivered").count,
+        total_in_transit: shippings.where(status: "in_transit").count,
+        total_assigned: shippings.where(status: "assigned").count,
+        total_pending: shippings.where(status: "pending").count,
+        total_cancelled: shippings.where(status: "cancelled").count,
+        total_dispatching: shippings.where(dispatching: true).count,
         total_count: shippings.total_count,
         total_pages: shippings.total_pages,
         current_page: shippings.current_page,

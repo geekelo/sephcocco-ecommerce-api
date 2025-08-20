@@ -65,9 +65,9 @@ Rails.application.routes.draw do
         end
         resources :sephcocco_lounge_shippings do
           member do
-            post :assign_rider
-            post :start_delivery
-            post :complete_delivery
+            patch :assign_rider
+            patch :start_delivery
+            patch :complete_delivery
           end
         end
         resources :sephcocco_lounge_faqs
@@ -127,9 +127,9 @@ Rails.application.routes.draw do
         end
         resources :sephcocco_pharmacy_shippings do
           member do
-            post :assign_rider
-            post :start_delivery
-            post :complete_delivery
+            patch :assign_rider
+            patch :start_delivery
+            patch :complete_delivery
           end
         end
         resources :sephcocco_pharmacy_faqs
@@ -191,9 +191,9 @@ Rails.application.routes.draw do
         end
         resources :sephcocco_restaurant_shippings do
           member do
-            post :assign_rider
-            post :start_delivery
-            post :complete_delivery
+            patch :assign_rider
+            patch :start_delivery
+            patch :complete_delivery
           end
         end
         resources :sephcocco_restaurant_faqs
