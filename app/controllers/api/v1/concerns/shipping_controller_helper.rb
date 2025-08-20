@@ -131,7 +131,7 @@ module Api::V1::Concerns::ShippingControllerHelper
   def assign_rider
     @shipping = shipping_class.find(params[:id])
     
-    if @shipping.update(rider: params[:rider], status: "assigned")
+    if @shipping.update(rider: params[:rider_id], status: "assigned")
       render json: @shipping, serializer: shipping_serializer_class
     else
       render json: { errors: @shipping.errors.full_messages }, status: :unprocessable_entity
