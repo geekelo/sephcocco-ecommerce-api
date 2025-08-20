@@ -158,6 +158,16 @@ module Api::V1::Concerns::ShippingControllerHelper
     end
   end
 
+  def cancel_delivery
+    @shipping = shipping_class.find(params[:id])
+    
+    if @shipping.update(status: "cancelled")
+      render json: @shipping, serializer: shipping_serializer_class
+    else
+      render json: { errors: @shipping.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_shipping

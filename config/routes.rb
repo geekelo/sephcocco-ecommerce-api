@@ -30,6 +30,7 @@ Rails.application.routes.draw do
           patch "suspend_user" => "sephcocco_users#suspend_user"
           patch "unsuspend_user" => "sephcocco_users#unsuspend_user"
           patch "update_user_outlets" => "sephcocco_users#update_user_outlets"
+          get "get_riders" => "sephcocco_users#get_riders"
         end
       end
 
@@ -68,6 +69,7 @@ Rails.application.routes.draw do
             patch :assign_rider
             patch :start_delivery
             patch :complete_delivery
+            patch :cancel_delivery
           end
         end
         resources :sephcocco_lounge_faqs
@@ -130,6 +132,7 @@ Rails.application.routes.draw do
             patch :assign_rider
             patch :start_delivery
             patch :complete_delivery
+            patch :cancel_delivery
           end
         end
         resources :sephcocco_pharmacy_faqs
@@ -194,6 +197,7 @@ Rails.application.routes.draw do
             patch :assign_rider
             patch :start_delivery
             patch :complete_delivery
+            patch :cancel_delivery
           end
         end
         resources :sephcocco_restaurant_faqs

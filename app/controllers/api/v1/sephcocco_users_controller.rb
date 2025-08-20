@@ -82,6 +82,11 @@ class Api::V1::SephcoccoUsersController < ApplicationController
     end
   end
 
+  def get_riders
+    riders = SephcoccoUser.where(sephcocco_user_role: "rider")
+    render json: riders, each_serializer: SephcoccoUserSerializer
+  end
+
   private
 
   def set_user
