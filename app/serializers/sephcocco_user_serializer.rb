@@ -20,10 +20,10 @@ class SephcoccoUserSerializer < ActiveModel::Serializer
   end
 
   def total_shippings
-    if object.sephcocco_user_role.name == "admin"
-    pharmacy_shippings = Pharmacy::SephcoccoPharmacyShipping.where(sephcocco_user_id: object.id, status: "delivered")
-    restaurant_shippings = Restaurant::SephcoccoRestaurantShipping.where(sephcocco_user_id: object.id, status: "delivered")
-      lounge_shippings = Lounge::SephcoccoLoungeShipping.where(sephcocco_user_id: object.id, status: "delivered")
+    if object.sephcocco_user_role.name == "rider"
+      pharmacy_shippings = Pharmacy::SephcoccoPharmacyShipping.where(rider_id: object.id, status: "delivered")
+      restaurant_shippings = Restaurant::SephcoccoRestaurantShipping.where(rider_id: object.id, status: "delivered")
+      lounge_shippings = Lounge::SephcoccoLoungeShipping.where(rider_id: object.id, status: "delivered")
       total_shippings = pharmacy_shippings.count + restaurant_shippings.count + lounge_shippings.count
       total_shippings
     else
