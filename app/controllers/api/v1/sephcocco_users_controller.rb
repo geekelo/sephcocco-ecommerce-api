@@ -83,7 +83,7 @@ class Api::V1::SephcoccoUsersController < ApplicationController
   end
 
   def get_riders
-    riders = SephcoccoUser.where(sephcocco_user_role: "rider")
+    riders = SephcoccoUser.where(sephcocco_user_role_id: SephcoccoUserRole.find_by(name: "rider").id)
     render json: riders, each_serializer: SephcoccoUserSerializer
   end
 
