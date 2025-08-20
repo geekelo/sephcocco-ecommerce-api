@@ -130,8 +130,12 @@ module Api::V1::Concerns::ShippingControllerHelper
   # Custom actions
   def assign_rider
     @shipping = shipping_class.find(params[:id])
-    
-    if @shipping.update(rider: params[:rider_id], status: "assigned")
+    rider = SephcoccoUser.find_by(id: params[:rider_id])
+    if rider.nil?
+      render json: { error: "Rider not found" }, status: :not_found
+      return
+    end
+    if @shipping.update(rider: rider, status: "assigned")
       render json: @shipping, serializer: shipping_serializer_class
     else
       render json: { errors: @shipping.errors.full_messages }, status: :unprocessable_entity
