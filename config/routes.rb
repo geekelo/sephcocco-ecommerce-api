@@ -34,6 +34,14 @@ Rails.application.routes.draw do
         end
       end
 
+      # Rider location tracking
+      resources :rider_locations, only: [ :index, :show ] do
+        collection do
+          post :update_location
+          post :cleanup
+        end
+      end
+
       # LOUNGE
       namespace :lounge do
         resources :sephcocco_lounge_products do

@@ -8,6 +8,10 @@ class Api::V1::Restaurant::SephcoccoRestaurantShippingsController < ApplicationC
     Restaurant::SephcoccoRestaurantShipping
   end
 
+  def order_association
+    :sephcocco_restaurant_order
+  end
+
   def shipping_association
     :sephcocco_restaurant_shippings
   end

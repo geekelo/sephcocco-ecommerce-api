@@ -82,7 +82,13 @@ module Api::V1::Concerns::ShippingControllerHelper
   end
 
   def update
+    old_dispatching = @shipping.dispatching
+    old_rider = @shipping.rider
+    
     if @shipping.update(shipping_params)
+      # Handle dispatching status change for location tracking
+      handle_dispatching_status_change(old_dispatching, old_rider)
+      
       # Create admin activity/notification
       if current_user&.sephcocco_user_role&.name == "admin"
         AdminActivities::CreateService.new(
@@ -136,6 +142,17 @@ module Api::V1::Concerns::ShippingControllerHelper
       return
     end
     if @shipping.update(rider: rider, status: "assigned")
+      # notify rider about the assignment
+      ActionCable.server.broadcast(
+        "rider_location_#{rider.id}",
+        {
+          type: 'rider_assigned',
+          shipping_id: @shipping.id,
+          tracking_number: @shipping.tracking_number,
+          outlet_type: outlet,
+          message: 'You have been assigned a new delivery'
+        }
+      )
       render json: @shipping, serializer: shipping_serializer_class
     else
       render json: { errors: @shipping.errors.full_messages }, status: :unprocessable_entity
@@ -156,6 +173,11 @@ module Api::V1::Concerns::ShippingControllerHelper
     @shipping = shipping_class.find(params[:id])
     
     if @shipping.update(status: "delivered", datetime_delivered: Time.current, dispatching: false)
+      # Update orders status to delivered
+      order = @shipping.send(order_association)
+      if order.present?
+        order.update(status: "delivered")
+      end
       render json: @shipping, serializer: shipping_serializer_class
     else
       render json: { errors: @shipping.errors.full_messages }, status: :unprocessable_entity
@@ -166,6 +188,11 @@ module Api::V1::Concerns::ShippingControllerHelper
     @shipping = shipping_class.find(params[:id])
     
     if @shipping.update(status: "cancelled")
+      # Update orders status to cancelled
+      order = @shipping.send(order_association)
+      if order.present?
+        order.update(status: "cancelled")
+      end
       render json: @shipping, serializer: shipping_serializer_class
     else
       render json: { errors: @shipping.errors.full_messages }, status: :unprocessable_entity
@@ -218,5 +245,101 @@ module Api::V1::Concerns::ShippingControllerHelper
 
   def outlet
     raise NotImplementedError, "Define `outlet` in your controller"
+  end
+
+  # Handle dispatching status changes for location tracking
+  def handle_dispatching_status_change(old_dispatching, old_rider)
+    # Check if dispatching status changed
+    if @shipping.dispatching != old_dispatching
+      if @shipping.dispatching == true
+        # Rider started dispatching - enable location tracking
+        enable_rider_location_tracking
+      else
+        # Rider stopped dispatching - disable location tracking
+        disable_rider_location_tracking
+      end
+    end
+    
+    # Check if rider changed
+    if @shipping.rider != old_rider && @shipping.rider.present?
+      # New rider assigned - notify them to start location tracking
+      notify_rider_assignment
+    end
+  end
+
+  def enable_rider_location_tracking
+    return unless @shipping.rider.present?
+    
+    Rails.logger.info "🚚 Enabling location tracking for rider: #{@shipping.rider.id}"
+    
+    # Notify rider to start location tracking
+    ActionCable.server.broadcast(
+      "rider_location_#{@shipping.rider.id}",
+      {
+        type: 'start_location_tracking',
+        shipping_id: @shipping.id,
+        tracking_number: @shipping.tracking_number,
+        outlet_type: outlet,
+        message: 'Please start location tracking for this delivery'
+      }
+    )
+    
+    # Notify admin about rider going online
+    ActionCable.server.broadcast(
+      "rider_locations_admin",
+      {
+        type: 'rider_online',
+        rider_id: @shipping.rider.id,
+        shipping_id: @shipping.id,
+        outlet_type: outlet,
+        timestamp: Time.current.iso8601
+      }
+    )
+  end
+
+  def disable_rider_location_tracking
+    return unless @shipping.rider.present?
+    
+    Rails.logger.info "🚚 Disabling location tracking for rider: #{@shipping.rider.id}"
+    
+    # Notify rider to stop location tracking
+    ActionCable.server.broadcast(
+      "rider_location_#{@shipping.rider.id}",
+      {
+        type: 'stop_location_tracking',
+        shipping_id: @shipping.id,
+        message: 'Location tracking stopped for this delivery'
+      }
+    )
+    
+    # Notify admin about rider going offline
+    ActionCable.server.broadcast(
+      "rider_locations_admin",
+      {
+        type: 'rider_offline',
+        rider_id: @shipping.rider.id,
+        shipping_id: @shipping.id,
+        outlet_type: outlet,
+        timestamp: Time.current.iso8601
+      }
+    )
+  end
+
+  def notify_rider_assignment
+    return unless @shipping.rider.present?
+    
+    Rails.logger.info "🚚 Notifying rider assignment: #{@shipping.rider.id}"
+    
+    # Notify the new rider about the assignment
+    ActionCable.server.broadcast(
+      "rider_location_#{@shipping.rider.id}",
+      {
+        type: 'rider_assigned',
+        shipping_id: @shipping.id,
+        tracking_number: @shipping.tracking_number,
+        outlet_type: outlet,
+        message: 'You have been assigned a new delivery'
+      }
+    )
   end
 end 

@@ -12,6 +12,10 @@ class Api::V1::Pharmacy::SephcoccoPharmacyShippingsController < ApplicationContr
     :sephcocco_pharmacy_shippings
   end
 
+  def order_association
+    :sephcocco_pharmacy_order
+  end
+
   def shipping_serializer_class
     if current_user&.sephcocco_user_role&.name == "admin"
       Pharmacy::Admin::SephcoccoPharmacyShippingSerializer

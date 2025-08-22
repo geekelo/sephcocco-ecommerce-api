@@ -8,6 +8,10 @@ class Api::V1::Lounge::SephcoccoLoungeShippingsController < ApplicationControlle
     Lounge::SephcoccoLoungeShipping
   end
 
+  def order_association
+    :sephcocco_lounge_order
+  end
+
   def shipping_association
     :sephcocco_lounge_shippings
   end
