@@ -77,6 +77,8 @@ module Api::V1::Concerns::OrdersControllerHelper
       order = current_user.send(order_association).new(order_params.merge(unit_price: unit_price))
     end
 
+    order.set_order_total(unit_price, order_params[:quantity])
+
     if order&.save
       if admin?
         AdminNotifications::CreateService.new(
@@ -104,6 +106,7 @@ module Api::V1::Concerns::OrdersControllerHelper
   def update
     old_status = @order.status
     if @order.update(order_params)
+      @order.set_order_total(@order.unit_price, @order.quantity)
       @order.update_stages(order_params[:status]) if order_params[:status].present?
 
       # Send status update email if status changed

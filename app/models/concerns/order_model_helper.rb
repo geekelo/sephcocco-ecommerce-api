@@ -28,7 +28,7 @@ module OrderModelHelper
     self.order_number = SecureRandom.uuid
   end
 
-  def set_order_total
+  def set_order_total(unit_price, quantity)
     if unit_price.present?
       self.total_price = unit_price * quantity
       self.total_cost = total_price
