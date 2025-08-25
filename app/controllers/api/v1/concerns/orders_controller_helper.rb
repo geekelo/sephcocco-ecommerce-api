@@ -218,7 +218,13 @@ module Api::V1::Concerns::OrdersControllerHelper
   end
 
   def set_customer
-    @customer = SephcoccoUser.find_by(id: order_params[:sephcocco_user_id])
+    if admin?
+      # For admin users, get customer from order params
+      @customer = SephcoccoUser.find_by(id: order_params[:sephcocco_user_id])
+    else
+      # For regular users, they are the customer
+      @customer = current_user
+    end
   end
 
   def admin?
