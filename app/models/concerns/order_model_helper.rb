@@ -23,6 +23,8 @@ module OrderModelHelper
       self.total_price = unit_price * quantity
       self.total_cost = total_price
     end
+
+    self.save!
   end
 
   def set_total_cost(shipping_cost = 0)
