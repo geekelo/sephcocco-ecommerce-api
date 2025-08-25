@@ -79,9 +79,10 @@ module Api::V1::Concerns::OrdersControllerHelper
 
 
 
+    # Set the total price before saving
+    order.set_order_total(unit_price, order_params[:quantity])
+    
     if order&.save
-      order.set_order_total(unit_price, order_params[:quantity])
-
       if admin?
         AdminNotifications::CreateService.new(
           action_type: "order",
