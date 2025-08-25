@@ -108,7 +108,8 @@ module Api::V1::Concerns::OrdersControllerHelper
     if @order.update(order_params)
       @order.set_order_total(@order.unit_price, @order.quantity)
       @order.update_stages(order_params[:status]) if order_params[:status].present?
-
+      @order.save!
+      
       # Send status update email if status changed
       if order_params[:status].present? && old_status != @order.status
         OrderMailer.with(order: @order, old_status: old_status).order_status_updated_email.deliver_now
