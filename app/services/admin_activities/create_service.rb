@@ -9,7 +9,9 @@ module AdminActivities
     end
 
     def call
-      activity_class = "#{@outlet.capitalize}::Sephcocco#{@outlet.capitalize}AdminActivity".constantize
+      # Handle both Module and String types for @outlet
+      outlet_name = @outlet.is_a?(Module) ? @outlet.name : @outlet
+      activity_class = "#{outlet_name.capitalize}::Sephcocco#{outlet_name.capitalize}AdminActivity".constantize
       
       activity_class.create!(
         sephcocco_user: @user,
