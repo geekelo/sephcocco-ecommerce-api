@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Payment Confirmed</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding: 40px 0;">
+      <tr>
+        <td align="center">
+          <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <tr>
+              <td>
+                <div style="text-align: center; margin-bottom: 30px;">
+                  <div style="background-color: #28a745; color: #ffffff; width: 60px; height: 60px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold;">
+                    ✓
+                  </div>
+                </div>
+                
+                <h2 style="color: #591c06; margin-top: 0; text-align: center;">Payment Confirmed!</h2>
+                <p style="color: #333333; font-size: 16px; line-height: 1.5; text-align: center;">
+                  Hello <%= @user.name %>,
+                </p>
+                <p style="color: #333333; font-size: 16px; line-height: 1.5; text-align: center;">
+                  Your payment has been successfully processed and confirmed.
+                </p>
+                
+                <div style="background-color: #f8f9fa; border-radius: 6px; padding: 20px; margin: 20px 0;">
+                  <h3 style="color: #591c06; margin-top: 0;">Payment Details</h3>
+                  <table width="100%" cellpadding="8" cellspacing="0">
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Transaction ID:</td>
+                      <td style="color: #666666; font-family: monospace;"><%= @payment.transaction_id %></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Amount Paid:</td>
+                      <td style="color: #28a745; font-weight: bold; font-size: 18px;">₦<%= number_with_precision(@payment.amount, precision: 2) %></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Payment Method:</td>
+                      <td style="color: #666666;"><%= @payment.payment_method&.capitalize || 'Online Payment' %></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Payment Date:</td>
+                      <td style="color: #666666;"><%= @payment.updated_at.strftime("%B %d, %Y at %I:%M %p") %></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Status:</td>
+                      <td style="color: #28a745; font-weight: bold;">Confirmed</td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Outlet:</td>
+                      <td style="color: #666666; text-transform: capitalize;"><%= @outlet_type %></td>
+                    </tr>
+                  </table>
+                </div>
+
+                <% if @orders.any? %>
+                  <div style="margin: 20px 0;">
+                    <h3 style="color: #591c06;">Orders Included</h3>
+                    <table width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+                      <thead>
+                        <tr style="background-color: #f8f9fa;">
+                          <th style="text-align: left; padding: 12px; border-bottom: 1px solid #dee2e6;">Order Number</th>
+                          <th style="text-align: center; padding: 12px; border-bottom: 1px solid #dee2e6;">Status</th>
+                          <th style="text-align: right; padding: 12px; border-bottom: 1px solid #dee2e6;">Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% @orders.each do |order| %>
+                          <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid #f1f3f4; font-family: monospace;"><%= order.order_number %></td>
+                            <td style="text-align: center; padding: 12px; border-bottom: 1px solid #f1f3f4; text-transform: capitalize;"><%= order.status %></td>
+                            <td style="text-align: right; padding: 12px; border-bottom: 1px solid #f1f3f4;">₦<%= number_with_precision(order.total_price, precision: 2) %></td>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                <% end %>
+
+                <div style="background-color: #e8f5e8; border-radius: 6px; padding: 20px; margin: 20px 0;">
+                  <h3 style="color: #2d5a2d; margin-top: 0;">What's Next?</h3>
+                  <ul style="color: #333333; font-size: 14px; line-height: 1.6;">
+                    <li>Your orders are now being processed</li>
+                    <li>You'll receive updates on your order status</li>
+                    <li>We'll notify you when your orders are ready for delivery</li>
+                    <li>Keep this email for your records</li>
+                  </ul>
+                </div>
+
+                <div style="background-color: #fff3cd; border-radius: 6px; padding: 20px; margin: 20px 0;">
+                  <h3 style="color: #856404; margin-top: 0;">Receipt</h3>
+                  <p style="color: #333333; font-size: 14px; line-height: 1.6;">
+                    This email serves as your payment receipt. Please keep it for your records.
+                  </p>
+                  <p style="color: #333333; font-size: 14px; line-height: 1.6;">
+                    <strong>Transaction ID:</strong> <%= @payment.transaction_id %><br>
+                    <strong>Date:</strong> <%= @payment.updated_at.strftime("%B %d, %Y at %I:%M %p") %><br>
+                    <strong>Amount:</strong> ₦<%= number_with_precision(@payment.amount, precision: 2) %>
+                  </p>
+                </div>
+
+                <p style="color: #555555; font-size: 14px; line-height: 1.5;">
+                  If you have any questions about your payment or orders, please contact our support team.
+                </p>
+                
+                <p style="color: #999999; font-size: 12px; line-height: 1.5; margin-top: 40px;">
+                  &copy; <%= Time.current.year %> Sephcocco. All rights reserved.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

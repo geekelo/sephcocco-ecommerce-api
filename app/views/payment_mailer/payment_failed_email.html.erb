@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Payment Failed</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding: 40px 0;">
+      <tr>
+        <td align="center">
+          <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <tr>
+              <td>
+                <div style="text-align: center; margin-bottom: 30px;">
+                  <div style="background-color: #dc3545; color: #ffffff; width: 60px; height: 60px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold;">
+                    ✕
+                  </div>
+                </div>
+                
+                <h2 style="color: #591c06; margin-top: 0; text-align: center;">Payment Failed</h2>
+                <p style="color: #333333; font-size: 16px; line-height: 1.5; text-align: center;">
+                  Hello <%= @user.name %>,
+                </p>
+                <p style="color: #333333; font-size: 16px; line-height: 1.5; text-align: center;">
+                  We're sorry, but your payment could not be processed.
+                </p>
+                
+                <div style="background-color: #f8f9fa; border-radius: 6px; padding: 20px; margin: 20px 0;">
+                  <h3 style="color: #591c06; margin-top: 0;">Payment Details</h3>
+                  <table width="100%" cellpadding="8" cellspacing="0">
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Transaction ID:</td>
+                      <td style="color: #666666; font-family: monospace;"><%= @payment.transaction_id %></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Amount:</td>
+                      <td style="color: #666666;">₦<%= number_with_precision(@payment.amount, precision: 2) %></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Payment Method:</td>
+                      <td style="color: #666666;"><%= @payment.payment_method&.capitalize || 'Online Payment' %></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Attempt Date:</td>
+                      <td style="color: #666666;"><%= @payment.updated_at.strftime("%B %d, %Y at %I:%M %p") %></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Status:</td>
+                      <td style="color: #dc3545; font-weight: bold;">Failed</td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Outlet:</td>
+                      <td style="color: #666666; text-transform: capitalize;"><%= @outlet_type %></td>
+                    </tr>
+                  </table>
+                </div>
+
+                <div style="background-color: #f8d7da; border-radius: 6px; padding: 20px; margin: 20px 0;">
+                  <h3 style="color: #721c24; margin-top: 0;">Reason for Failure</h3>
+                  <p style="color: #333333; font-size: 14px; line-height: 1.6;">
+                    <%= @reason %>
+                  </p>
+                </div>
+
+                <div style="background-color: #e8f5e8; border-radius: 6px; padding: 20px; margin: 20px 0;">
+                  <h3 style="color: #2d5a2d; margin-top: 0;">What You Can Do</h3>
+                  <ul style="color: #333333; font-size: 14px; line-height: 1.6;">
+                    <li>Check your payment method details</li>
+                    <li>Ensure you have sufficient funds</li>
+                    <li>Try using a different payment method</li>
+                    <li>Contact your bank if the issue persists</li>
+                    <li>Contact our support team for assistance</li>
+                  </ul>
+                </div>
+
+                <div style="background-color: #fff3cd; border-radius: 6px; padding: 20px; margin: 20px 0;">
+                  <h3 style="color: #856404; margin-top: 0;">Need Help?</h3>
+                  <p style="color: #333333; font-size: 14px; line-height: 1.6;">
+                    If you continue to experience issues, please contact our support team. We're here to help!
+                  </p>
+                  <p style="color: #333333; font-size: 14px; line-height: 1.6;">
+                    <strong>Reference:</strong> <%= @payment.transaction_id %>
+                  </p>
+                </div>
+
+                <p style="color: #555555; font-size: 14px; line-height: 1.5;">
+                  Thank you for your patience. We appreciate your business.
+                </p>
+                
+                <p style="color: #999999; font-size: 12px; line-height: 1.5; margin-top: 40px;">
+                  &copy; <%= Time.current.year %> Sephcocco. All rights reserved.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Order Status Update</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding: 40px 0;">
+      <tr>
+        <td align="center">
+          <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <tr>
+              <td>
+                <h2 style="color: #591c06; margin-top: 0;">Order Status Update</h2>
+                <p style="color: #333333; font-size: 16px; line-height: 1.5;">
+                  Hello <%= @user.name %>,
+                </p>
+                <p style="color: #333333; font-size: 16px; line-height: 1.5;">
+                  Your order status has been updated.
+                </p>
+                
+                <div style="background-color: #f8f9fa; border-radius: 6px; padding: 20px; margin: 20px 0;">
+                  <h3 style="color: #591c06; margin-top: 0;">Order Details</h3>
+                  <table width="100%" cellpadding="8" cellspacing="0">
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Order Number:</td>
+                      <td style="color: #666666;"><%= @order.order_number %></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Previous Status:</td>
+                      <td style="color: #666666; text-transform: capitalize;"><%= @old_status %></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">New Status:</td>
+                      <td style="color: #28a745; text-transform: capitalize; font-weight: bold;"><%= @new_status %></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Updated At:</td>
+                      <td style="color: #666666;"><%= @order.updated_at.strftime("%B %d, %Y at %I:%M %p") %></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Outlet:</td>
+                      <td style="color: #666666; text-transform: capitalize;"><%= @outlet_type %></td>
+                    </tr>
+                  </table>
+                </div>
+
+                <div style="background-color: #e8f5e8; border-radius: 6px; padding: 20px; margin: 20px 0;">
+                  <h3 style="color: #2d5a2d; margin-top: 0;">Status Information</h3>
+                  <% case @new_status %>
+                  <% when 'pending' %>
+                    <p style="color: #333333; font-size: 14px; line-height: 1.6;">
+                      Your order is being reviewed and will be processed soon.
+                    </p>
+                  <% when 'processing' %>
+                    <p style="color: #333333; font-size: 14px; line-height: 1.6;">
+                      Your order is now being prepared. We'll notify you when it's ready for delivery.
+                    </p>
+                  <% when 'delivering' %>
+                    <p style="color: #333333; font-size: 14px; line-height: 1.6;">
+                      Your order is on its way! You'll receive tracking information shortly.
+                    </p>
+                  <% when 'completed' %>
+                    <p style="color: #333333; font-size: 14px; line-height: 1.6;">
+                      Your order has been completed. Thank you for choosing us!
+                    </p>
+                  <% when 'cancelled' %>
+                    <p style="color: #333333; font-size: 14px; line-height: 1.6;">
+                      Your order has been cancelled. If you have any questions, please contact support.
+                    </p>
+                  <% else %>
+                    <p style="color: #333333; font-size: 14px; line-height: 1.6;">
+                      Your order status has been updated to <%= @new_status %>.
+                    </p>
+                  <% end %>
+                </div>
+
+                <p style="color: #555555; font-size: 14px; line-height: 1.5;">
+                  If you have any questions about your order, please contact our support team.
+                </p>
+                
+                <p style="color: #999999; font-size: 12px; line-height: 1.5; margin-top: 40px;">
+                  &copy; <%= Time.current.year %> Sephcocco. All rights reserved.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

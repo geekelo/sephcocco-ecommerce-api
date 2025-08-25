@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Order Confirmation</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding: 40px 0;">
+      <tr>
+        <td align="center">
+          <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <tr>
+              <td>
+                <h2 style="color: #591c06; margin-top: 0;">Order Confirmation</h2>
+                <p style="color: #333333; font-size: 16px; line-height: 1.5;">
+                  Hello <%= @user.name %>,
+                </p>
+                <p style="color: #333333; font-size: 16px; line-height: 1.5;">
+                  Thank you for your order! We've received your order and it's being processed.
+                </p>
+                
+                <div style="background-color: #f8f9fa; border-radius: 6px; padding: 20px; margin: 20px 0;">
+                  <h3 style="color: #591c06; margin-top: 0;">Order Details</h3>
+                  <table width="100%" cellpadding="8" cellspacing="0">
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Order Number:</td>
+                      <td style="color: #666666;"><%= @order.order_number %></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Order Date:</td>
+                      <td style="color: #666666;"><%= @order.created_at.strftime("%B %d, %Y at %I:%M %p") %></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Status:</td>
+                      <td style="color: #666666; text-transform: capitalize;"><%= @order.status %></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Total Amount:</td>
+                      <td style="color: #666666; font-weight: bold;">₦<%= number_with_precision(@order.total_price, precision: 2) %></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight: bold; color: #333333;">Outlet:</td>
+                      <td style="color: #666666; text-transform: capitalize;"><%= @outlet_type %></td>
+                    </tr>
+                  </table>
+                </div>
+
+                <% if @order.respond_to?(:sephcocco_pharmacy_products) || @order.respond_to?(:sephcocco_restaurant_products) || @order.respond_to?(:sephcocco_lounge_products) %>
+                  <div style="margin: 20px 0;">
+                    <h3 style="color: #591c06;">Order Items</h3>
+                    <table width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+                      <thead>
+                        <tr style="background-color: #f8f9fa;">
+                          <th style="text-align: left; padding: 12px; border-bottom: 1px solid #dee2e6;">Item</th>
+                          <th style="text-align: center; padding: 12px; border-bottom: 1px solid #dee2e6;">Quantity</th>
+                          <th style="text-align: right; padding: 12px; border-bottom: 1px solid #dee2e6;">Price</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% products = @order.sephcocco_pharmacy_products || @order.sephcocco_restaurant_products || @order.sephcocco_lounge_products %>
+                        <% products.each do |product| %>
+                          <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid #f1f3f4;"><%= product.name %></td>
+                            <td style="text-align: center; padding: 12px; border-bottom: 1px solid #f1f3f4;"><%= product.quantity %></td>
+                            <td style="text-align: right; padding: 12px; border-bottom: 1px solid #f1f3f4;">₦<%= number_with_precision(product.price, precision: 2) %></td>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                <% end %>
+
+                <div style="background-color: #e8f5e8; border-radius: 6px; padding: 20px; margin: 20px 0;">
+                  <h3 style="color: #2d5a2d; margin-top: 0;">What's Next?</h3>
+                  <ul style="color: #333333; font-size: 14px; line-height: 1.6;">
+                    <li>We'll notify you when your order is being prepared</li>
+                    <li>You'll receive updates on your order status</li>
+                    <li>We'll send you tracking information once your order is dispatched</li>
+                  </ul>
+                </div>
+
+                <p style="color: #555555; font-size: 14px; line-height: 1.5;">
+                  If you have any questions about your order, please contact our support team.
+                </p>
+                
+                <p style="color: #999999; font-size: 12px; line-height: 1.5; margin-top: 40px;">
+                  &copy; <%= Time.current.year %> Sephcocco. All rights reserved.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

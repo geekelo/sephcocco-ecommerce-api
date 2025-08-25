@@ -1,0 +1,33 @@
+Order Confirmation
+
+Hello <%= @user.name %>,
+
+Thank you for your order! We've received your order and it's being processed.
+
+ORDER DETAILS
+=============
+Order Number: <%= @order.order_number %>
+Order Date: <%= @order.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+Status: <%= @order.status.capitalize %>
+Total Amount: ₦<%= number_with_precision(@order.total_price, precision: 2) %>
+Outlet: <%= @outlet_type.capitalize %>
+
+<% if @order.respond_to?(:sephcocco_pharmacy_products) || @order.respond_to?(:sephcocco_restaurant_products) || @order.respond_to?(:sephcocco_lounge_products) %>
+ORDER ITEMS
+==========
+<% products = @order.sephcocco_pharmacy_products || @order.sephcocco_restaurant_products || @order.sephcocco_lounge_products %>
+<% products.each do |product| %>
+- <%= product.name %> (Qty: <%= product.quantity %>) - ₦<%= number_with_precision(product.price, precision: 2) %>
+<% end %>
+<% end %>
+
+WHAT'S NEXT?
+============
+- We'll notify you when your order is being prepared
+- You'll receive updates on your order status  
+- We'll send you tracking information once your order is dispatched
+
+If you have any questions about your order, please contact our support team.
+
+---
+© <%= Time.current.year %> Sephcocco. All rights reserved.

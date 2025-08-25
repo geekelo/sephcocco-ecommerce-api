@@ -102,8 +102,14 @@ module Api::V1::Concerns::OrdersControllerHelper
   end
 
   def update
+    old_status = @order.status
     if @order.update(order_params)
       @order.update_stages(order_params[:status]) if order_params[:status].present?
+
+      # Send status update email if status changed
+      if order_params[:status].present? && old_status != @order.status
+        OrderMailer.with(order: @order, old_status: old_status).order_status_updated_email.deliver_now
+      end
 
       if @order.status == "delivering"
         # create shipping for order
@@ -113,6 +119,9 @@ module Api::V1::Concerns::OrdersControllerHelper
           status: "pending",
           tracking_number: @order.order_number
         )
+
+        # notify customer about the order via email
+        OrderMailer.with(order: @order).order_created_email.deliver_now
       end
 
       if admin?

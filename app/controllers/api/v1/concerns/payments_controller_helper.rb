@@ -146,14 +146,24 @@ module Api::V1::Concerns::PaymentsControllerHelper
     if @payment.update(payment_params)
       @payment.orders.each do |order|
         if status == "payment confirmed"
+          # notify customer about the payment via email
+          PaymentMailer.with(payment: @payment).payment_confirmed_email.deliver_now
           order.update(status: "payment confirmed")
           @payment.sephcocco_user.update(payment_ref: @payment.sephcocco_user.payment_ref.next)
         elsif status == "cancelled"
+          # notify customer about payment cancellation
+          PaymentMailer.with(payment: @payment, reason: "Payment was cancelled").payment_failed_email.deliver_now
           order.update(status: "payment cancelled")
         elsif status == "paid"
           order.update(status: "awaiting payment approval")
         elsif status == "declined"
+          # notify customer about payment decline
+          PaymentMailer.with(payment: @payment, reason: "Payment was declined").payment_declined_email.deliver_now
           order.update(status: "payment declined")
+        elsif status == "failed"
+          # notify customer about payment failure
+          PaymentMailer.with(payment: @payment, reason: "Payment processing failed").payment_failed_email.deliver_now
+          order.update(status: "payment failed")
         end
       end
       
@@ -240,6 +250,8 @@ module Api::V1::Concerns::PaymentsControllerHelper
       if payment
         Rails.logger.info "Payment verified and confirmed: #{payment.id}"
         payment.update(status: "payment confirmed")
+        # notify customer about the payment via email
+        PaymentMailer.with(payment: payment).payment_confirmed_email.deliver_now
         
         # Handle orders - they might be stored as strings in a JSONB array
         if payment.orders.is_a?(Array) && payment.orders.any?

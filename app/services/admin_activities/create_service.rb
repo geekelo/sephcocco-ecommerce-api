@@ -9,7 +9,7 @@ module AdminActivities
     end
 
     def call
-      activity_class = "#{@outlet.capitalize}::Sephcocco#{@outlet.capitalize}AdminActivity".constantize
+      activity_class = "#{@outlet.capitalize}::Sephcocco#{@outlet.name.capitalize}AdminActivity".constantize
       
       activity_class.create!(
         sephcocco_user: @user,
@@ -17,12 +17,6 @@ module AdminActivities
         activity_name: @activity_name,
         activity_description: @activity_description
       )
-    end
-
-    private
-
-    def activity_class
-      "#{@outlet.capitalize}::Sephcocco#{@outlet.capitalize}AdminActivity".constantize
     end
   end
 end 
