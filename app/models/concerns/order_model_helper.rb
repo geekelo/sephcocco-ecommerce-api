@@ -5,13 +5,28 @@ module OrderModelHelper
   included do
     before_create :set_order_status
     before_create :set_order_number
-    before_create :set_order_total
     before_create :set_shipping_details, if: -> { respond_to?(:set_shipping_details, true) }
   end
 
   def update_stages(status)
     self.stages.push({"status": status, "date": DateTime.now})
     self.current_stage = status
+    self.save!
+  end
+
+  def set_order_total(unit_price = nil, quantity = nil)
+    # Use instance variables if parameters not provided
+    unit_price ||= self.unit_price
+    quantity ||= self.quantity
+    
+    if unit_price.present? && quantity.present?
+      self.total_price = unit_price * quantity
+      self.total_cost = total_price
+    end
+  end
+
+  def set_total_cost(shipping_cost = 0)
+    self.total_cost = (self.total_price + shipping_cost).round(2)
     self.save!
   end
 
@@ -26,17 +41,5 @@ module OrderModelHelper
 
   def set_order_number
     self.order_number = SecureRandom.uuid
-  end
-
-  def set_order_total(unit_price, quantity)
-    if unit_price.present?
-      self.total_price = unit_price * quantity
-      self.total_cost = total_price
-    end
-  end
-
-  def set_total_cost(shipping_cost = 0)
-    self.total_cost = (self.total_price + shipping_cost).round(2)
-    self.save!
   end
 end
