@@ -13,6 +13,7 @@ module PaymentModelHelper
     self.status = "paid"
     self.status_history ||= []
     self.status_history << { status: "paid", timestamp: Time.current.iso8601 } unless status_history.any? { |h| h[:status] == "paid" }
+    self.save!
   end
 
   def set_status
