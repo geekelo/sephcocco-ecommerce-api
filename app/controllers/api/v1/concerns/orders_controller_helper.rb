@@ -3,7 +3,7 @@ module Api::V1::Concerns::OrdersControllerHelper
   extend ActiveSupport::Concern
 
   included do
-    before_action :authenticate_user!, only: [ :index, :create, :update, :destroy, :paid_orders, :pending_orders, :completed_orders ]
+    before_action :authenticate_user!, only: [ :index, :create, :update, :destroy, :paid_orders, :pending_orders, :completed_orders, :delivering_orders ]
     before_action :set_order, only: [ :update, :destroy, :user_order_update, :user_order_destroy ]
     before_action :set_customer, only: [ :create ]
   end
@@ -187,14 +187,14 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def delivering_orders
     if current_user&.sephcocco_user_role&.name == "admin"
-      orders = order_class.where(status: "delivering")
+      orders = order_class.where(status: "delivering") || []
       render json: orders, each_serializer: order_serializer_class
     else
       orders = current_user.send(order_association).where(status: "delivering") || []
       render json: orders, each_serializer: order_serializer_class
     end
   end
-  
+
   def completed_orders
     if current_user&.sephcocco_user_role&.name == "admin"
       orders = order_class.where(status: "completed")
