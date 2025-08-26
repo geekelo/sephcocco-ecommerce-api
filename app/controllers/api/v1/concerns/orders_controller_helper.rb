@@ -70,9 +70,14 @@ module Api::V1::Concerns::OrdersControllerHelper
   end
 
   def create
+    # Validate customer is set
+    if admin? && @customer.nil?
+      return render json: { error: "Customer is required for admin order creation" }, status: :unprocessable_entity
+    end
+
     unit_price = params[:unit_price] || product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"]).price
     if admin?
-      order = @customer&.send(order_association).new(order_params.merge(unit_price: unit_price))
+      order = @customer.send(order_association).new(order_params.merge(unit_price: unit_price))
     else
       order = current_user.send(order_association).new(order_params.merge(unit_price: unit_price))
     end
@@ -234,7 +239,16 @@ module Api::V1::Concerns::OrdersControllerHelper
   def set_customer
     if admin?
       # For admin users, get customer from order params
-      @customer = SephcoccoUser.find_by(id: order_params[:sephcocco_user_id])
+      customer_id = order_params[:sephcocco_user_id]
+      if customer_id.blank?
+        Rails.logger.error "Admin order creation: sephcocco_user_id is required"
+        return
+      end
+      @customer = SephcoccoUser.find_by(id: customer_id)
+      if @customer.nil?
+        Rails.logger.error "Admin order creation: Customer not found with ID #{customer_id}"
+        return
+      end
     else
       # For regular users, they are the customer
       @customer = current_user
