@@ -261,7 +261,7 @@ module Api::V1::Concerns::OrdersControllerHelper
     Rails.logger.info "set_customer - @customer set to: #{@customer&.id}"
   end
 
-  def admin?
+  def admin
     current_user&.sephcocco_user_role&.name == "admin"
   end
 end
