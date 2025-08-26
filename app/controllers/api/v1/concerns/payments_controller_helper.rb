@@ -105,7 +105,11 @@ module Api::V1::Concerns::PaymentsControllerHelper
         if order_ids.present?
           order_ids.each do |order_id|
             order = order_class.find(order_id)
-            order.update(status: "awaiting payment approval")
+            if payment.status == "paid"
+              order.update_order_status("awaiting payment approval")
+            elsif payment.status == "payment confirmed"
+              order.update_order_status("paid")
+            end
             payment.orders << order
           end
         end
@@ -130,9 +134,9 @@ module Api::V1::Concerns::PaymentsControllerHelper
           order_ids.each do |order_id|
             order = order_class.find(order_id)
             if payment.status == "paid"
-              order.update(status: "awaiting payment approval")
+              order.update_order_status("awaiting payment approval")
             elsif payment.status == "payment confirmed"
-              order.update(status: "paid")
+              order.update_order_status("paid")
             end
             payment.orders << order
           end

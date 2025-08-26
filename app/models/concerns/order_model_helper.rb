@@ -32,6 +32,11 @@ module OrderModelHelper
     self.save!
   end
 
+  def update_order_status(status)
+    self.status = status
+    self.save!
+  end
+
   private
 
   def set_order_status
