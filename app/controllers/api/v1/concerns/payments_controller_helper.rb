@@ -31,6 +31,16 @@ module Api::V1::Concerns::PaymentsControllerHelper
       payments = payments.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
     end
 
+    # Apply start_date filter
+    if params[:filter]&.dig(:start_date).present?
+      payments = payments.where(created_at: params[:filter][:start_date]..Time.current)
+    end
+
+    # Apply end_date filter
+    if params[:filter]&.dig(:end_date).present?
+      payments = payments.where(created_at: Time.current..params[:filter][:end_date])
+    end
+
     # Apply payment method filter
     if params[:filter]&.dig(:payment_method).present?
       payments = payments.where(payment_method: params[:filter][:payment_method])
