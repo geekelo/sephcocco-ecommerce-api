@@ -65,7 +65,18 @@ module Api::V1::Concerns::OrdersControllerHelper
           orders = orders.where('created_at <= ?', params[:filter][:end_date])
         end
       end
-      render json: orders, each_serializer: order_serializer_class
+      orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
+      render json: {
+        orders: ActiveModelSerializers::SerializableResource.new(
+          orders, 
+          each_serializer: order_serializer_class
+        ).as_json,
+        meta: {
+          total_count: orders.total_count,
+          total_pages: orders.total_pages,
+          current_page: orders.current_page
+        }
+      }
     end
   end
 
@@ -172,10 +183,32 @@ module Api::V1::Concerns::OrdersControllerHelper
   def pending_orders
     if current_user&.sephcocco_user_role&.name == "admin"
       orders = order_class.where(status: "pending")
-      render json: orders, each_serializer: order_serializer_class
+      orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
+      render json: {
+        orders: ActiveModelSerializers::SerializableResource.new(
+          orders, 
+          each_serializer: order_serializer_class
+        ).as_json,
+        meta: {
+          total_count: orders.total_count,
+          total_pages: orders.total_pages,
+          current_page: orders.current_page
+        }
+      }
     else
       orders = current_user.send(order_association).where(status: "pending")
-      render json: orders, each_serializer: order_serializer_class
+      orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
+      render json: {
+        orders: ActiveModelSerializers::SerializableResource.new(
+          orders, 
+          each_serializer: order_serializer_class
+        ).as_json,
+        meta: {
+          total_count: orders.total_count,
+          total_pages: orders.total_pages,
+          current_page: orders.current_page
+        }
+      }
     end
   end
 
@@ -184,29 +217,84 @@ module Api::V1::Concerns::OrdersControllerHelper
   
     if current_user&.sephcocco_user_role&.name == "admin"
       orders = order_class.where(status: statuses)
+      orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
+      render json: {
+        orders: ActiveModelSerializers::SerializableResource.new(
+          orders, 
+          each_serializer: order_serializer_class
+        ).as_json,
+        meta: {
+          total_count: orders.total_count,
+          total_pages: orders.total_pages,
+          current_page: orders.current_page
+        }
+      }
     else
       orders = current_user
                  .send(order_association)
                  .where(status: statuses)
+      orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
+      render json: {
+        orders: ActiveModelSerializers::SerializableResource.new(
+          orders, 
+          each_serializer: order_serializer_class
+        ).as_json,
+        meta: {
+          total_count: orders.total_count,
+          total_pages: orders.total_pages,
+          current_page: orders.current_page
+        }
+      }
     end
-  
-    render json: orders, each_serializer: order_serializer_class
   end  
 
   def delivering_orders
     if current_user&.sephcocco_user_role&.name == "admin"
       orders = order_class.where(status: "delivering") || []
-      render json: orders, each_serializer: order_serializer_class
+      orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
+      render json: {
+        orders: ActiveModelSerializers::SerializableResource.new(
+          orders, 
+          each_serializer: order_serializer_class
+        ).as_json,
+        meta: {
+          total_count: orders.total_count,
+          total_pages: orders.total_pages,
+          current_page: orders.current_page
+        }
+      }
     else
       orders = current_user.send(order_association).where(status: "delivering") || []
-      render json: orders, each_serializer: order_serializer_class
+      orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
+      render json: {
+        orders: ActiveModelSerializers::SerializableResource.new(
+          orders, 
+          each_serializer: order_serializer_class
+        ).as_json,
+        meta: {
+          total_count: orders.total_count,
+          total_pages: orders.total_pages,
+          current_page: orders.current_page
+        }
+      }
     end
   end
 
   def completed_orders
     if current_user&.sephcocco_user_role&.name == "admin"
       orders = order_class.where(status: "completed")
-      render json: orders, each_serializer: order_serializer_class
+      orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
+      render json: {
+        orders: ActiveModelSerializers::SerializableResource.new(
+          orders, 
+          each_serializer: order_serializer_class
+        ).as_json,
+        meta: {
+          total_count: orders.total_count,
+          total_pages: orders.total_pages,
+          current_page: orders.current_page
+        }
+      }
     else
       orders = current_user.send(order_association).where(status: "completed") || []
       orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
