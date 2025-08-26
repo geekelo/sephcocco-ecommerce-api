@@ -78,9 +78,12 @@ module Api::V1::Concerns::PaymentsControllerHelper
       return render json: { error: "No orders found" }, status: :unprocessable_entity
     end
 
-    if actual_payment_params[:amount] < order_total_price
+    # Convert amount to BigDecimal for comparison
+    payment_amount = BigDecimal(actual_payment_params[:amount].to_s)
+    
+    if payment_amount < order_total_price
       return render json: { error: "Amount is less than the order total price" }, status: :unprocessable_entity
-    elsif actual_payment_params[:amount] > order_total_price 
+    elsif payment_amount > order_total_price 
       return render json: { error: "Amount is greater than the order total price" }, status: :unprocessable_entity
     end
 
@@ -311,7 +314,22 @@ module Api::V1::Concerns::PaymentsControllerHelper
   end
 
   def set_customer
-    @customer = SephcoccoUser.find_by(id: params[:sephcocco_user_id])
+    if current_user&.sephcocco_user_role&.name == "admin"
+      # For admin users, get customer from payment params
+      customer_id = payment_params[:sephcocco_user_id]
+      if customer_id.blank?
+        Rails.logger.error "Admin payment creation: sephcocco_user_id is required"
+        return
+      end
+      @customer = SephcoccoUser.find_by(id: customer_id)
+      if @customer.nil?
+        Rails.logger.error "Admin payment creation: Customer not found with ID #{customer_id}"
+        return
+      end
+    else
+      # For regular users, they are the customer
+      @customer = current_user
+    end
   end
 
   def payment_class
