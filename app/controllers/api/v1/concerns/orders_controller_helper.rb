@@ -176,10 +176,10 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def paid_orders
     if current_user&.sephcocco_user_role&.name == "admin"
-      orders = order_class.where(status: "paid") || order_class.where(status: "awaiting payment approval") || []
+      orders = order_class.where(status: "paid") && order_class.where(status: "awaiting payment approval") || []
       render json: orders, each_serializer: order_serializer_class
     else
-      orders = current_user.send(order_association).where(status: "paid") || current_user.send(order_association).where(status: "awaiting payment approval") || []
+      orders = current_user.send(order_association).where(status: "paid") && current_user.send(order_association).where(status: "awaiting payment approval") || []
       render json: orders, each_serializer: order_serializer_class
     end
   end
