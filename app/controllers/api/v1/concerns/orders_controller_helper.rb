@@ -237,6 +237,10 @@ module Api::V1::Concerns::OrdersControllerHelper
   end
 
   def set_customer
+    Rails.logger.info "set_customer - current_user: #{current_user&.id}"
+    Rails.logger.info "set_customer - user_role: #{current_user&.sephcocco_user_role&.name}"
+    Rails.logger.info "set_customer - admin?: #{admin?}"
+    
     if admin?
       # For admin users, get customer from order params
       customer_id = order_params[:sephcocco_user_id]
@@ -253,9 +257,11 @@ module Api::V1::Concerns::OrdersControllerHelper
       # For regular users, they are the customer
       @customer = current_user
     end
+    
+    Rails.logger.info "set_customer - @customer set to: #{@customer&.id}"
   end
 
   def admin?
-    current_user.sephcocco_user_role.name == "admin"
+    current_user&.sephcocco_user_role&.name == "admin"
   end
 end
