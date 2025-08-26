@@ -10,7 +10,7 @@ module PaymentModelHelper
   private
 
   def set_default_status
-    self.status = "paid"
+    self.status = "paid" if self.status == "pending"
     self.status_history ||= []
     self.status_history << { status: "paid", timestamp: Time.current.iso8601 } unless status_history.any? { |h| h[:status] == "paid" }
   end
