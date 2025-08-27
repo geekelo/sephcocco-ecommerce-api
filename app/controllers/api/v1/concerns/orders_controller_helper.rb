@@ -63,6 +63,8 @@ module Api::V1::Concerns::OrdersControllerHelper
           orders = orders.where('created_at >= ?', params[:filter][:start_date])
         elsif params[:filter][:end_date].present?
           orders = orders.where('created_at <= ?', params[:filter][:end_date])
+        elsif params[:filter][:order_number].present?
+          orders = orders.where(order_number: params[:filter][:order_number])
         end
       end
       orders = orders.page(params[:page]).per(params[:per_page] || 20) || []

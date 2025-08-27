@@ -31,6 +31,24 @@ module Api::V1::Concerns::ProductsControllerHelper
       products = products.where(visible: true)
     end
 
+    # Apply search_param filter
+    if params[:search_param].present?
+      products = products.where("name ILIKE ?", "%#{params[:search_param]}%")
+    end
+
+    # Apply category_id filter
+    if params[:category_id].present?
+      products = products.where(category_id: params[:category_id])
+    end
+
+    # Apply price_range filter
+    if params[:start_price].present? && params[:end_price].present?
+      products = products.where(price: params[:start_price]..params[:end_price])
+    end
+
+    # Sort by likes
+    products = products.order(likes: :desc)
+
     # Apply pagination
     products = products.page(params[:page]).per(params[:per_page] || 20)
 

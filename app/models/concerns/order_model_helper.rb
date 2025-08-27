@@ -34,6 +34,8 @@ module OrderModelHelper
 
   def change_order_status(status)
     self.status = status
+    self.stages.push({"status": status, "date": DateTime.now})
+    self.current_stage = status
     self.save!
   end
 
