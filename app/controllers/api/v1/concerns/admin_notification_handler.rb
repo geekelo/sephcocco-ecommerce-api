@@ -7,7 +7,7 @@ module Api::V1::Concerns::AdminNotificationHandler
   end
 
   def index_notifications(model)
-    notifications = model.where(viewed: false)
+    notifications = model.where(viewed: false).order(created_at: :desc)
     render json: notifications, status: :ok
   end
 

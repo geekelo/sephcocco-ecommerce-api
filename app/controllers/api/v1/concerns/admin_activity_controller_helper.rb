@@ -47,6 +47,7 @@ module Api::V1::Concerns::AdminActivityControllerHelper
         admin_activities = admin_activities.where('created_at <= ?', params[:filter][:end_date])
       end
     end    
+    admin_activities = admin_activities.order(created_at: :desc)
     admin_activities = admin_activities.page(params[:page]).per(params[:per_page] || 20)
     
     render json: {

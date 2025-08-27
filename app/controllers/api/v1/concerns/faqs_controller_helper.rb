@@ -14,6 +14,8 @@ module Api::V1::Concerns::FaqsControllerHelper
       faq_class.includes(category_association).where(visibility: true).order(:position)
     end
 
+    faqs = faqs.order(created_at: :desc)
+
     render json: faqs, each_serializer: faq_serializer_class
   end
 

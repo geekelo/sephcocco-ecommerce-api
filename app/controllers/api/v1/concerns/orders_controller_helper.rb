@@ -31,6 +31,8 @@ module Api::V1::Concerns::OrdersControllerHelper
           orders = orders.where('created_at <= ?', params[:filter][:end_date])
         end
       end
+
+      orders = orders.order(created_at: :desc)
       orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(

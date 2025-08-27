@@ -9,6 +9,7 @@ module Api::V1::Concerns::ProductCategoriesControllerHelper
 
   def index
     categories = category_class.all
+    categories = categories.order(created_at: :desc)
     render json: categories, each_serializer: product_category_unnested_serializer
   end
 

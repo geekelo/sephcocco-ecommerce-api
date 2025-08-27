@@ -47,7 +47,11 @@ module Api::V1::Concerns::ProductsControllerHelper
     end
 
     # Sort by likes
-    products = products.order(likes: :desc)
+    if params[:sort_by_likes].present? && params[:sort_by_likes] == "true"
+      products = products.order(likes: :desc)
+    end
+
+    products = products.order(created_at: :desc)
 
     # Apply pagination
     products = products.page(params[:page]).per(params[:per_page] || 20)
