@@ -74,6 +74,16 @@ module Api::V1::Concerns::ProductCategoriesControllerHelper
       association = product.send(product_category_association_name)
       association << category unless association.include?(category)
 
+      if admin?
+        AdminActivities::CreateService.new(
+          user: current_user,
+          activity_type: "Update",
+          activity_name: "Product Category",
+          activity_description: "Product Category Updated: #{product.name}",
+          outlet: outlet
+        ).call
+      end
+
       render json: { message: "Product added to category successfully", product: product }, status: :created
     else
       render json: { message: "Product or category not found" }, status: :not_found

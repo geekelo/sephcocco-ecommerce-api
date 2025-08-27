@@ -142,6 +142,15 @@ module Api::V1::Concerns::ShippingControllerHelper
       return
     end
     if @shipping.update(rider: rider, status: "assigned")
+      if current_user&.sephcocco_user_role&.name == "admin"
+        AdminActivities::CreateService.new(
+          user: current_user,
+          activity_type: "Update",
+          activity_name: "Shipping",
+          activity_description: "Shipping updated: #{@shipping.id}",
+          outlet: outlet
+        ).call
+      end
       # notify rider about the assignment
       ActionCable.server.broadcast(
         "rider_location_#{rider.id}",
