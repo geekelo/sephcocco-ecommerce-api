@@ -112,6 +112,12 @@ module Api::V1::Concerns::OrdersControllerHelper
           outlet: outlet,
         ).call
       end
+
+       # like the product
+       product = product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"])
+       product.increment!(:likes)
+       like_class.create(user_key => current_user.id, product_key => @product.id)
+       
       render json: order, status: :created
     else
       render json: order&.errors || { error: "Invalid customer" }, status: :unprocessable_entity

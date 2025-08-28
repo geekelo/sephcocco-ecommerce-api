@@ -99,7 +99,7 @@ module Api::V1::Concerns::AnalyticsControllerHelper
   
     # Group completed orders by month
     orders_count = order_class
-                     .where(status: 'completed', created_at: start_date..end_date)
+                     .where(status: 'delivered', created_at: start_date..end_date)
                      .group("EXTRACT(MONTH FROM created_at)")
                      .count
   
@@ -122,7 +122,7 @@ module Api::V1::Concerns::AnalyticsControllerHelper
   end
 
   def total_payment_received_amount
-    payment_class.where(status: 'completed').sum(:amount)
+    payment_class.where(status: 'payment confirmed').sum(:amount)
   end
 
   def total_orders_count
@@ -158,7 +158,7 @@ module Api::V1::Concerns::AnalyticsControllerHelper
     
     target_date = Date.new(year, month, 1)
     month_range = target_date.beginning_of_month..target_date.end_of_month
-    payment_class.where(status: 'completed', created_at: month_range).sum(:amount)
+    payment_class.where(status: 'payment confirmed', created_at: month_range).sum(:amount)
   end
 
   def monthly_orders_count
@@ -180,7 +180,7 @@ module Api::V1::Concerns::AnalyticsControllerHelper
     return 0 unless year > 1900
     
     year_range = Date.new(year, 1, 1).beginning_of_year..Date.new(year, 12, 31).end_of_year
-    payment_class.where(status: 'completed', created_at: year_range).sum(:amount)
+    payment_class.where(status: 'payment confirmed', created_at: year_range).sum(:amount)
   end
 
   def yearly_orders_count

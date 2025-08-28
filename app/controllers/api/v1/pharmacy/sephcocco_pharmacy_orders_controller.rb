@@ -28,6 +28,10 @@ class Api::V1::Pharmacy::SephcoccoPharmacyOrdersController < ApplicationControll
     Pharmacy
   end
 
+  def like_class
+    Pharmacy::SephcoccoPharmacyLike
+  end
+
   def admin_notification_class
     Pharmacy::SephcoccoPharmacyAdminNotification
   end
