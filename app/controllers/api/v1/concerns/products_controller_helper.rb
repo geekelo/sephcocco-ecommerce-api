@@ -38,6 +38,15 @@ module Api::V1::Concerns::ProductsControllerHelper
         products = products.where("name ILIKE ?", "%#{params[:filter][:search_terms]}%")
       end
 
+      # Apply visibility or status filter
+      if params[:filter][:status].present?
+        if params[:filter][:status] == "public"
+          products = products.where(visible: true)
+        elsif params[:filter][:status] == "private"
+          products = products.where(visible: false)
+        end
+      end
+
       # Apply category_id filter
       if params[:filter][:category_id].present?
         products = products.where(category_id: params[:filter][:category_id])
