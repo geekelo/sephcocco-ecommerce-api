@@ -49,7 +49,7 @@ module Api::V1::Concerns::ProductsControllerHelper
 
       # Apply category_id filter
       if params[:filter][:category_id].present?
-        products = products.where(category_id: params[:filter][:category_id])
+        products = products.where(category_association_name => params[:filter][:category_id])
       end
 
       # Apply price_range filter
