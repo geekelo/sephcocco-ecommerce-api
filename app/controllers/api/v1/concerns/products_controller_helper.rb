@@ -31,24 +31,27 @@ module Api::V1::Concerns::ProductsControllerHelper
       products = products.where(visible: true)
     end
 
-    # Apply search_terms filter
-    if params[:filter][:search_terms].present?
-      products = products.where("name ILIKE ?", "%#{params[:filter][:search_terms]}%")
-    end
+    # Apply filters if they exist
+    if params[:filter].present?
+      # Apply search_terms filter
+      if params[:filter][:search_terms].present?
+        products = products.where("name ILIKE ?", "%#{params[:filter][:search_terms]}%")
+      end
 
-    # Apply category_id filter
-    if params[:filter][:category_id].present?
-      products = products.where(category_id: params[:filter][:category_id])
-    end
+      # Apply category_id filter
+      if params[:filter][:category_id].present?
+        products = products.where(category_id: params[:filter][:category_id])
+      end
 
-    # Apply price_range filter
-    if params[:filter][:start_price].present? && params[:filter][:end_price].present?
-      products = products.where(price: params[:filter][:start_price]..params[:filter][:end_price])
-    end
+      # Apply price_range filter
+      if params[:filter][:start_price].present? && params[:filter][:end_price].present?
+        products = products.where(price: params[:filter][:start_price]..params[:filter][:end_price])
+      end
 
-    # Sort by likes
-    if params[:filter][:sort_by_likes].present? && params[:filter][:sort_by_likes] == "true"
-      products = products.order(likes: :desc)
+      # Sort by likes
+      if params[:filter][:sort_by_likes].present? && params[:filter][:sort_by_likes] == "true"
+        products = products.order(likes: :desc)
+      end
     end
 
     products = products.order(created_at: :desc)
