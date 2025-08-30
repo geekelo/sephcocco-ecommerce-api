@@ -35,7 +35,7 @@ module Api::V1::Concerns::ProductsControllerHelper
     if params[:filter].present?
       # Apply search_terms filter
       if params[:filter][:search_terms].present?
-        products = products.where("name ILIKE ?", "%#{params[:filter][:search_terms]}%")
+        products = products.where("#{product_class.table_name}.name ILIKE ?", "%#{params[:filter][:search_terms]}%")
       end
 
       # Apply visibility or status filter
