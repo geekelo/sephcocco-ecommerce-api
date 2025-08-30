@@ -60,11 +60,6 @@ module Api::V1::Concerns::ProductsControllerHelper
         products = products.where(price: params[:filter][:start_price]..params[:filter][:end_price])
       end
 
-      # Sort by likes
-      if params[:filter][:sort_by_likes].present? && params[:filter][:sort_by_likes] == "true"
-        products = products.order(likes: :desc)
-      end
-
       # Apply date filter
       if params[:filter][:start_date].present? && params[:filter][:end_date].present?
         products = products.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
@@ -78,6 +73,15 @@ module Api::V1::Concerns::ProductsControllerHelper
       # Apply end date filter
       if params[:filter][:end_date].present?
         products = products.where(created_at: Time.now..params[:filter][:end_date])
+      end
+
+      # Sort by likes
+      if params[:filter][:sort_by_likes].present? && params[:filter][:sort_by_likes] == "true"
+        products = products.order(likes: :desc)
+      elsif params[:filter][:sort_by_stock].present? && params[:filter][:sort_by_stock] == "true"
+        products = products.order(amount_in_stock: :desc)
+      else
+        products = products.order(created_at: :desc)
       end
     end
 
