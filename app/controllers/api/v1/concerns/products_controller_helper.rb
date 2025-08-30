@@ -30,9 +30,6 @@ module Api::V1::Concerns::ProductsControllerHelper
     else
       products = products.where(visible: true)
     end
-    
-    # Sort from latest to oldest
-    products = products.order(created_at: :desc)
 
     # Apply filters if they exist
     if params[:filter].present?
@@ -60,22 +57,21 @@ module Api::V1::Concerns::ProductsControllerHelper
         products = products.where(price: params[:filter][:start_price]..params[:filter][:end_price])
       end
 
-      # Apply date filter
+      # Apply date filters
       if params[:filter][:start_date].present? && params[:filter][:end_date].present?
+        # Both dates provided - filter by range
         products = products.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
+      elsif params[:filter][:start_date].present?
+        # Only start date - filter from start date to now
+        products = products.where("created_at >= ?", params[:filter][:start_date])
+      elsif params[:filter][:end_date].present?
+        # Only end date - filter from beginning to end date
+        products = products.where("created_at <= ?", params[:filter][:end_date])
       end
+    end
 
-      # Apply start date  filter
-      if params[:filter][:start_date].present?
-        products = products.where(created_at: params[:filter][:start_date]..Time.now)
-      end
-
-      # Apply end date filter
-      if params[:filter][:end_date].present?
-        products = products.where(created_at: Time.now..params[:filter][:end_date])
-      end
-
-      # Sort by likes
+    # Apply sorting (outside filter block so it always applies)
+    if params[:filter].present?
       if params[:filter][:sort_by_likes].present? && params[:filter][:sort_by_likes] == "true"
         products = products.order(likes: :desc)
       elsif params[:filter][:sort_by_stock].present? && params[:filter][:sort_by_stock] == "true"
@@ -83,6 +79,9 @@ module Api::V1::Concerns::ProductsControllerHelper
       else
         products = products.order(created_at: :desc)
       end
+    else
+      # Default sorting when no filters are applied
+      products = products.order(created_at: :desc)
     end
 
     # Apply pagination
