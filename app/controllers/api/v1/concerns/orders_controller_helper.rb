@@ -19,7 +19,7 @@ module Api::V1::Concerns::OrdersControllerHelper
           search_term = "%#{params[:filter][:search_terms]}%"
           orders = orders.joins(:sephcocco_user, :sephcocco_pharmacy_product)
                          .where(
-                           "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet.name.downcase}_products.name ILIKE ? OR orders.order_number ILIKE ?",
+                           "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet.name.downcase}_products.name ILIKE ? OR #{order_class.table_name}.order_number ILIKE ?",
                            search_term, search_term, search_term
                          )        
         end
