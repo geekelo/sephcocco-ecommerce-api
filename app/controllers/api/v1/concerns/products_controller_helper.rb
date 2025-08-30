@@ -30,6 +30,9 @@ module Api::V1::Concerns::ProductsControllerHelper
     else
       products = products.where(visible: true)
     end
+    
+    # Sort from latest to oldest
+    products = products.order(created_at: :desc)
 
     # Apply filters if they exist
     if params[:filter].present?
@@ -77,8 +80,6 @@ module Api::V1::Concerns::ProductsControllerHelper
         products = products.where(created_at: Time.now..params[:filter][:end_date])
       end
     end
-
-    products = products.order(created_at: :desc)
 
     # Apply pagination
     products = products.page(params[:page]).per(params[:per_page] || 20)
