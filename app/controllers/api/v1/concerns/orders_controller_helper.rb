@@ -19,8 +19,8 @@ module Api::V1::Concerns::OrdersControllerHelper
           search_term = "%#{params[:filter][:search_terms]}%"
           orders = orders.joins(:sephcocco_user, :sephcocco_pharmacy_product)
                          .where(
-                           "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet.name.downcase}_products.name ILIKE ?",
-                           search_term, search_term
+                           "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet.name.downcase}_products.name ILIKE ? OR orders.order_number ILIKE ?",
+                           search_term, search_term, search_term
                          )        
         end
         if params[:filter][:start_date].present? && params[:filter][:end_date].present?
