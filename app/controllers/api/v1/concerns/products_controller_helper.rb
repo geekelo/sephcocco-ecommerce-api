@@ -61,6 +61,21 @@ module Api::V1::Concerns::ProductsControllerHelper
       if params[:filter][:sort_by_likes].present? && params[:filter][:sort_by_likes] == "true"
         products = products.order(likes: :desc)
       end
+
+      # Apply date filter
+      if params[:filter][:start_date].present? && params[:filter][:end_date].present?
+        products = products.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
+      end
+
+      # Apply start date  filter
+      if params[:filter][:start_date].present?
+        products = products.where(created_at: params[:filter][:start_date]..Time.now)
+      end
+
+      # Apply end date filter
+      if params[:filter][:end_date].present?
+        products = products.where(created_at: Time.now..params[:filter][:end_date])
+      end
     end
 
     products = products.order(created_at: :desc)
