@@ -13,6 +13,7 @@ class Restaurant::Admin::SephcoccoRestaurantOrderSerializer < ActiveModel::Seria
               :updated_at,
               :product,
               :customer,  
+              :payment_details,
               :address,
               :phone_number,
               :additional_notes,

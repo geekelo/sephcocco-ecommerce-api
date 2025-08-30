@@ -13,6 +13,7 @@ class Lounge::Admin::SephcoccoLoungeOrderSerializer < ActiveModel::Serializer
               :updated_at,
               :product,
               :customer,
+              :payment_details,
               :address,
               :phone_number,
               :additional_notes,

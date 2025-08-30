@@ -13,6 +13,7 @@ class Pharmacy::Admin::SephcoccoPharmacyOrderSerializer < ActiveModel::Serialize
               :updated_at,
               :product,
               :customer,
+              :payment_details,
               :address,
               :phone_number,
               :additional_notes,
