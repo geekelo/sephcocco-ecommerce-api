@@ -17,7 +17,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
   end
 
   def like_class
-    Restaurant::SephcoccoRestaurantLike
+    Restaurant::SephcoccoRestaurantProductLike
   end
 
   def order_serializer_class

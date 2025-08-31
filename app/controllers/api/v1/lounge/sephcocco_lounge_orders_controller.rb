@@ -17,7 +17,7 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
   end
 
   def like_class
-    Lounge::SephcoccoLoungeLike
+    Lounge::SephcoccoLoungeProductLike
   end
 
   def order_serializer_class
