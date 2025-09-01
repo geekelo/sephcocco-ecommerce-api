@@ -121,7 +121,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
           order_ids.each do |order_id|
             order = order_class.find(order_id)
             # update the payment id
-            order.update("#{outlet.name.downcase}_payment_id" => payment.id)
+            order.update("#{outlet}_payment_id" => payment.id)
             if payment.status == "paid"
               order.change_order_status("awaiting payment approval")
             elsif payment.status == "payment confirmed"
@@ -151,7 +151,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
           order_ids.each do |order_id|
             order = order_class.find(order_id)
             # update the payment id
-            order.update("#{outlet.name.downcase}_payment_id" => payment.id)
+            order.update("#{outlet}_payment_id" => payment.id)
             if payment.status == "paid"
               order.change_order_status("awaiting payment approval")
             elsif payment.status == "payment confirmed"
