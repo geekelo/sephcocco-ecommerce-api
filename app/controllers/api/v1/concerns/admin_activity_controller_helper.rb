@@ -24,17 +24,12 @@ module Api::V1::Concerns::AdminActivityControllerHelper
         admin_activities = admin_activities.where(activity_name: params[:filter][:activity_name])
       end
 
-      # Filter by user ID
-      if params[:filter][:user_id].present?
-        admin_activities = admin_activities.where(sephcocco_user_id: params[:filter][:user_id])
-      end
-
       # Search in activity description and other fields
       if params[:filter][:search_terms].present?
         search_term = "%#{params[:filter][:search_terms]}%"
         admin_activities = admin_activities.where(
-          "activity_description ILIKE ? OR activity_type ILIKE ? OR activity_name ILIKE ?",
-          search_term, search_term, search_term
+          "activity_description ILIKE ? OR activity_type ILIKE ? OR activity_name ILIKE ? OR sephcocco_users.name ILIKE ?",
+          search_term, search_term, search_term, search_term
         )
       end
 
