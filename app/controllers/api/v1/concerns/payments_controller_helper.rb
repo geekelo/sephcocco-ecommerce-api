@@ -200,7 +200,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
           user: current_user,
           activity_type: "Update",
           activity_name: "Payment",
-          activity_description: "Payment #{status}ed: #{@payment.id}",
+          activity_description: "Payment #{status}: #{@payment.id}",
           outlet: outlet
         ).call
         render json: @payment, each_serializer: payment_serializer
