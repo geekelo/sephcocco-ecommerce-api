@@ -166,7 +166,11 @@ module Api::V1::Concerns::PaymentsControllerHelper
     status = payment_params[:status] if payment_params[:status].present?
     if @payment.update(payment_params)
       if status.present?
-        @payment.orders.each do |order|
+        # Handle orders stored as array of IDs in JSONB field
+        if @payment.orders.is_a?(Array) && @payment.orders.any?
+          @payment.orders.each do |order_id|
+            order = order_class.find_by(id: order_id)
+            next unless order
           if status == "payment confirmed"
             # notify customer about the payment via email
             PaymentMailer.with(payment: @payment).payment_confirmed_email.deliver_now
@@ -187,6 +191,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
             PaymentMailer.with(payment: @payment, reason: "Payment processing failed").payment_failed_email.deliver_now
             order.change_order_status("payment failed")
           end
+        end
         end
       end
       
