@@ -26,7 +26,8 @@ module Api::V1::Concerns::ShippingControllerHelper
     end
 
     # Apply pagination
-    shippings = shippings.page(params[:page]).per(params[:per_page] || 20)
+    page_number = params[:page].is_a?(Hash) ? 1 : (params[:page] || 1)
+    shippings = shippings.page(page_number).per(params[:per_page] || 20)
 
     render json: {
       shippings: ActiveModelSerializers::SerializableResource.new(
