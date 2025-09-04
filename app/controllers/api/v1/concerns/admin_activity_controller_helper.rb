@@ -27,7 +27,7 @@ module Api::V1::Concerns::AdminActivityControllerHelper
       # Search in activity description and other fields
       if params[:filter][:search_terms].present?
         search_term = "%#{params[:filter][:search_terms]}%"
-        admin_activities = admin_activities.where(
+        admin_activities = admin_activities.joins(:sephcocco_user).where(
           "activity_description ILIKE ? OR activity_type ILIKE ? OR activity_name ILIKE ? OR sephcocco_users.name ILIKE ?",
           search_term, search_term, search_term, search_term
         )
