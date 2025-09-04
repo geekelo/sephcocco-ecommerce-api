@@ -15,14 +15,25 @@ module Api::V1::Concerns::ShippingControllerHelper
     end
 
     # Apply filters
-    shippings = shippings.where(status: params[:status]) if params[:status].present?
-    shippings = shippings.where(dispatching: params[:dispatching]) if params[:dispatching].present?
-    shippings = shippings.where(rider: params[:rider]) if params[:rider].present?
+    if params[:filter].present?
+      if params[:filter][:status].present?
+        shippings = shippings.where(status: params[:filter][:status])
+      end
 
-    # Apply search
-    if params[:search].present?
-      search_term = "%#{params[:search]}%"
-      shippings = shippings.where("tracking_number ILIKE ? OR rider ILIKE ?", search_term, search_term)
+        # Apply search
+        if params[:filter][:search_terms].present?
+          search_term = "%#{params[:filter][:search_terms]}%"
+          shippings = shippings.joins(:sephcocco_user).joins(:sephcocco_order).where("tracking_number ILIKE ? OR rider ILIKE ? OR sephcocco_users.name ILIKE ? OR sephcocco_#{outlet.name.downcase}_orders.order_number ILIKE ?", search_term, search_term, search_term, search_term)
+        end
+
+        if params[:filter][:start_date].present? && params[:filter][:end_date].present?
+          shippings = shippings.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
+        elsif params[:filter][:start_date].present?
+          shippings = shippings.where('created_at >= ?', params[:filter][:start_date])
+        elsif params[:filter][:end_date].present?
+          shippings = shippings.where('created_at <= ?', params[:filter][:end_date])
+        end
+
     end
 
     # Apply pagination
