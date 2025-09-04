@@ -61,8 +61,8 @@ module Api::V1::Concerns::ShippingControllerHelper
         AdminActivities::CreateService.new(
           user: current_user,
           activity_type: "create",
-          activity_name: "Shipping",
-          activity_description: "Shipping created: #{@shipping.id}",
+          activity_name: "Logistics",
+          activity_description: "Initiated Logistics with tracking number: #{@shipping.tracking_number}",
           outlet: outlet
         ).call
       else
@@ -94,8 +94,8 @@ module Api::V1::Concerns::ShippingControllerHelper
         AdminActivities::CreateService.new(
           user: current_user,
           activity_type: "update",
-          activity_name: "Shipping",
-          activity_description: "Shipping updated: #{@shipping.id}",
+          activity_name: "Logistics",
+          activity_description: "Logistics details updated with tracking number: #{@shipping.tracking_number}",
           outlet: outlet
         ).call
       else
@@ -121,15 +121,15 @@ module Api::V1::Concerns::ShippingControllerHelper
         AdminActivities::CreateService.new(
           user: current_user,
           activity_type: "delete",
-          activity_name: "Shipping",
-          activity_description: "Shipping deleted: #{@shipping.id}",
+          activity_name: "Logistics",
+          activity_description: "Logistics deleted with tracking number: #{@shipping.tracking_number}",
           outlet: outlet
         ).call
       end
 
-      render json: { message: "Shipping deleted successfully" }, status: :ok
+      render json: { message: "Logistics deleted successfully" }, status: :ok
     else
-      render json: { error: "Failed to delete shipping" }, status: :unprocessable_entity
+      render json: { error: "Failed to delete logistics" }, status: :unprocessable_entity
     end
   end
 
@@ -146,8 +146,8 @@ module Api::V1::Concerns::ShippingControllerHelper
         AdminActivities::CreateService.new(
           user: current_user,
           activity_type: "update",
-          activity_name: "Shipping",
-          activity_description: "Shipping updated: #{@shipping.id}",
+          activity_name: "Logistics",
+          activity_description: "Rider assigned for this delivery with tracking number: #{@shipping.tracking_number}",
           outlet: outlet
         ).call
       end
@@ -159,7 +159,7 @@ module Api::V1::Concerns::ShippingControllerHelper
           shipping_id: @shipping.id,
           tracking_number: @shipping.tracking_number,
           outlet_type: outlet,
-          message: 'You have been assigned a new delivery'
+          message: 'You have been assigned a new delivery with tracking number: #{@shipping.tracking_number}'
         }
       )
       render json: @shipping, serializer: shipping_serializer_class
@@ -289,7 +289,7 @@ module Api::V1::Concerns::ShippingControllerHelper
         shipping_id: @shipping.id,
         tracking_number: @shipping.tracking_number,
         outlet_type: outlet,
-        message: 'Please start location tracking for this delivery'
+        message: "Please start location tracking for this delivery with tracking number: #{@shipping.tracking_number}"
       }
     )
     
@@ -317,7 +317,7 @@ module Api::V1::Concerns::ShippingControllerHelper
       {
         type: 'stop_location_tracking',
         shipping_id: @shipping.id,
-        message: 'Location tracking stopped for this delivery'
+        message: "Location tracking stopped for this delivery with tracking number: #{@shipping.tracking_number}"
       }
     )
     
@@ -347,7 +347,7 @@ module Api::V1::Concerns::ShippingControllerHelper
         shipping_id: @shipping.id,
         tracking_number: @shipping.tracking_number,
         outlet_type: outlet,
-        message: 'You have been assigned a new delivery'
+        message: "You have been assigned a new delivery with tracking number: #{@shipping.tracking_number}"
       }
     )
   end
