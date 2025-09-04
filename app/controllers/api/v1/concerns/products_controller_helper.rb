@@ -119,7 +119,7 @@ module Api::V1::Concerns::ProductsControllerHelper
       if admin?
         AdminActivities::CreateService.new(
           user: current_user,
-          activity_type: "Create",
+          activity_type: "create",
           activity_name: "Product",
           activity_description: "Product Created: #{@product.name}",
           outlet: outlet
@@ -136,7 +136,7 @@ module Api::V1::Concerns::ProductsControllerHelper
       if admin?
         AdminActivities::CreateService.new(
           user: current_user,
-          activity_type: "Update",
+          activity_type: "update",
           activity_name: "Product",
           activity_description: "Product Updated: #{@product.name}",
           outlet: outlet

@@ -159,7 +159,7 @@ module Api::V1::Concerns::OrdersControllerHelper
       if admin?
         AdminActivities::CreateService.new(
           user: current_user,
-          activity_type: "Update",
+          activity_type: "update",
           activity_name: "Order",
           activity_description: "Order Updated: #{@order.order_number}",
           outlet: outlet
@@ -178,7 +178,7 @@ module Api::V1::Concerns::OrdersControllerHelper
       if admin?
         AdminActivities::CreateService.new(
           user: current_user,
-          activity_type: "Delete",
+          activity_type: "delete",
           activity_name: "Order",
           activity_description: "Order Deleted: #{@order.order_number}",
           outlet: outlet

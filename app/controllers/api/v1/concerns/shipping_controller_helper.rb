@@ -60,7 +60,7 @@ module Api::V1::Concerns::ShippingControllerHelper
       if current_user&.sephcocco_user_role&.name == "admin"
         AdminActivities::CreateService.new(
           user: current_user,
-          activity_type: "Create",
+          activity_type: "create",
           activity_name: "Shipping",
           activity_description: "Shipping created: #{@shipping.id}",
           outlet: outlet
@@ -93,7 +93,7 @@ module Api::V1::Concerns::ShippingControllerHelper
       if current_user&.sephcocco_user_role&.name == "admin"
         AdminActivities::CreateService.new(
           user: current_user,
-          activity_type: "Update",
+          activity_type: "update",
           activity_name: "Shipping",
           activity_description: "Shipping updated: #{@shipping.id}",
           outlet: outlet
@@ -120,7 +120,7 @@ module Api::V1::Concerns::ShippingControllerHelper
       if current_user&.sephcocco_user_role&.name == "admin"
         AdminActivities::CreateService.new(
           user: current_user,
-          activity_type: "Delete",
+          activity_type: "delete",
           activity_name: "Shipping",
           activity_description: "Shipping deleted: #{@shipping.id}",
           outlet: outlet
@@ -145,7 +145,7 @@ module Api::V1::Concerns::ShippingControllerHelper
       if current_user&.sephcocco_user_role&.name == "admin"
         AdminActivities::CreateService.new(
           user: current_user,
-          activity_type: "Update",
+          activity_type: "update",
           activity_name: "Shipping",
           activity_description: "Shipping updated: #{@shipping.id}",
           outlet: outlet

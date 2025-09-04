@@ -107,7 +107,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
       if payment.save
         AdminActivities::CreateService.new(
           user: current_user,
-          activity_type: "Create",
+          activity_type: "create",
           activity_name: "Payment",
           activity_description: "Payment Created: #{payment.id}",
           outlet: outlet
@@ -198,7 +198,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
       if current_user&.sephcocco_user_role&.name == "admin"
         AdminActivities::CreateService.new(
           user: current_user,
-          activity_type: "Update",
+          activity_type: "update",
           activity_name: "Payment",
           activity_description: "Payment #{status}: #{@payment.id}",
           outlet: outlet
@@ -224,7 +224,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
       if admin?
         AdminActivities::CreateService.new(
           user: current_user,
-          activity_type: "Delete",
+          activity_type: "delete",
           activity_name: "Payment",
           activity_description: "Payment Deleted: #{@payment.id}",
           outlet: outlet
@@ -300,7 +300,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
         if current_user&.sephcocco_user_role&.name == "admin"
           AdminActivities::CreateService.new(
             user: current_user,
-            activity_type: "Update",
+            activity_type: "update",
             activity_name: "Payment",
             activity_description: "Payment verified and confirmed: #{payment.id}",
             outlet: outlet

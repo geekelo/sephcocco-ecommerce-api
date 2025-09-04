@@ -16,7 +16,7 @@ module Api::V1::Concerns::AdminNotificationHandler
       if admin?
         AdminActivities::CreateService.new(
           user: current_user,
-          activity_type: "Update",
+          activity_type: "update",
           activity_name: "Notification",
           activity_description: "Notification Viewed: #{@notification.message}",
           outlet: outlet

@@ -41,7 +41,7 @@ module Api::V1::Concerns::FaqsControllerHelper
     if admin?
       AdminActivities::CreateService.new(
         user: current_user,
-        activity_type: "Create",
+        activity_type: "create",
         activity_name: "FAQ",
         activity_description: "FAQ Created: #{faq.title}",
         outlet: outlet
@@ -69,7 +69,7 @@ module Api::V1::Concerns::FaqsControllerHelper
     if admin?
       AdminActivities::CreateService.new(
         user: current_user,
-        activity_type: "Update",
+        activity_type: "update",
         activity_name: "FAQ",
         activity_description: "FAQ Updated: #{faq.title}",
         outlet: outlet
@@ -90,7 +90,7 @@ module Api::V1::Concerns::FaqsControllerHelper
     if admin?
       AdminActivities::CreateService.new(
         user: current_user,
-        activity_type: "Delete",
+        activity_type: "delete",
         activity_name: "FAQ",
         activity_description: "FAQ Deleted: #{faq.title}",
         outlet: outlet

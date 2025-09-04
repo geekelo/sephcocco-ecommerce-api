@@ -24,7 +24,7 @@ module Api::V1::Concerns::ProductCategoriesControllerHelper
       if admin?
         AdminActivities::CreateService.new(
           user: current_user,
-          activity_type: "Create",
+          activity_type: "create",
           activity_name: "Product Category",
           activity_description: "Product Category Created: #{@product_category.name}",
           outlet: outlet
@@ -41,7 +41,7 @@ module Api::V1::Concerns::ProductCategoriesControllerHelper
       if admin?
         AdminActivities::CreateService.new(
           user: current_user,
-          activity_type: "Update",
+          activity_type: "update",
           activity_name: "Product Category",
           activity_description: "Product Category Updated: #{@product_category.name}",
           outlet: outlet
@@ -58,7 +58,7 @@ module Api::V1::Concerns::ProductCategoriesControllerHelper
     if admin?
       AdminActivities::CreateService.new(
         user: current_user,
-        activity_type: "Delete",
+        activity_type: "delete",
         activity_name: "Product Category",
         activity_description: "Product Category Deleted: #{@product_category.name}",
         outlet: outlet
@@ -78,7 +78,7 @@ module Api::V1::Concerns::ProductCategoriesControllerHelper
       if admin?
         AdminActivities::CreateService.new(
           user: current_user,
-          activity_type: "Update",
+          activity_type: "update",
           activity_name: "Product Category",
           activity_description: "Product Category Updated: #{product.name}",
           outlet: outlet
