@@ -23,7 +23,7 @@ module Api::V1::Concerns::ShippingControllerHelper
         # Apply search
         if params[:filter][:search_terms].present?
           search_term = "%#{params[:filter][:search_terms]}%"
-                                           shippings = shippings.joins(:"sephcocco_#{outlet}_order" => :sephcocco_user).where("tracking_number ILIKE ? OR rider ILIKE ? OR sephcocco_users.name ILIKE ? OR sephcocco_#{outlet}_orders.order_number ILIKE ?", search_term, search_term, search_term, search_term)
+                                           shippings = shippings.joins(:"sephcocco_#{outlet}_order" => :sephcocco_user).joins("LEFT JOIN sephcocco_users AS riders ON riders.id = sephcocco_#{outlet}_shippings.rider_id").where("tracking_number ILIKE ? OR riders.name ILIKE ? OR sephcocco_users.name ILIKE ? OR sephcocco_#{outlet}_orders.order_number ILIKE ?", search_term, search_term, search_term, search_term)
         end
 
         if params[:filter][:start_date].present? && params[:filter][:end_date].present?
