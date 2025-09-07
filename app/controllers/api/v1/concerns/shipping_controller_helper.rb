@@ -36,9 +36,11 @@ module Api::V1::Concerns::ShippingControllerHelper
 
     end
 
+    shippings = shippings.order(created_at: :desc)
+
     # Apply pagination
     page_number = params[:page].is_a?(Hash) ? 1 : (params[:page] || 1)
-    shippings = shippings.page(page_number).per(params[:per_page] || 20)
+    shippings = shippings.page(page_number).per(params[:per_page] || 20) || []
 
     render json: {
       shippings: ActiveModelSerializers::SerializableResource.new(
@@ -154,6 +156,11 @@ module Api::V1::Concerns::ShippingControllerHelper
       return
     end
     if @shipping.update(rider: rider, status: "assigned")
+      # Update orders status to picked up for delivery
+      order = @shipping.send(order_association)
+      if order.present?
+        order.update_stages("picked up for delivery")
+      end
       if current_user&.sephcocco_user_role&.name == "admin"
         AdminActivities::CreateService.new(
           user: current_user,
@@ -184,6 +191,11 @@ module Api::V1::Concerns::ShippingControllerHelper
     @shipping = shipping_class.find(params[:id])
     
     if @shipping.update(status: "in_transit", dispatching: true)
+      # Update orders status to in transit
+      order = @shipping.send(order_association)
+      if order.present?
+        order.update_stages("in_transit")
+      end
       render json: @shipping, serializer: shipping_serializer_class
     else
       render json: { errors: @shipping.errors.full_messages }, status: :unprocessable_entity
@@ -198,6 +210,7 @@ module Api::V1::Concerns::ShippingControllerHelper
       order = @shipping.send(order_association)
       if order.present?
         order.update(status: "delivered")
+        order.update_stages("delivered")
       end
       render json: @shipping, serializer: shipping_serializer_class
     else
@@ -213,6 +226,7 @@ module Api::V1::Concerns::ShippingControllerHelper
       order = @shipping.send(order_association)
       if order.present?
         order.update(status: "cancelled")
+        order.update_stages("cancelled")
       end
       render json: @shipping, serializer: shipping_serializer_class
     else

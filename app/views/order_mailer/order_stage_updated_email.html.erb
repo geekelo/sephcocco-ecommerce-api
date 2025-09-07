@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Order Stage Update</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .order-details {
+      background-color: #ffffff;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .stage-info {
+      background-color: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 4px;
+    }
+    .footer {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 14px;
+      color: #6c757d;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      background-color: #28a745;
+      color: white;
+      border-radius: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Order Stage Update</h1>
+    <p>Your order has been updated with a new stage.</p>
+  </div>
+
+  <div class="order-details">
+    <h2>Order Information</h2>
+    <p><strong>Order Number:</strong> <%= @order.order_number %></p>
+    <p><strong>Outlet:</strong> <%= @outlet_type.capitalize %></p>
+    <p><strong>Customer:</strong> <%= @user.name %></p>
+    <p><strong>Email:</strong> <%= @user.email %></p>
+    
+    <% if @order.respond_to?(:sephcocco_pharmacy_product) && @order.sephcocco_pharmacy_product %>
+      <p><strong>Product:</strong> <%= @order.sephcocco_pharmacy_product.name %></p>
+    <% elsif @order.respond_to?(:sephcocco_restaurant_product) && @order.sephcocco_restaurant_product %>
+      <p><strong>Product:</strong> <%= @order.sephcocco_restaurant_product.name %></p>
+    <% elsif @order.respond_to?(:sephcocco_lounge_product) && @order.sephcocco_lounge_product %>
+      <p><strong>Product:</strong> <%= @order.sephcocco_lounge_product.name %></p>
+    <% end %>
+    
+    <p><strong>Quantity:</strong> <%= @order.quantity %></p>
+    <p><strong>Total Cost:</strong> $<%= @order.total_cost %></p>
+  </div>
+
+  <div class="stage-info">
+    <h3>Stage Update</h3>
+    <p><strong>New Stage:</strong> <span class="status-badge"><%= @new_stage %></span></p>
+    <p><strong>Updated On:</strong> <%= @stage_date.strftime("%B %d, %Y at %I:%M %p") %></p>
+  </div>
+
+  <div class="order-details">
+    <h3>Order Timeline</h3>
+    <% if @order.stages.present? %>
+      <ul>
+        <% @order.stages.each do |stage| %>
+          <li>
+            <strong><%= stage['status'].capitalize %></strong> - 
+            <%= DateTime.parse(stage['date']).strftime("%B %d, %Y at %I:%M %p") %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p>No stage history available.</p>
+    <% end %>
+  </div>
+
+  <div class="footer">
+    <p>Thank you for choosing Sephcocco!</p>
+    <p>If you have any questions, please contact our customer service.</p>
+  </div>
+</body>
+</html>

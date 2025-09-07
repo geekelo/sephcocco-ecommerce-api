@@ -9,9 +9,17 @@ module OrderModelHelper
   end
 
   def update_stages(status)
-    self.stages.push({"status": status, "date": DateTime.now})
+    stage_date = DateTime.now
+    self.stages.push({"status": status, "date": stage_date})
     self.current_stage = status
     self.save!
+    
+    # Send email notification for stage update
+    OrderMailer.with(
+      order: self,
+      new_stage: status,
+      stage_date: stage_date
+    ).order_stage_updated_email.deliver_now
   end
 
   def set_order_total(unit_price = nil, quantity = nil)
@@ -33,10 +41,18 @@ module OrderModelHelper
   end
 
   def change_order_status(status)
+    stage_date = DateTime.now
     self.status = status
-    self.stages.push({"status": status, "date": DateTime.now})
+    self.stages.push({"status": status, "date": stage_date})
     self.current_stage = status
     self.save!
+    
+    # Send email notification for status change
+    OrderMailer.with(
+      order: self,
+      new_stage: status,
+      stage_date: stage_date
+    ).order_stage_updated_email.deliver_now
   end
 
   private

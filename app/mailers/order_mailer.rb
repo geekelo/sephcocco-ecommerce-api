@@ -6,7 +6,7 @@ class OrderMailer < ApplicationMailer
     
     mail(
       to: @user.email,
-      subject: "Order Confirmation - #{@order.order_number}"
+      subject: "Order Confirmation - Order Number: #{@order.order_number}"
     )
   end
 
@@ -19,7 +19,7 @@ class OrderMailer < ApplicationMailer
     
     mail(
       to: @user.email,
-      subject: "Order Status Update - #{@order.order_number}"
+      subject: "Order Status Update - Order Number: #{@order.order_number}"
     )
   end
 
@@ -30,7 +30,7 @@ class OrderMailer < ApplicationMailer
     
     mail(
       to: @user.email,
-      subject: "Order Delivered - #{@order.order_number}"
+      subject: "Order Delivered - Order Number: #{@order.order_number}"
     )
   end
 
@@ -42,7 +42,20 @@ class OrderMailer < ApplicationMailer
     
     mail(
       to: @user.email,
-      subject: "Order Cancelled - #{@order.order_number}"
+      subject: "Order Cancelled - Order Number: #{@order.order_number}"
+    )
+  end
+
+  def order_stage_updated_email
+    @order = params[:order]
+    @user = @order.sephcocco_user
+    @outlet_type = determine_outlet_type(@order)
+    @new_stage = params[:new_stage]
+    @stage_date = params[:stage_date]
+    
+    mail(
+      to: @user.email,
+      subject: "Update on your Order - Order Number: #{@order.order_number}"
     )
   end
 
