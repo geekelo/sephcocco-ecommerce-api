@@ -305,7 +305,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def completed_orders
     if current_user&.sephcocco_user_role&.name == "admin"
-      orders = order_class.where(status: "completed").order(updated_at: :desc)
+      orders = order_class.where(status: "delivered").order(updated_at: :desc)
       orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
