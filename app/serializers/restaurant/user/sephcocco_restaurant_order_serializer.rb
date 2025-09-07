@@ -1,6 +1,8 @@
 class Restaurant::User::SephcoccoRestaurantOrderSerializer < ActiveModel::Serializer
   attributes  :id,
               :status,
+              :current_stage,
+              :stages,
               :order_number,
               :quantity,
               :unit_price,

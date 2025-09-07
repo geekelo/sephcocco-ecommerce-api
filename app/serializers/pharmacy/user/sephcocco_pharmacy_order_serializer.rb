@@ -1,6 +1,8 @@
 class Pharmacy::User::SephcoccoPharmacyOrderSerializer < ActiveModel::Serializer
   attributes  :id,
               :status,
+              :current_stage,
+              :stages,
               :order_number,
               :quantity,
               :unit_price,
