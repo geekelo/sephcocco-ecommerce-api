@@ -35,8 +35,21 @@ class Api::V1::SephcoccoUsersController < ApplicationController
   end
 
   def update
-    if @user.update(user_params)
-      render json: { message: "User outlets updated successfully" }, status: :ok
+    # Extract outlets from permitted params
+    outlets_data = user_params[:outlets]
+    
+    # Remove outlets from params to avoid trying to set it as an attribute
+    user_attributes = user_params.except(:outlets)
+    
+    # Handle outlet updates separately if present
+    if outlets_data.present?
+      outlets = SephcoccoOutlet.where(name: outlets_data)
+      @user.sephcocco_outlets = outlets if outlets.any?
+    end
+
+    # Update other user attributes
+    if @user.update(user_attributes)
+      render json: { message: "User updated successfully" }, status: :ok
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
