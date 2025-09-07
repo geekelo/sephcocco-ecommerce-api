@@ -319,7 +319,7 @@ module Api::V1::Concerns::OrdersControllerHelper
         }
       }
     else
-      orders = current_user.send(order_association).where(status: "completed").order(updated_at: :desc) || []
+      orders = current_user.send(order_association).where(status: "delivered").order(updated_at: :desc) || []
       orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
