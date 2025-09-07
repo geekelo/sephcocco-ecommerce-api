@@ -225,8 +225,7 @@ module Api::V1::Concerns::ShippingControllerHelper
       # Update orders status to cancelled
       order = @shipping.send(order_association)
       if order.present?
-        order.update(status: "cancelled")
-        order.update_stages("cancelled")
+        order.update_stages("delivery cancelled")
       end
       render json: @shipping, serializer: shipping_serializer_class
     else
