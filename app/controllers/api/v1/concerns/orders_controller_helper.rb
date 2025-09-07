@@ -17,9 +17,9 @@ module Api::V1::Concerns::OrdersControllerHelper
         end
         if params[:filter][:search_terms].present?
           search_term = "%#{params[:filter][:search_terms]}%"
-          orders = orders.joins(:sephcocco_user, :sephcocco_pharmacy_product)
+          orders = orders.joins(:sephcocco_user, :"sephcocco_#{outlet.name.downcase}_product")
                          .where(
-                           "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet}_products.name ILIKE ? OR #{order_class.table_name}.order_number ILIKE ?",
+                           "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet.name.downcase}_products.name ILIKE ? OR #{order_class.table_name}.order_number ILIKE ?",
                            search_term, search_term, search_term
                          )        
         end
@@ -90,7 +90,7 @@ module Api::V1::Concerns::OrdersControllerHelper
       return render json: { error: "Customer is required for admin order creation" }, status: :unprocessable_entity
     end
 
-    unit_price = params[:unit_price] || product_class.find(order_params[:"sephcocco_#{outlet}_product_id"]).price
+    unit_price = params[:unit_price] || product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"]).price
     if admin?
       order = @customer.send(order_association).new(order_params.merge(unit_price: unit_price))
     else
@@ -158,9 +158,9 @@ module Api::V1::Concerns::OrdersControllerHelper
 
       if @order.status == "delivering"
         # create shipping for order
-        shipping_class = "#{outlet.capitalize}::Sephcocco#{outlet.capitalize}Shipping".constantize
+        shipping_class = "#{outlet.name.capitalize}::Sephcocco#{outlet.name.capitalize}Shipping".constantize
         shipping_class.create(
-          "sephcocco_#{outlet}_order_id" => @order.id,
+          "sephcocco_#{outlet.name.downcase}_order_id" => @order.id,
           status: "pending",
           tracking_number: @order.order_number
         )
