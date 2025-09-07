@@ -28,6 +28,14 @@ class Api::V1::SephcoccoUsersController < ApplicationController
           if params[:filter][:search_terms].present?
             @users = @users.where("name ILIKE ? OR email ILIKE ? OR phone_number ILIKE ? OR whatsapp_number ILIKE ?", "%#{params[:filter][:search_terms]}%", "%#{params[:filter][:search_terms]}%", "%#{params[:filter][:search_terms]}%", "%#{params[:filter][:search_terms]}%")
           end
+
+          if params[:filter][:start_date].present? && params[:filter][:end_date].present?
+            @users = @users.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
+          elsif params[:filter][:start_date].present?
+            @users = @users.where(created_at: params[:filter][:start_date]..Time.current)
+          elsif params[:filter][:end_date].present?
+            @users = @users.where(created_at: Time.current..params[:filter][:end_date])
+          end
         end
 
       user_data = {
