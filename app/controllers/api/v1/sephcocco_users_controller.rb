@@ -16,6 +16,20 @@ class Api::V1::SephcoccoUsersController < ApplicationController
       total_inactive_accounts = SephcoccoUser.where(suspended: true).count
       total_suspended = SephcoccoUser.where(suspended: true).count
       
+        # filter by name
+        if params[:filter].present?
+          if params[:filter][:status].present?
+            if params[:filter][:status] == "suspended"
+              @users = @users.where(suspended: true)
+              else
+              @users = @users.where(suspended: false)
+            end
+          end
+          if params[:filter][:search_terms].present?
+            @users = @users.where("name ILIKE ? OR email ILIKE ? OR phone_number ILIKE ? OR whatsapp_number ILIKE ?", "%#{params[:filter][:search_terms]}%", "%#{params[:filter][:search_terms]}%", "%#{params[:filter][:search_terms]}%", "%#{params[:filter][:search_terms]}%")
+          end
+        end
+
       user_data = {
         users: ActiveModelSerializers::SerializableResource.new(@users, each_serializer: SephcoccoUserSerializer).as_json,
         summary: {
