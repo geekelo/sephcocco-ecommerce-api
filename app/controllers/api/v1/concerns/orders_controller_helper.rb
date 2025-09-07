@@ -205,7 +205,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def pending_orders
     if current_user&.sephcocco_user_role&.name == "admin"
-      orders = order_class.where(status: "pending")
+      orders = order_class.where(status: "pending").order(created_at: :desc)
       orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
@@ -219,7 +219,7 @@ module Api::V1::Concerns::OrdersControllerHelper
         }
       }
     else
-      orders = current_user.send(order_association).where(status: "pending")
+      orders = current_user.send(order_association).where(status: "pending").order(created_at: :desc)
       orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
@@ -239,7 +239,7 @@ module Api::V1::Concerns::OrdersControllerHelper
     statuses = ["paid", "awaiting payment approval"]
   
     if current_user&.sephcocco_user_role&.name == "admin"
-      orders = order_class.where(status: statuses)
+      orders = order_class.where(status: statuses).order(created_at: :desc)
       orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
@@ -255,7 +255,7 @@ module Api::V1::Concerns::OrdersControllerHelper
     else
       orders = current_user
                  .send(order_association)
-                 .where(status: statuses)
+                 .where(status: statuses).order(created_at: :desc)
       orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
@@ -273,7 +273,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def delivering_orders
     if current_user&.sephcocco_user_role&.name == "admin"
-      orders = order_class.where(status: "delivering") || []
+      orders = order_class.where(status: "delivering").order(created_at: :desc) || []
       orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
@@ -287,7 +287,7 @@ module Api::V1::Concerns::OrdersControllerHelper
         }
       }
     else
-      orders = current_user.send(order_association).where(status: "delivering") || []
+      orders = current_user.send(order_association).where(status: "delivering").order(created_at: :desc) || []
       orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
@@ -305,7 +305,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def completed_orders
     if current_user&.sephcocco_user_role&.name == "admin"
-      orders = order_class.where(status: "completed")
+      orders = order_class.where(status: "completed").order(created_at: :desc)
       orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
@@ -319,7 +319,7 @@ module Api::V1::Concerns::OrdersControllerHelper
         }
       }
     else
-      orders = current_user.send(order_association).where(status: "completed") || []
+      orders = current_user.send(order_association).where(status: "completed").order(created_at: :desc) || []
       orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
