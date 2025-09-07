@@ -53,9 +53,9 @@ module Api::V1::Concerns::OrdersControllerHelper
         end
         if params[:filter][:search_terms].present?
           search_term = "%#{params[:filter][:search_terms]}%"
-          orders = orders.joins(:sephcocco_user, :sephcocco_pharmacy_product)
+          orders = orders.joins(:sephcocco_user, :"sephcocco_#{outlet.name.downcase}_product")
                          .where(
-                           "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet}_products.name ILIKE ?",
+                           "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet.name.downcase}_products.name ILIKE ?",
                            search_term, search_term
                          )        
         end
@@ -114,7 +114,7 @@ module Api::V1::Concerns::OrdersControllerHelper
       end
 
        # like the product (only if not already liked)
-       product = product_class.find(order_params[:"sephcocco_#{outlet}_product_id"])
+       product = product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"])
      
        
        # Create like only if it doesn't already exist
