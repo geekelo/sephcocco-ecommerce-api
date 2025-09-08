@@ -26,11 +26,53 @@ class Api::V1::RegistrationController < ApplicationController
           user.sephcocco_outlets << outlets if outlets&.any?
         end
 
+        if user.sephcocco_user_role.name == "admin" 
+          AdminActivities::CreateService.new(
+            user: user,
+            activity_type: "create",
+            activity_name: "User",
+            activity_description: "New Admin Created: #{user.name}",
+            outlet: outlet
+          ).call
+        elsif user.sephcocco_user_role.name == "rider"
+          AdminActivities::CreateService.new(
+            user: user,
+            activity_type: "create",
+            activity_name: "User",
+            activity_description: "New Rider Created: #{user.name}",
+            outlet: outlet
+          ).call
+        else
+          AdminNotifications::CreateService.new(
+            action_type: "New User",
+            action_id: user.id,
+            user: user,
+            notification_class: admin_notification_class,
+            outlet: outlet
+          ).call
+        end
+
+        # send welcome email to user with email confirmation
+        user.generate_email_confirmation_token!
+        UserMailer.with(user: user).welcome_email.deliver_now
+        UserMailer.with(user: user).email_confirmation.deliver_now
+
         render json: { message: "User created successfully" }, status: :created
       else
         render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
       end
     end
+  end
+
+  def confirm_email
+    user = SephcoccoUser.find_by(email_confirmation_token: params[:token])
+    if user.email_confirmation_token_expired?
+      render json: { error: "Email confirmation token expired" }, status: :unprocessable_entity
+    else
+      user.confirm_email
+      user.clear_email_confirmation_token!
+    end
+    render json: { message: "Email confirmed successfully" }, status: :ok
   end
 
   private

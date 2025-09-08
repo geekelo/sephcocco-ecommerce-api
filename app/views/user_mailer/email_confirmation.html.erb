@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirm Your Email - Sephcocco</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    .container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    .confirmation-title {
+      font-size: 18px;
+      color: #e74c3c;
+      margin-bottom: 20px;
+    }
+    .content {
+      margin-bottom: 30px;
+    }
+    .token-box {
+      background-color: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .token {
+      font-size: 32px;
+      font-weight: bold;
+      color: #2c3e50;
+      letter-spacing: 3px;
+      font-family: 'Courier New', monospace;
+    }
+    .button {
+      display: inline-block;
+      background-color: #27ae60;
+      color: white;
+      padding: 12px 24px;
+      text-decoration: none;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+    .footer {
+      text-align: center;
+      font-size: 14px;
+      color: #7f8c8d;
+      border-top: 1px solid #ecf0f1;
+      padding-top: 20px;
+    }
+    .warning {
+      background-color: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 5px;
+      padding: 15px;
+      margin: 20px 0;
+      color: #856404;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">Sephcocco</div>
+      <div class="confirmation-title">Email Confirmation Required</div>
+    </div>
+    
+    <div class="content">
+      <p>Hello <%= @user.name %>,</p>
+      
+      <p>Thank you for registering with Sephcocco! To complete your account setup, please confirm your email address using the verification code below:</p>
+      
+      <div class="token-box">
+        <div class="token"><%= @user.email_confirmation_token %></div>
+      </div>
+      
+      <p>Please enter this 6-digit code in the email confirmation form on our website to verify your email address.</p>
+      
+      <div class="warning">
+        <strong>Important:</strong> This verification code will expire in 2 hours for security reasons. If you don't confirm your email within this time, you'll need to request a new verification code.
+      </div>
+      
+      <p>If you didn't create an account with Sephcocco, please ignore this email.</p>
+      
+      <p>If you're having trouble with the verification process, please contact our support team.</p>
+      
+      <p>Best regards,<br>
+      The Sephcocco Team</p>
+    </div>
+    
+    <div class="footer">
+      <p>This email was sent to <%= @user.email %>.</p>
+      <p>&copy; <%= Date.current.year %> Sephcocco. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

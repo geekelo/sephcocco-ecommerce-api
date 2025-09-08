@@ -59,7 +59,25 @@ class SephcoccoUser < ApplicationRecord
   def clear_reset_generated_token!
     update!(reset_password_token: nil, reset_password_sent_at: nil)
   end
-  
+
+  def generate_email_confirmation_token!
+    token = rand(100000..999999).to_s
+    update!(email_confirmation_token: token, email_confirmation_sent_at: Time.current)
+    token
+  end
+
+  def email_confirmation_token_expired?
+    email_confirmation_sent_at < 2.hours.ago
+  end
+
+  def clear_email_confirmation_token!
+    update!(email_confirmation_token: nil, email_confirmation_sent_at: nil)
+  end
+
+  def confirm_email
+    update!(email_confirmed: true)
+  end
+
   private
   
   def set_default_role
