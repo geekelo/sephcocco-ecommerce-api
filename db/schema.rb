@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_08_113731) do
+ActiveRecord::Schema[7.2].define(version: 2025_09_10_115032) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -503,6 +503,19 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_08_113731) do
     t.index ["name"], name: "index_sephcocco_user_roles_on_name", unique: true
   end
 
+  create_table "sephcocco_user_subroles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "sephcocco_user_subroles_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "sephcocco_user_id", null: false
+    t.uuid "sephcocco_user_subrole_id", null: false
+    t.index ["sephcocco_user_id", "sephcocco_user_subrole_id"], name: "index_user_subroles_users_on_user_id_and_subrole_id", unique: true
+  end
+
   create_table "sephcocco_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "email", null: false
     t.string "name", null: false
@@ -521,8 +534,10 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_08_113731) do
     t.string "email_confirmation_token"
     t.datetime "email_confirmation_sent_at"
     t.boolean "email_confirmed", default: false
+    t.uuid "sephcocco_user_subrole_id"
     t.index ["email"], name: "index_sephcocco_users_on_email", unique: true
     t.index ["sephcocco_user_role_id"], name: "index_sephcocco_users_on_sephcocco_user_role_id"
+    t.index ["sephcocco_user_subrole_id"], name: "index_sephcocco_users_on_sephcocco_user_subrole_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -566,5 +581,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_08_113731) do
   add_foreign_key "sephcocco_restaurant_product_likes", "sephcocco_users"
   add_foreign_key "sephcocco_restaurant_shippings", "sephcocco_restaurant_orders"
   add_foreign_key "sephcocco_restaurant_shippings", "sephcocco_users", column: "rider_id"
+  add_foreign_key "sephcocco_user_subroles_users", "sephcocco_user_subroles"
+  add_foreign_key "sephcocco_user_subroles_users", "sephcocco_users"
   add_foreign_key "sephcocco_users", "sephcocco_user_roles"
+  add_foreign_key "sephcocco_users", "sephcocco_user_subroles"
 end
