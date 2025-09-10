@@ -47,6 +47,8 @@ roles.each do |role_name|
     u.phone_number = "080#{rand(10000000..99999999)}"
     u.whatsapp_number = "080#{rand(10000000..99999999)}"
     u.sephcocco_user_role_id = role.id
+    u.password = "1234567"
+    u.password_confirmation = "1234567"
   end
 
   puts "✅ Created/Found user for role: #{role_name} (Email: #{user.email})"
