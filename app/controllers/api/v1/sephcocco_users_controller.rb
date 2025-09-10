@@ -140,12 +140,17 @@ class Api::V1::SephcoccoUsersController < ApplicationController
   end
 
   def confirm_email
-    user = SephcoccoUser.find_by(email_confirmation_token: params[:token])
-    if user.email_confirmation_token_expired?
+    if @user.email_confirmation_token.nil? || @user.email_confirmation_token_expired?
       render json: { error: "Email confirmation token expired" }, status: :unprocessable_entity
+      return
     else
-      user.confirm_email
-      user.clear_email_confirmation_token!
+      if @user.email_confirmation_token === params[:confirmation_token]
+        @user.confirm_email
+        @user.clear_email_confirmation_token!
+      else
+        render json: { error: "Email confirmation token is invalid" }, status: :unprocessable_entity
+        return
+      end
     end
     render json: { message: "Email confirmed successfully" }, status: :ok
   end
