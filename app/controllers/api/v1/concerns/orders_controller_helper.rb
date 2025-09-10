@@ -17,9 +17,9 @@ module Api::V1::Concerns::OrdersControllerHelper
         end
         if params[:filter][:search_terms].present?
           search_term = "%#{params[:filter][:search_terms]}%"
-          orders = orders.joins(:sephcocco_user, :"sephcocco_#{outlet.name.downcase}_product")
+          orders = orders.joins(:sephcocco_user, :"sephcocco_#{outlet.name.downcase}_product", :"sephcocco_#{outlet.name.downcase}_payment")
                          .where(
-                           "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet.name.downcase}_products.name ILIKE ? OR #{order_class.table_name}.order_number ILIKE ?",
+                           "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet.name.downcase}_products.name ILIKE ? OR #{order_class.table_name}.order_number ILIKE ? OR sephcocco_#{outlet.name.downcase}_payments.transaction_id ILIKE ? OR sephcocco_#{outlet.name.downcase}_payments.id ILIKE ? OR sephcocco_#{outlet.name.downcase}_payments.amount ILIKE ?",
                            search_term, search_term, search_term
                          )        
         end
@@ -53,9 +53,9 @@ module Api::V1::Concerns::OrdersControllerHelper
         end
         if params[:filter][:search_terms].present?
           search_term = "%#{params[:filter][:search_terms]}%"
-          orders = orders.joins(:sephcocco_user, :"sephcocco_#{outlet.name.downcase}_product")
+          orders = orders.joins(:sephcocco_user, :"sephcocco_#{outlet.name.downcase}_product", :"sephcocco_#{outlet.name.downcase}_payment")
                          .where(
-                           "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet.name.downcase}_products.name ILIKE ?",
+                           "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet.name.downcase}_products.name ILIKE ? OR #{order_class.table_name}.order_number ILIKE ? OR sephcocco_#{outlet.name.downcase}_payments.transaction_id ILIKE ? OR sephcocco_#{outlet.name.downcase}_payments.id ILIKE ? OR sephcocco_#{outlet.name.downcase}_payments.amount ILIKE ?",
                            search_term, search_term
                          )        
         end

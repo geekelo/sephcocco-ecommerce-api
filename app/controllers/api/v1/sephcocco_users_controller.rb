@@ -59,14 +59,20 @@ class Api::V1::SephcoccoUsersController < ApplicationController
   def update
     # Extract outlets from permitted params
     outlets_data = user_params[:outlets]
+    subroles = user_params[:subroles]
     
     # Remove outlets from params to avoid trying to set it as an attribute
-    user_attributes = user_params.except(:outlets)
+    user_attributes = user_params.except(:outlets, :subroles)
     
     # Handle outlet updates separately if present
     if outlets_data.present?
       outlets = SephcoccoOutlet.where(name: outlets_data)
       @user.sephcocco_outlets = outlets if outlets.any?
+    end
+
+    if subroles.present?
+      subroles = SephcoccoSubrole.where(name: subroles)
+      @user.sephcocco_subroles |= subroles if subroles.any?
     end
 
     # Update other user attributes
@@ -81,6 +87,11 @@ class Api::V1::SephcoccoUsersController < ApplicationController
     if params[:user][:outlets].present?
       outlets = SephcoccoOutlet.where(name: params[:user][:outlets])
       @user.sephcocco_outlets |= outlets if outlets.any?
+    end
+
+    if params[:user][:subroles].present?
+      subroles = SephcoccoSubrole.where(name: params[:user][:subroles])
+      @user.sephcocco_subroles |= subroles if subroles.any?
     end
 
     if @user.save
@@ -122,6 +133,17 @@ class Api::V1::SephcoccoUsersController < ApplicationController
     render json: riders, each_serializer: SephcoccoUserSerializer
   end
 
+  def confirm_email
+    user = SephcoccoUser.find_by(email_confirmation_token: params[:token])
+    if user.email_confirmation_token_expired?
+      render json: { error: "Email confirmation token expired" }, status: :unprocessable_entity
+    else
+      user.confirm_email
+      user.clear_email_confirmation_token!
+    end
+    render json: { message: "Email confirmed successfully" }, status: :ok
+  end
+
   private
 
   def set_user
@@ -135,6 +157,6 @@ class Api::V1::SephcoccoUsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email, :password, :password_confirmation, :name, :address, :phone_number, :whatsapp_number, :role, outlets: [])
+    params.require(:user).permit(:email, :password, :password_confirmation, :name, :address, :phone_number, :whatsapp_number,  :role, outlets: [], subroles: [] )
   end
 end

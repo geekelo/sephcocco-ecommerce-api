@@ -1,8 +1,14 @@
 class SephcoccoUserSerializer < ActiveModel::Serializer
-  attributes :id, :name, :email, :address, :payment_ref, :phone_number, :whatsapp_number, :role, :outlets, :suspended, :last_login_at, :created_at, :updated_at, :total_orders, :total_shippings
+  attributes :id, :name, :email, :address, :payment_ref, :phone_number, :whatsapp_number, :role, :outlets, :suspended, :last_login_at, :created_at, :updated_at, :total_orders, :total_shippings, :subroles
 
   def role
     object&.sephcocco_user_role&.name
+  end
+
+  def subroles
+    object&.sephcocco_subroles&.map do |subrole|
+      subrole.name
+    end || []
   end
 
   def outlets

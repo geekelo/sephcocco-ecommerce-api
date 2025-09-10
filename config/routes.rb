@@ -31,6 +31,7 @@ Rails.application.routes.draw do
           patch "unsuspend_user" => "sephcocco_users#unsuspend_user"
           patch "update_user_outlets" => "sephcocco_users#update_user_outlets"
           get "get_riders" => "sephcocco_users#get_riders"
+          patch "confirm_email" => "sephcocco_users#confirm_email"
         end
       end
 

@@ -2,6 +2,7 @@ class SephcoccoUser < ApplicationRecord
   has_secure_password
   belongs_to :sephcocco_user_role, optional: true
   has_and_belongs_to_many :sephcocco_outlets
+  has_and_belongs_to_many :sephcocco_user_subroles
   
   validates :sephcocco_user_role, presence: true
   

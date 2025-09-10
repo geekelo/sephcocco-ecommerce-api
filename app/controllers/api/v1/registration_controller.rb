@@ -8,7 +8,7 @@ class Api::V1::RegistrationController < ApplicationController
       password = params[:user][:password].presence || "1234567"
       password_confirmation = params[:user][:password_confirmation].presence || "1234567"
 
-      extracted_user_params = user_params.except(:role, :outlets).merge(
+      extracted_user_params = user_params.except(:role, :outlets, :subroles).merge(
         password: password,
         password_confirmation: password_confirmation,
 
@@ -24,6 +24,11 @@ class Api::V1::RegistrationController < ApplicationController
 
           # Associate only if found
           user.sephcocco_outlets << outlets if outlets&.any?
+        end
+
+        if user_params[:subroles].present?
+          subroles = SephcoccoSubrole.where(name: user_params[:subroles])
+          user.sephcocco_subroles << subroles if subroles&.any?
         end
 
         if user.sephcocco_user_role.name == "admin" 
@@ -64,17 +69,6 @@ class Api::V1::RegistrationController < ApplicationController
     end
   end
 
-  def confirm_email
-    user = SephcoccoUser.find_by(email_confirmation_token: params[:token])
-    if user.email_confirmation_token_expired?
-      render json: { error: "Email confirmation token expired" }, status: :unprocessable_entity
-    else
-      user.confirm_email
-      user.clear_email_confirmation_token!
-    end
-    render json: { message: "Email confirmed successfully" }, status: :ok
-  end
-
   private
 
   def user_params
@@ -87,7 +81,8 @@ class Api::V1::RegistrationController < ApplicationController
       :phone_number,
       :whatsapp_number,
       :role,
-      outlets: []
+      outlets: [],
+      subroles: []
     )
   end
 

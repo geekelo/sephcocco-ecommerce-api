@@ -10,7 +10,8 @@
 
 # db/seeds/sephcocco_user_roles.rb
 
-roles = %w[user manager frontdesk superadmin admin support rider]
+roles = %w[user admin rider]
+subroles = %w[logistics support supperadmin stock accountant]
 
 roles.each do |role_name|
   SephcoccoUserRole.find_or_create_by!(name: role_name)
@@ -18,12 +19,17 @@ end
 
 puts "✅ CLA ROLES ADDED SUCCESSFULLY"
 
+subroles.each do |subrole_name|
+  SephcoccoSubrole.find_or_create_by!(name: subrole_name)
+end
+
+puts "✅ CLA SUBROLES ADDED SUCCESSFULLY"
 
 # db/seeds/sephcocco_users.rb
 
 puts "🌟 Seeding Sephcocco Users for each role..."
 
-roles = %w[user manager frontdesk superadmin admin support]
+roles = %w[user admin rider]
 
 roles.each do |role_name|
   role = SephcoccoUserRole.find_by(name: role_name)
