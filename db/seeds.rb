@@ -20,7 +20,7 @@ end
 puts "✅ CLA ROLES ADDED SUCCESSFULLY"
 
 subroles.each do |subrole_name|
-  SephcoccoSubrole.find_or_create_by!(name: subrole_name)
+  SephcoccoUserSubrole.find_or_create_by!(name: subrole_name)
 end
 
 puts "✅ CLA SUBROLES ADDED SUCCESSFULLY"
