@@ -133,6 +133,12 @@ class Api::V1::SephcoccoUsersController < ApplicationController
     render json: riders, each_serializer: SephcoccoUserSerializer
   end
 
+  def request_email_confirmation_token
+    @user.generate_email_confirmation_token!
+    UserMailer.with(user: @user).email_confirmation.deliver_now
+    render json: { message: "Email confirmation token requested successfully" }, status: :ok
+  end
+
   def confirm_email
     user = SephcoccoUser.find_by(email_confirmation_token: params[:token])
     if user.email_confirmation_token_expired?
