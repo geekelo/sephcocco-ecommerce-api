@@ -133,6 +133,14 @@ class Api::V1::SephcoccoUsersController < ApplicationController
     render json: riders, each_serializer: SephcoccoUserSerializer
   end
 
+  def check_email_confirmation
+    if @user.email_confirmed
+      render json: { message: "Email confirmed successfully" }, status: :ok
+    else
+      render json: { error: "Email not confirmed" }, status: :unprocessable_entity
+    end
+  end
+
   def request_email_confirmation_token
     @user.generate_email_confirmation_token!
     UserMailer.with(user: @user).email_confirmation.deliver_now
