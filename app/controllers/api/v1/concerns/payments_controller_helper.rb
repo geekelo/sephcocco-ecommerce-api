@@ -155,9 +155,14 @@ module Api::V1::Concerns::PaymentsControllerHelper
             payment.orders << order
           end
         end
+
+        # Initialize a transaction
+        if params[:react_native] == "true"
+          init(payment.sephcocco_user.email, payment.amount)
+        end
         render json: payment, each_serializer: payment_serializer, status: :created
       else
-          render json: payment.errors, status: :unprocessable_entity
+        render json: payment.errors, status: :unprocessable_entity
       end
     end
   end
@@ -355,6 +360,20 @@ module Api::V1::Concerns::PaymentsControllerHelper
       # For regular users, they are the customer
       @customer = current_user
     end
+  end
+
+  # Initialize a transaction for REACT NATIVE ONLY
+  def init(email, amount)
+    Rails.logger.info "Payment Create - Init - Email: #{email}"
+    Rails.logger.info "Payment Create - Init - Amount: #{amount}"
+
+    response = HTTParty.post(
+      "https://api.paystack.co/transaction/initialize",
+      headers: { "Authorization" => "Bearer #{ENV['PAYSTACK_SECRET_KEY']}", "Content-Type" => "application/json" },
+      body: { email: email, amount: amount }.to_json
+    )
+
+    render json: response.parsed_response
   end
 
   def payment_class
