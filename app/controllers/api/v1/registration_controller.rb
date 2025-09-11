@@ -77,8 +77,8 @@ class Api::V1::RegistrationController < ApplicationController
 
         # send welcome email to user with email confirmation
         user.generate_email_confirmation_token!
-        UserMailer.with(user: user).welcome_email.deliver_now
-        UserMailer.with(user: user).email_confirmation.deliver_now
+        UserMailer.welcome_email(user).deliver_now
+        UserMailer.email_confirmation(user).deliver_now
 
         render json: { message: "User created successfully" }, status: :created
       else
