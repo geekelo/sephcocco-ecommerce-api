@@ -157,7 +157,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
         end
 
         # Initialize a transaction
-        if params[:react_native] == "true"
+        if params[:react_native].present?
           response = init(payment.sephcocco_user.email, payment.amount)
           payment.update(transaction_id: response.parsed_response["data"]["reference"])
           render json: { message: "Transaction initialized successfully", data: response.parsed_response }, status: :created
