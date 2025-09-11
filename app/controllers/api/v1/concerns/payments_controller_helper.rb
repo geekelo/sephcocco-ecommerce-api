@@ -370,13 +370,21 @@ module Api::V1::Concerns::PaymentsControllerHelper
     Rails.logger.info "Payment Create - Init - Email: #{email}"
     Rails.logger.info "Payment Create - Init - Amount: #{amount}"
 
-    response = HTTParty.post(
-      "https://api.paystack.co/transaction/initialize",
-      headers: { "Authorization" => "Bearer #{ENV['PAYSTACK_SECRET_KEY']}", "Content-Type" => "application/json" },
-      body: { email: email, amount: amount }.to_json
-    )
+    require 'net/http'
+    require 'uri'
+    require 'json'
 
-    return response.parsed_response
+    uri = URI('https://api.paystack.co/transaction/initialize')
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+
+    request = Net::HTTP::Post.new(uri)
+    request['Authorization'] = "Bearer #{ENV['PAYSTACK_SECRET_KEY']}"
+    request['Content-Type'] = 'application/json'
+    request.body = { email: email, amount: amount }.to_json
+
+    response = http.request(request)
+    return JSON.parse(response.body)
   end
 
   def payment_class
