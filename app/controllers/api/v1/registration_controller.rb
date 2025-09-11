@@ -32,29 +32,47 @@ class Api::V1::RegistrationController < ApplicationController
         end
 
         if user.sephcocco_user_role.name == "admin" 
-          AdminActivities::CreateService.new(
-            user: user,
-            activity_type: "create",
-            activity_name: "User",
-            activity_description: "New Admin Created: #{user.name}",
-            outlet: outlet
-          ).call
+          # Create admin activities for all outlets when admin is created
+          ["pharmacy", "restaurant", "lounge"].each do |outlet_name|
+            AdminActivities::CreateService.new(
+              user: user,
+              activity_type: "create",
+              activity_name: "User",
+              activity_description: "New Admin Created: #{user.name}",
+              outlet: outlet_name
+            ).call
+          end
         elsif user.sephcocco_user_role.name == "rider"
-          AdminActivities::CreateService.new(
-            user: user,
-            activity_type: "create",
-            activity_name: "User",
-            activity_description: "New Rider Created: #{user.name}",
-            outlet: outlet
-          ).call
+          # Create admin activities for all outlets when rider is created
+          ["pharmacy", "restaurant", "lounge"].each do |outlet_name|
+            AdminActivities::CreateService.new(
+              user: user,
+              activity_type: "create",
+              activity_name: "User",
+              activity_description: "New Rider Created: #{user.name}",
+              outlet: outlet_name
+            ).call
+          end
         else
-          AdminNotifications::CreateService.new(
-            action_type: "New User",
-            action_id: user.id,
-            user: user,
-            notification_class: admin_notification_class,
-            outlet: outlet
-          ).call
+          # Create admin notifications for all outlets when regular user is created
+          ["pharmacy", "restaurant", "lounge"].each do |outlet_name|
+            notification_class = case outlet_name
+            when "pharmacy"
+              Pharmacy::SephcoccoPharmacyAdminNotification
+            when "restaurant"
+              Restaurant::SephcoccoRestaurantAdminNotification
+            when "lounge"
+              Lounge::SephcoccoLoungeAdminNotification
+            end
+            
+            AdminNotifications::CreateService.new(
+              action_type: "New User",
+              action_id: user.id,
+              user: user,
+              notification_class: notification_class,
+              outlet: outlet_name
+            ).call
+          end
         end
 
         # send welcome email to user with email confirmation
