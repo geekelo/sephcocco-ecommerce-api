@@ -143,7 +143,7 @@ class Api::V1::SephcoccoUsersController < ApplicationController
 
   def request_email_confirmation_token
     @user.generate_email_confirmation_token!
-    UserMailer.with(user: @user).email_confirmation.deliver_now
+    UserMailer.email_confirmation(@user).deliver_now
     render json: { message: "Email confirmation token requested successfully" }, status: :ok
   end
 
