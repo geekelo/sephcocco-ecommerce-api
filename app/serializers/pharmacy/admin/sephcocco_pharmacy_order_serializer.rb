@@ -17,10 +17,21 @@ class Pharmacy::Admin::SephcoccoPharmacyOrderSerializer < ActiveModel::Serialize
               :address,
               :phone_number,
               :additional_notes,
-              :shipping_details
+              :shipping_details,
+              :product_details
 
   def product
     object&.sephcocco_pharmacy_product
+  end
+
+  def product_details
+    prod = object.sephcocco_pharmacy_product
+    return nil unless prod
+    {
+      id: prod.id,
+      name: prod.name,
+      main_image_url: prod.main_image_url,
+    }
   end
 
   def customer

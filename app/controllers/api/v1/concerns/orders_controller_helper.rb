@@ -88,12 +88,7 @@ module Api::V1::Concerns::OrdersControllerHelper
     if @order.nil?
       return render json: { error: "Order not found" }, status: :not_found
     end
-    
-    if admin?
-      render json: @order, each_serializer: order_serializer_class
-    else
-      render json: @order, each_serializer: order_serializer_class
-    end
+    render json: @order, each_serializer: order_serializer_class
   end
 
   def create
