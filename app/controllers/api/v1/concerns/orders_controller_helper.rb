@@ -84,6 +84,14 @@ module Api::V1::Concerns::OrdersControllerHelper
     end
   end
 
+  def show
+    if admin?
+      render json: @order, each_serializer: order_serializer_class
+    else
+      render json: @order, each_serializer: order_serializer_class
+    end
+  end
+
   def create
     # Validate customer is set
     if admin? && @customer.nil?
