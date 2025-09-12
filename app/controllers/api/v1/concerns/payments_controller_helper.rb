@@ -380,30 +380,36 @@ module Api::V1::Concerns::PaymentsControllerHelper
 
   # Initialize a transaction for REACT NATIVE ONLY
   def init(email, amount)
-    Rails.logger.info "Payment Create - Init - Email: #{email}"
-    Rails.logger.info "Payment Create - Init - Amount: #{amount}"
-
-    require 'net/http'
-    require 'uri'
-    require 'json'
-
-    uri = URI('https://api.paystack.co/transaction/initialize')
-    http = Net::HTTP.new(uri.host, uri.port)
+    url = URI.parse("https://api.paystack.co/transaction/initialize")
+    http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = true
-
-    request = Net::HTTP::Post.new(uri)
-    request['Authorization'] = "Bearer #{ENV['PAYSTACK_SECRET_KEY']}"
-    request['Content-Type'] = 'application/json'
-    request.body = { email: email, amount: amount }.to_json
-
+  
+    amount_in_kobo = (amount.to_f * 100).to_i
+    Rails.logger.info "💰 Paystack Init - Email: #{email}, Amount in Kobo: #{amount_in_kobo}"
+  
+    request = Net::HTTP::Post.new(url.request_uri, {
+      "Authorization" => "Bearer #{ENV['PAYSTACK_SECRET_KEY']}",
+      "Content-Type"  => "application/json"
+    })
+  
+    request.body = {
+      email: email,
+      amount: amount_in_kobo,
+      callback_url: "http://localhost:3000/verify"
+    }.to_json
+  
     response = http.request(request)
-    Rails.logger.info "Payment Create - Init - Response Code: #{response.code}"
-    Rails.logger.info "Payment Create - Init - Response Body: #{response.body}"
-    
-    parsed_response = JSON.parse(response.body)
-    Rails.logger.info "Payment Create - Init - Parsed Response: #{parsed_response.inspect}"
-    
-    return parsed_response
+  
+    # Always log full response for debugging
+    Rails.logger.info "📡 Paystack Raw Response: #{response.code} - #{response.body}"
+  
+    begin
+      parsed_response = JSON.parse(response.body)
+    rescue JSON::ParserError
+      parsed_response = { "status" => false, "message" => "Invalid JSON from Paystack", "raw_body" => response.body }
+    end
+  
+    parsed_response.merge("http_status" => response.code.to_i)
   end
 
   def payment_class
