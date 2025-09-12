@@ -142,7 +142,11 @@ class Api::V1::SephcoccoUsersController < ApplicationController
   end
 
   def request_email_confirmation_token
-    user = current_user
+    user = SephcoccoUser.find_by(email: params[:email])
+    if user.nil?
+      render json: { error: "User not found" }, status: :unprocessable_entity
+      return
+    end
     user.generate_email_confirmation_token!
     UserMailer.email_confirmation(user).deliver_now
     render json: { message: "Email confirmation token requested successfully" }, status: :ok
