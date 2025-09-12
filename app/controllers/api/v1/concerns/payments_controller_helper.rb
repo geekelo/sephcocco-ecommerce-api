@@ -133,7 +133,11 @@ module Api::V1::Concerns::PaymentsControllerHelper
       # For non-admin users, we need to set the user_id
       payment_params_with_user = actual_payment_params.to_h.merge(sephcocco_user_id: current_user.id)
       Rails.logger.info "Payment Create - Final Params: #{payment_params_with_user.inspect}"
+      Rails.logger.info "Payment Create - Current User ID: #{current_user.id}"
+      Rails.logger.info "Payment Create - Payment Association: #{payment_association}"
       payment = current_user.send(payment_association).new(payment_params_with_user)
+      Rails.logger.info "Payment Create - Payment Valid: #{payment.valid?}"
+      Rails.logger.info "Payment Create - Payment Errors: #{payment.errors.full_messages}" unless payment.valid?
       if payment.save
         AdminNotifications::CreateService.new(
           action_type: "payment",
@@ -158,9 +162,18 @@ module Api::V1::Concerns::PaymentsControllerHelper
 
         # Initialize a transaction
         if params[:react_native].present?
-          response = init(payment.sephcocco_user.email, payment.amount)
-          payment.update(transaction_id: response["data"]["reference"])
-          render json: { message: "Transaction initialized successfully", data: response }, status: :created
+          Rails.logger.info "Payment Create - React Native - Payment Valid: #{payment.valid?}"
+          Rails.logger.info "Payment Create - React Native - Payment User: #{payment.sephcocco_user&.email}"
+          Rails.logger.info "Payment Create - React Native - Payment Amount: #{payment.amount}"
+          
+          if payment.valid? && payment.sephcocco_user.present?
+            response = init(payment.sephcocco_user.email, payment.amount)
+            payment.update(transaction_id: response["data"]["reference"])
+            render json: { message: "Transaction initialized successfully", data: response }, status: :created
+          else
+            Rails.logger.error "Payment Create - React Native - Invalid payment or missing user"
+            render json: { error: "Payment creation failed", errors: payment.errors.full_messages }, status: :unprocessable_entity
+          end
         else
           render json: payment, each_serializer: payment_serializer, status: :created
         end
@@ -384,7 +397,13 @@ module Api::V1::Concerns::PaymentsControllerHelper
     request.body = { email: email, amount: amount }.to_json
 
     response = http.request(request)
-    return JSON.parse(response.body)
+    Rails.logger.info "Payment Create - Init - Response Code: #{response.code}"
+    Rails.logger.info "Payment Create - Init - Response Body: #{response.body}"
+    
+    parsed_response = JSON.parse(response.body)
+    Rails.logger.info "Payment Create - Init - Parsed Response: #{parsed_response.inspect}"
+    
+    return parsed_response
   end
 
   def payment_class
