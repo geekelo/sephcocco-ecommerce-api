@@ -3,7 +3,7 @@ module Api::V1::Concerns::OrdersControllerHelper
   extend ActiveSupport::Concern
 
   included do
-    before_action :authenticate_user!, only: [ :index, :create, :update, :destroy, :paid_orders, :pending_orders, :completed_orders, :delivering_orders ]
+    before_action :authenticate_user!, only: [ :index, :create, :show, :update, :destroy, :paid_orders, :pending_orders, :completed_orders, :delivering_orders ]
     before_action :set_order, only: [ :update, :destroy, :user_order_update, :user_order_destroy ]
     before_action :set_customer, only: [ :create ]
   end
@@ -142,14 +142,6 @@ module Api::V1::Concerns::OrdersControllerHelper
       render json: order, status: :created
     else
       render json: order&.errors || { error: "Invalid customer" }, status: :unprocessable_entity
-    end
-  end
-
-  def show
-    if admin?
-      render json: @order, each_serializer: order_serializer_class
-    else
-      render json: @order, each_serializer: order_serializer_class
     end
   end
 
