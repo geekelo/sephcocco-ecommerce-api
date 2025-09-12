@@ -4,7 +4,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   included do
     before_action :authenticate_user!, only: [ :index, :create, :show, :update, :destroy, :paid_orders, :pending_orders, :completed_orders, :delivering_orders ]
-    before_action :set_order, only: [ :update, :destroy, :user_order_update, :user_order_destroy ]
+    before_action :set_order, only: [ :show, :update, :destroy, :user_order_update, :user_order_destroy ]
     before_action :set_customer, only: [ :create ]
   end
 
@@ -85,6 +85,10 @@ module Api::V1::Concerns::OrdersControllerHelper
   end
 
   def show
+    if @order.nil?
+      return render json: { error: "Order not found" }, status: :not_found
+    end
+    
     if admin?
       render json: @order, each_serializer: order_serializer_class
     else
@@ -340,10 +344,10 @@ module Api::V1::Concerns::OrdersControllerHelper
   private
 
   def set_order
-    if current_user.sephcocco_user_role.name == "admin"
+    if current_user&.sephcocco_user_role&.name == "admin"
       @order = order_class.find(params[:id])
     else
-      @order = current_user.send(order_association).find_by(id: params[:id])
+      @order = current_user&.send(order_association)&.find_by(id: params[:id])
     end
   end
 
