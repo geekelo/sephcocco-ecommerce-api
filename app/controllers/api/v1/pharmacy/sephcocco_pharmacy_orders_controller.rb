@@ -17,7 +17,7 @@ class Api::V1::Pharmacy::SephcoccoPharmacyOrdersController < ApplicationControll
   end
 
   def order_serializer_class
-    if current_user.sephcocco_user_role.name == "admin"
+    if current_user&.sephcocco_user_role&.name == "admin"
       Pharmacy::Admin::SephcoccoPharmacyOrderSerializer
     else
       Pharmacy::User::SephcoccoPharmacyOrderSerializer
@@ -37,7 +37,7 @@ class Api::V1::Pharmacy::SephcoccoPharmacyOrdersController < ApplicationControll
   end
 
   def order_serializer
-    if current_user.sephcocco_user_role.name == "admin"
+    if current_user&.sephcocco_user_role&.name == "admin"
       Pharmacy::Admin::SephcoccoPharmacyOrderSerializer
     else
       Pharmacy::User::SephcoccoPharmacyOrderSerializer
@@ -49,7 +49,7 @@ class Api::V1::Pharmacy::SephcoccoPharmacyOrdersController < ApplicationControll
   end
 
   def order_params
-    if current_user.sephcocco_user_role.name == "admin"
+    if current_user&.sephcocco_user_role&.name == "admin"
       params.require(:sephcocco_pharmacy_order).permit(
         :sephcocco_user_id,
         :sephcocco_pharmacy_product_id,

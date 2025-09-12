@@ -21,7 +21,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
   end
 
   def order_serializer_class
-    if current_user.sephcocco_user_role.name == "admin"
+    if current_user&.sephcocco_user_role&.name == "admin"
       Restaurant::Admin::SephcoccoRestaurantOrderSerializer
     else
       Restaurant::User::SephcoccoRestaurantOrderSerializer
@@ -37,7 +37,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
   end
 
   def order_serializer
-    if current_user.sephcocco_user_role.name == "admin"
+    if current_user&.sephcocco_user_role&.name == "admin"
       Restaurant::Admin::SephcoccoRestaurantOrderSerializer
     else
       Restaurant::User::SephcoccoRestaurantOrderSerializer
@@ -49,7 +49,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
   end
 
   def order_params
-    if current_user.sephcocco_user_role.name == "admin"
+    if current_user&.sephcocco_user_role&.name == "admin"
       params.require(:sephcocco_restaurant_order).permit(
         :sephcocco_user_id,
         :sephcocco_restaurant_product_id,
