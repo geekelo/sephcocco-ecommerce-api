@@ -170,7 +170,12 @@ class Api::V1::SephcoccoUsersController < ApplicationController
         return
       end
     end
-    render json: { message: "Email confirmed successfully" }, status: :ok
+    if user&.sephcocco_user_role&.name == "admin"
+      render json: { message: "Email confirmed successfully", user: SephcoccoUserSerializer.new(user),
+      token: JsonWebToken.encode(sub: user.id) }, status: :ok
+    else
+      render json: { message: "Email confirmed successfully" }, status: :ok
+    end
   end
 
   private
