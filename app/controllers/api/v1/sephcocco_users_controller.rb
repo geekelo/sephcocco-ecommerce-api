@@ -1,5 +1,5 @@
 class Api::V1::SephcoccoUsersController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: [ :request_email_confirmation_token, :confirm_email ]
   before_action :check_admin_role, only: [ :index, :create, :update_user_outlets ]
   before_action :set_user, only: [ :show, :update, :destroy, :update_user_outlets, :switch_user_role, :suspend_user, :unsuspend_user ]
 
