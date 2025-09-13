@@ -27,8 +27,8 @@ class Api::V1::RegistrationController < ApplicationController
         end
 
         if user_params[:subroles].present?
-          subroles = SephcoccoSubrole.where(name: user_params[:subroles])
-          user.sephcocco_subroles << subroles if subroles&.any?
+          subroles = SephcoccoUserSubrole.where(name: user_params[:subroles])
+          user.sephcocco_user_subroles << subroles if subroles&.any?
         end
 
         if user.sephcocco_user_role.name == "admin" 

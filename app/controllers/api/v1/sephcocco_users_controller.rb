@@ -71,8 +71,8 @@ class Api::V1::SephcoccoUsersController < ApplicationController
     end
 
     if subroles.present?
-      subroles = SephcoccoSubrole.where(name: subroles)
-      @user.sephcocco_subroles |= subroles if subroles.any?
+      subroles = SephcoccoUserSubrole.where(name: subroles)
+      @user.sephcocco_user_subroles |= subroles if subroles.any?
     end
 
     # Update other user attributes
