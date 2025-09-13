@@ -178,6 +178,11 @@ class Api::V1::SephcoccoUsersController < ApplicationController
     end
   end
 
+  def get_user_subroles
+    subroles = SephcoccoUserSubrole.all
+    render json: subroles, each_serializer: SephcoccoUserSubroleSerializer
+  end
+
   private
 
   def set_user
