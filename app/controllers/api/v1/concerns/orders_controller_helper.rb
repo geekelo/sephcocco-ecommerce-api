@@ -168,6 +168,13 @@ module Api::V1::Concerns::OrdersControllerHelper
         OrderMailer.with(order: @order).order_created_email.deliver_now
       end
 
+      if @order.status == "refunded"
+        # Deduct from payment
+        payment = payment_class.find_by(id: @order.payment_id)
+        payment.update(amount: payment.amount - @order.total_price)
+        payment.save!
+      end
+
       if admin?
         AdminActivities::CreateService.new(
           user: current_user,
