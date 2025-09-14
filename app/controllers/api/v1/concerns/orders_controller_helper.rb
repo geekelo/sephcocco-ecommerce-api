@@ -20,7 +20,7 @@ module Api::V1::Concerns::OrdersControllerHelper
           orders = orders.joins(:sephcocco_user, :"sephcocco_#{outlet.name.downcase}_product", :"sephcocco_#{outlet.name.downcase}_payment")
                          .where(
                            "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet.name.downcase}_products.name ILIKE ? OR #{order_class.table_name}.order_number ILIKE ? OR sephcocco_#{outlet.name.downcase}_payment.transaction_id ILIKE ? OR sephcocco_#{outlet.name.downcase}_payment_id ILIKE ? OR sephcocco_#{outlet.name.downcase}_payment.amount ILIKE ?",
-                           search_term, search_term, search_term
+                           search_term, search_term, search_term, search_term, search_term, search_term
                          )        
         end
         if params[:filter][:start_date].present? && params[:filter][:end_date].present?
@@ -56,7 +56,7 @@ module Api::V1::Concerns::OrdersControllerHelper
           orders = orders.joins(:sephcocco_user, :"sephcocco_#{outlet.name.downcase}_product", :"sephcocco_#{outlet.name.downcase}_payment")
                          .where(
                            "sephcocco_users.name ILIKE ? OR sephcocco_#{outlet.name.downcase}_products.name ILIKE ? OR #{order_class.table_name}.order_number ILIKE ? OR sephcocco_#{outlet.name.downcase}_payments.transaction_id ILIKE ? OR sephcocco_#{outlet.name.downcase}_payments.id ILIKE ? OR sephcocco_#{outlet.name.downcase}_payments.amount ILIKE ?",
-                           search_term, search_term
+                           search_term, search_term, search_term, search_term, search_term, search_term
                          )        
         end
         if params[:filter][:start_date].present? && params[:filter][:end_date].present?
