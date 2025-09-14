@@ -46,7 +46,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
       if params[:filter][:search_terms].present?
         term = "%#{params[:filter][:search_terms]}%"
         payments = payments.joins(:sephcocco_user).where(
-          "CAST(#{payment_class.table_name}.amount AS TEXT) ILIKE :term OR #{payment_class.table_name}.transaction_id ILIKE :term OR sephcocco_users.name ILIKE :term OR orders ILIKE :term",
+          "CAST(#{payment_class.table_name}.amount AS TEXT) ILIKE :term OR #{payment_class.table_name}.transaction_id ILIKE :term OR sephcocco_users.name ILIKE :term OR orders::text ILIKE :term",
           term: term
         )
       end
