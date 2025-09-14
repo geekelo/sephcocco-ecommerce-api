@@ -9,6 +9,18 @@ module MigrationHelpers
         t.string :vendor, null: false
         t.string :status, null: false, default: "pending" # pending, approved, cancelled, queried
         t.timestamps
+
+        # stock: {
+        #   old_stock: 100,
+        #   add_stock: 50,
+        #   new_stock: 150
+        # },
+        # price: {
+        #   old_price: 25.00,
+        #   new_price: 30.00,
+        #   cost_price: 20.00,
+        #   profit_markup: 10.00
+        # }
       end
       
       add_index "sephcocco_#{prefix}_stock_managements", :invoice_number

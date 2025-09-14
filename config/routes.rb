@@ -108,6 +108,7 @@ Rails.application.routes.draw do
             get :overview_performance
           end
         end
+        resources :sephcocco_lounge_stock_managements
       end
 
       # PHARMACY
@@ -173,6 +174,7 @@ Rails.application.routes.draw do
             get :overview_performance
           end
         end
+        resources :sephcocco_pharmacy_stock_managements
       end
 
       # RESTAURANT
@@ -239,6 +241,7 @@ Rails.application.routes.draw do
             get :overview_performance
           end
         end
+        resources :sephcocco_restaurant_stock_managements
       end
     end
   end

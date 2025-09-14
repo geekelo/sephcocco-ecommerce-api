@@ -1,0 +1,185 @@
+# app/controllers/api/v1/concerns/stock_management_controller_helper.rb
+module Api::V1::Concerns::StockManagementControllerHelper
+  extend ActiveSupport::Concern
+
+  included do
+    before_action :authenticate_user!, only: [:index, :create, :show, :update, :destroy]
+    before_action :set_stock_management, only: [:show, :update, :destroy]
+    before_action :check_admin_role, only: [:index, :create, :update, :destroy]
+  end
+
+  def index
+    stock_managements = stock_management_class.all
+    
+    # Apply filters if they exist
+    if params[:filter].present?
+      # Apply status filter
+      if params[:filter][:status].present?
+        stock_managements = stock_managements.where(status: params[:filter][:status])
+      end
+      
+      # Apply vendor filter
+      if params[:filter][:vendor].present?
+        stock_managements = stock_managements.where("vendor ILIKE ?", "%#{params[:filter][:vendor]}%")
+      end
+      
+      # Apply date filter
+      if params[:filter][:start_date].present? && params[:filter][:end_date].present?
+        stock_managements = stock_managements.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
+      elsif params[:filter][:start_date].present?
+        stock_managements = stock_managements.where('created_at >= ?', params[:filter][:start_date])
+      elsif params[:filter][:end_date].present?
+        stock_managements = stock_managements.where('created_at <= ?', params[:filter][:end_date])
+      end
+      
+      # Apply search filter
+      if params[:filter][:search_terms].present?
+        search_term = "%#{params[:filter][:search_terms]}%"
+        stock_managements = stock_managements.joins(:sephcocco_product)
+                                            .where(
+                                              "invoice_number ILIKE ? OR vendor ILIKE ? OR sephcocco_#{outlet}_products.name ILIKE ? OR stock::text ILIKE ? OR price::text ILIKE ?",
+                                              search_term, search_term, search_term, search_term, search_term
+                                            )
+      end
+    end
+
+    # Sort by date
+    stock_managements = stock_managements.order(created_at: :desc)
+
+    # Apply pagination
+    stock_managements = stock_managements.page(params[:page]).per(params[:per_page] || 20)
+
+    render json: {
+      stock_managements: ActiveModelSerializers::SerializableResource.new(
+        stock_managements, 
+        each_serializer: stock_management_serializer
+      ).as_json,
+      meta: {
+        total_count: stock_managements.total_count,
+        total_pages: stock_managements.total_pages,
+        current_page: stock_managements.current_page,
+        per_page: stock_managements.limit_value
+      }
+    }
+  end
+
+  def show
+    render json: @stock_management, serializer: stock_management_serializer
+  end
+
+  def create
+    product = product_class.find(@stock_management.sephcocco_product_id)
+    old_stock = product.amount_in_stock
+    old_price = product.price
+
+    stock_management_params[:stock][:old_stock] = old_stock
+    stock_management_params[:price][:old_price] = old_price
+    stock_management_params[:stock][:new_stock] = old_stock + stock_management_params[:stock][:add_stock]
+    stock_management_params[:price][:new_price] = stock_management_params[:price][:cost_price] + stock_management_params[:price][:profit_markup]
+
+    @stock_management = stock_management_class.new(stock_management_params)
+    
+    if @stock_management.save
+
+      # Create admin activity
+      AdminActivities::CreateService.new(
+        user: current_user,
+        activity_type: "create",
+        activity_name: "Stock Management",
+        activity_description: "Stock Management Created: #{@stock_management.invoice_number}",
+        outlet: outlet
+      ).call
+      
+      render json: @stock_management, serializer: stock_management_serializer, status: :created
+    else
+      render json: { errors: @stock_management.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    if @stock_management.update(stock_management_params)
+
+      if @stock_management.status == "approved"
+        # update the product stock and price
+        product = product_class.find(@stock_management.sephcocco_product_id)
+        product.update(amount_in_stock: @stock_management.stock[:new_stock])
+        product.update(price: @stock_management.price[:new_price])
+        product.save!
+      end
+      # Create admin activity
+      AdminActivities::CreateService.new(
+        user: current_user,
+        activity_type: "update",
+        activity_name: "Stock Management",
+        activity_description: @stock_management.status == "approved" ? "Stock Management Approved: #{@stock_management.invoice_number}" : "Stock Management Updated: #{@stock_management.invoice_number}",
+        outlet: outlet
+      ).call
+      
+      render json: @stock_management, serializer: stock_management_serializer
+    else
+      render json: { errors: @stock_management.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    if @stock_management.destroy
+      # Create admin activity
+      AdminActivities::CreateService.new(
+        user: current_user,
+        activity_type: "delete",
+        activity_name: "Stock Management",
+        activity_description: "Stock Management Deleted: #{@stock_management.invoice_number}",
+        outlet: outlet
+      ).call
+      
+      render json: { message: "Stock management deleted successfully" }, status: :ok
+    else
+      render json: { error: "Failed to delete stock management" }, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def set_stock_management
+    @stock_management = stock_management_class.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Stock management not found" }, status: :not_found
+  end
+
+  def check_admin_role
+    unless admin?
+      render json: { error: "Access denied. Admin role required." }, status: :forbidden
+    end
+  end
+
+  def admin?
+    current_user&.sephcocco_user_role&.name == "admin"
+  end
+
+  def stock_management_params
+    params.require(stock_management_param_key).permit(
+      :sephcocco_product_id,
+      :invoice_number,
+      :vendor,
+      :status,
+      stock: {},
+      price: {}
+    )
+  end
+
+  def stock_management_param_key
+    "sephcocco_#{outlet}_stock_management"
+  end
+
+  def stock_management_class
+    raise NotImplementedError, "You must implement the stock_management_class method"
+  end
+
+  def stock_management_serializer
+    raise NotImplementedError, "You must implement the stock_management_serializer method"
+  end
+
+  def outlet
+    raise NotImplementedError, "You must implement the outlet method"
+  end
+end
