@@ -41,6 +41,13 @@ class Restaurant::SephcoccoRestaurantProduct < ApplicationRecord
     :restaurant_orders
   end
 
+  def self.stock_management_class
+    Restaurant::SephcoccoRestaurantStockManagement
+  end
+
   # 🔧 Call the association setup after all class methods are defined
   setup_product_associations
+  
+  # Add stock management association
+  has_many :sephcocco_restaurant_stock_managements, class_name: "Restaurant::SephcoccoRestaurantStockManagement", foreign_key: :sephcocco_restaurant_product_id, dependent: :destroy
 end

@@ -41,8 +41,15 @@ module Lounge
     def self.order_association_name
       :lounge_orders
     end
+
+    def self.stock_management_class
+      Lounge::SephcoccoLoungeStockManagement
+    end
   
     # 🔧 Call the association setup after all class methods are defined
     setup_product_associations
+    
+    # Add stock management association
+    has_many :sephcocco_lounge_stock_managements, class_name: "Lounge::SephcoccoLoungeStockManagement", foreign_key: :sephcocco_lounge_product_id, dependent: :destroy
   end
 end

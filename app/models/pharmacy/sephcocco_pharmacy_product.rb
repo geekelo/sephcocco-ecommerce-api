@@ -41,6 +41,13 @@ class Pharmacy::SephcoccoPharmacyProduct < ApplicationRecord
     :pharmacy_orders
   end
 
+  def self.stock_management_class
+    Pharmacy::SephcoccoPharmacyStockManagement
+  end
+
   # 🔧 Call the association setup after all class methods are defined
   setup_product_associations
+  
+  # Add stock management association
+  has_many :sephcocco_pharmacy_stock_managements, class_name: "Pharmacy::SephcoccoPharmacyStockManagement", foreign_key: :sephcocco_pharmacy_product_id, dependent: :destroy
 end

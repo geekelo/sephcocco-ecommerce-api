@@ -39,4 +39,8 @@ module Api::V1::Concerns::AdminNotificationHandler
   def notification_params
     params.require(param_key).permit(:viewed)
   end
+
+  def admin?
+    current_user&.sephcocco_user_role&.name == "admin"
+  end
 end

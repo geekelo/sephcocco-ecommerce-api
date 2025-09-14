@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_10_115032) do
+ActiveRecord::Schema[7.2].define(version: 2025_09_14_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -212,6 +212,22 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_10_115032) do
     t.index ["sephcocco_lounge_order_id"], name: "index_sephcocco_lounge_shippings_on_sephcocco_lounge_order_id"
   end
 
+  create_table "sephcocco_lounge_stock_managements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "sephcocco_lounge_product_id", null: false
+    t.string "invoice_number", null: false
+    t.jsonb "stock", default: {}
+    t.jsonb "price", default: {}
+    t.string "vendor", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_sephcocco_lounge_stock_managements_on_created_at"
+    t.index ["invoice_number"], name: "index_sephcocco_lounge_stock_managements_on_invoice_number"
+    t.index ["sephcocco_lounge_product_id"], name: "idx_on_sephcocco_lounge_product_id_d1414457b8"
+    t.index ["status"], name: "index_sephcocco_lounge_stock_managements_on_status"
+    t.index ["vendor"], name: "index_sephcocco_lounge_stock_managements_on_vendor"
+  end
+
   create_table "sephcocco_outlets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
@@ -360,6 +376,22 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_10_115032) do
     t.index ["sephcocco_pharmacy_order_id"], name: "idx_on_sephcocco_pharmacy_order_id_552de683f6"
   end
 
+  create_table "sephcocco_pharmacy_stock_managements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "sephcocco_pharmacy_product_id", null: false
+    t.string "invoice_number", null: false
+    t.jsonb "stock", default: {}
+    t.jsonb "price", default: {}
+    t.string "vendor", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_sephcocco_pharmacy_stock_managements_on_created_at"
+    t.index ["invoice_number"], name: "index_sephcocco_pharmacy_stock_managements_on_invoice_number"
+    t.index ["sephcocco_pharmacy_product_id"], name: "idx_on_sephcocco_pharmacy_product_id_4f269e9506"
+    t.index ["status"], name: "index_sephcocco_pharmacy_stock_managements_on_status"
+    t.index ["vendor"], name: "index_sephcocco_pharmacy_stock_managements_on_vendor"
+  end
+
   create_table "sephcocco_restaurant_admin_activities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "sephcocco_user_id", null: false
     t.string "activity_type"
@@ -496,6 +528,22 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_10_115032) do
     t.index ["sephcocco_restaurant_order_id"], name: "idx_on_sephcocco_restaurant_order_id_2b91f3bddc"
   end
 
+  create_table "sephcocco_restaurant_stock_managements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "sephcocco_restaurant_product_id", null: false
+    t.string "invoice_number", null: false
+    t.jsonb "stock", default: {}
+    t.jsonb "price", default: {}
+    t.string "vendor", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_sephcocco_restaurant_stock_managements_on_created_at"
+    t.index ["invoice_number"], name: "index_sephcocco_restaurant_stock_managements_on_invoice_number"
+    t.index ["sephcocco_restaurant_product_id"], name: "idx_on_sephcocco_restaurant_product_id_c0872c4425"
+    t.index ["status"], name: "index_sephcocco_restaurant_stock_managements_on_status"
+    t.index ["vendor"], name: "index_sephcocco_restaurant_stock_managements_on_vendor"
+  end
+
   create_table "sephcocco_user_roles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
@@ -555,6 +603,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_10_115032) do
   add_foreign_key "sephcocco_lounge_product_likes", "sephcocco_users"
   add_foreign_key "sephcocco_lounge_shippings", "sephcocco_lounge_orders"
   add_foreign_key "sephcocco_lounge_shippings", "sephcocco_users", column: "rider_id"
+  add_foreign_key "sephcocco_lounge_stock_managements", "sephcocco_lounge_products"
   add_foreign_key "sephcocco_outlets_users", "sephcocco_outlets"
   add_foreign_key "sephcocco_outlets_users", "sephcocco_users"
   add_foreign_key "sephcocco_pharmacy_admin_activities", "sephcocco_users"
@@ -569,6 +618,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_10_115032) do
   add_foreign_key "sephcocco_pharmacy_product_likes", "sephcocco_users"
   add_foreign_key "sephcocco_pharmacy_shippings", "sephcocco_pharmacy_orders"
   add_foreign_key "sephcocco_pharmacy_shippings", "sephcocco_users", column: "rider_id"
+  add_foreign_key "sephcocco_pharmacy_stock_managements", "sephcocco_pharmacy_products"
   add_foreign_key "sephcocco_restaurant_admin_activities", "sephcocco_users"
   add_foreign_key "sephcocco_restaurant_admin_notifications", "sephcocco_users"
   add_foreign_key "sephcocco_restaurant_faqs", "sephcocco_restaurant_faq_categories", column: "sephcocco_restaurant_category_id"
@@ -581,6 +631,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_10_115032) do
   add_foreign_key "sephcocco_restaurant_product_likes", "sephcocco_users"
   add_foreign_key "sephcocco_restaurant_shippings", "sephcocco_restaurant_orders"
   add_foreign_key "sephcocco_restaurant_shippings", "sephcocco_users", column: "rider_id"
+  add_foreign_key "sephcocco_restaurant_stock_managements", "sephcocco_restaurant_products"
   add_foreign_key "sephcocco_user_subroles_users", "sephcocco_user_subroles"
   add_foreign_key "sephcocco_user_subroles_users", "sephcocco_users"
   add_foreign_key "sephcocco_users", "sephcocco_user_roles"
