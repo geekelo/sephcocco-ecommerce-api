@@ -56,6 +56,7 @@ class Api::V1::Lounge::SephcoccoLoungeProductsController < ApplicationController
       :discount_price,
       :price,
       :visible,
+      :barcode,
       category_ids: [],
       other_image_urls: []
     )

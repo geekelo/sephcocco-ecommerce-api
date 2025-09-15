@@ -1,6 +1,14 @@
 module ProductModelHelper
   extend ActiveSupport::Concern
 
+  included do
+    validates :barcode, uniqueness: true, allow_blank: true
+    validates :barcode, format: { 
+      with: /\A\d{8,14}\z/, 
+      message: "must be 8-14 digits" 
+    }, allow_blank: true
+  end
+
   class_methods do
     def setup_product_associations
       has_and_belongs_to_many category_association_name,

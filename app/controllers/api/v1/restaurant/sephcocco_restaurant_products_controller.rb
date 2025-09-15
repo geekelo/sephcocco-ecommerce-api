@@ -55,6 +55,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantProductsController < ApplicationCo
       :amount_in_stock,
       :price,
       :visible,
+      :barcode,
       category_ids: [],
       other_image_urls: []
     )

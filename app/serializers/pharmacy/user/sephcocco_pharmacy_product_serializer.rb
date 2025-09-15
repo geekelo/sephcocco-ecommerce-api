@@ -11,6 +11,7 @@ class Pharmacy::User::SephcoccoPharmacyProductSerializer < ActiveModel::Serializ
               :out_of_stock_status,
               :main_image_url,
               :other_image_urls,
+              :barcode,
               :categories,
               :created_at,
               :updated_at,

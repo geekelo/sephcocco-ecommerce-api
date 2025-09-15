@@ -11,6 +11,7 @@ class Pharmacy::Admin::SephcoccoPharmacyProductSerializer < ActiveModel::Seriali
               :price,
               :main_image_url,
               :other_image_urls,
+              :barcode,
               :categories,
               :created_at,
               :updated_at,

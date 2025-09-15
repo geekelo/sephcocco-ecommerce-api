@@ -68,6 +68,15 @@ module Api::V1::Concerns::ProductsControllerHelper
         # Only end date - filter from beginning to end date
         products = products.where("created_at <= ?", params[:filter][:end_date])
       end
+
+      # Apply search filter
+      if params[:filter][:search_terms].present?
+        search_term = "%#{params[:filter][:search_terms]}%"
+        products = products.where(
+          "name ILIKE ? OR short_description ILIKE ? OR long_description ILIKE ? OR barcode ILIKE ?",
+          search_term, search_term, search_term, search_term
+        )
+      end
     end
 
     # Apply sorting (outside filter block so it always applies)

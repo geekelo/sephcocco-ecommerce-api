@@ -12,6 +12,7 @@ class Lounge::SephcoccoLoungeProductSerializer < ActiveModel::Serializer
               :main_image_url,
               :other_image_urls,
               :visible,
+              :barcode,
               :categories,
               :created_at,
               :updated_at
