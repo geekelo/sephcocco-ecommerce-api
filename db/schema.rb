@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_14_120000) do
+ActiveRecord::Schema[7.2].define(version: 2025_09_14_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -196,6 +196,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_14_120000) do
     t.string "main_image_url"
     t.string "other_image_urls", default: [], array: true
     t.decimal "discount_price", precision: 16, scale: 2, default: "0.0", null: false
+    t.string "barcode"
+    t.index ["barcode"], name: "index_sephcocco_lounge_products_on_barcode", unique: true
     t.index ["name"], name: "index_sephcocco_lounge_products_on_name", unique: true
   end
 
@@ -360,6 +362,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_14_120000) do
     t.string "main_image_url"
     t.string "other_image_urls", default: [], array: true
     t.decimal "discount_price", precision: 16, scale: 2, default: "0.0", null: false
+    t.string "barcode"
+    t.index ["barcode"], name: "index_sephcocco_pharmacy_products_on_barcode", unique: true
     t.index ["name"], name: "index_sephcocco_pharmacy_products_on_name", unique: true
   end
 
@@ -512,6 +516,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_14_120000) do
     t.string "main_image_url"
     t.string "other_image_urls", default: [], array: true
     t.decimal "discount_price", precision: 16, scale: 2, default: "0.0", null: false
+    t.string "barcode"
+    t.index ["barcode"], name: "index_sephcocco_restaurant_products_on_barcode", unique: true
     t.index ["name"], name: "index_sephcocco_restaurant_products_on_name", unique: true
   end
 

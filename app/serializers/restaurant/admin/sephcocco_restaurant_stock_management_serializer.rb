@@ -1,11 +1,19 @@
 class Restaurant::Admin::SephcoccoRestaurantStockManagementSerializer < ActiveModel::Serializer
-  attributes :id, :invoice_number, :vendor, :status, :stock, :price, :created_at, :updated_at
+  attributes :id, :invoice_number, :vendor, :status, :product, :stock, :price, :created_at, :updated_at
 
   def stock
     {
       old_stock: object.stock['old_stock'],
       add_stock: object.stock['add_stock'],
       new_stock: object.stock['new_stock']
+    }
+  end
+
+  def product
+    {
+      id: object&.sephcocco_restaurant_product&.id,
+      name: object&.sephcocco_restaurant_product&.name,
+      barcode: object&.sephcocco_restaurant_product&.barcode,
     }
   end
 

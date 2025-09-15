@@ -1,5 +1,5 @@
 class Lounge::Admin::SephcoccoLoungeStockManagementSerializer < ActiveModel::Serializer
-  attributes :id, :invoice_number, :vendor, :status, :stock, :price, :created_at, :updated_at
+  attributes :id, :invoice_number, :vendor, :status, :product, :stock, :price, :created_at, :updated_at
 
 
   def stock
@@ -7,6 +7,14 @@ class Lounge::Admin::SephcoccoLoungeStockManagementSerializer < ActiveModel::Ser
       old_stock: object.stock['old_stock'],
       add_stock: object.stock['add_stock'],
       new_stock: object.stock['new_stock']
+    }
+  end
+
+  def product
+    {
+      id: object&.sephcocco_lounge_product&.id,
+      name: object&.sephcocco_lounge_product&.name,
+      barcode: object&.sephcocco_lounge_product&.barcode,
     }
   end
 
