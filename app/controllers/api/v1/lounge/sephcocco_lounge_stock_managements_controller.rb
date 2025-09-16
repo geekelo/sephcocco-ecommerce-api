@@ -14,4 +14,8 @@ class Api::V1::Lounge::SephcoccoLoungeStockManagementsController < ApplicationCo
   def outlet
     'lounge'
   end
+
+  def product_class
+    Lounge::SephcoccoLoungeProduct
+  end
 end

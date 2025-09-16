@@ -14,4 +14,8 @@ class Api::V1::Restaurant::SephcoccoRestaurantStockManagementsController < Appli
   def outlet
     'restaurant'
   end
+
+  def product_class
+    Restaurant::SephcoccoRestaurantProduct
+  end
 end

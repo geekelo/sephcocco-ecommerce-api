@@ -14,4 +14,8 @@ class Api::V1::Pharmacy::SephcoccoPharmacyStockManagementsController < Applicati
   def outlet
     'pharmacy'
   end
+
+  def product_class
+    Pharmacy::SephcoccoPharmacyProduct
+  end
 end

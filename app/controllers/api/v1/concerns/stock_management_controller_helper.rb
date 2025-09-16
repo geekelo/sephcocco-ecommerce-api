@@ -68,16 +68,21 @@ module Api::V1::Concerns::StockManagementControllerHelper
   end
 
   def create
-    product = product_class.find(@stock_management.sephcocco_product_id)
+    # Get the product first
+    product = product_class.find(stock_management_params[:"sephcocco_#{outlet}_product_id"])
     old_stock = product.amount_in_stock
     old_price = product.price
 
-    stock_management_params[:stock][:old_stock] = old_stock
-    stock_management_params[:price][:old_price] = old_price
-    stock_management_params[:stock][:new_stock] = old_stock + stock_management_params[:stock][:add_stock]
-    stock_management_params[:price][:new_price] = stock_management_params[:price][:cost_price] + stock_management_params[:price][:profit_markup]
+    # Prepare the parameters with calculated values
+    params_hash = stock_management_params.to_h
+    params_hash[:stock] ||= {}
+    params_hash[:price] ||= {}
+    params_hash[:stock][:old_stock] = old_stock
+    params_hash[:price][:old_price] = old_price
+    params_hash[:stock][:new_stock] = old_stock + params_hash[:stock][:add_stock].to_i
+    params_hash[:price][:new_price] = params_hash[:price][:cost_price].to_f + params_hash[:price][:profit_markup].to_f
 
-    @stock_management = stock_management_class.new(stock_management_params)
+    @stock_management = stock_management_class.new(params_hash)
     
     if @stock_management.save
 
@@ -101,9 +106,9 @@ module Api::V1::Concerns::StockManagementControllerHelper
 
       if @stock_management.status == "approved"
         # update the product stock and price
-        product = product_class.find(@stock_management.sephcocco_product_id)
-        product.update(amount_in_stock: @stock_management.stock[:new_stock])
-        product.update(price: @stock_management.price[:new_price])
+        product = product_class.find(@stock_management.send(:"sephcocco_#{outlet}_product_id"))
+        product.update(amount_in_stock: @stock_management.stock['new_stock'])
+        product.update(price: @stock_management.price['new_price'])
         product.save!
       end
       # Create admin activity
@@ -158,7 +163,7 @@ module Api::V1::Concerns::StockManagementControllerHelper
 
   def stock_management_params
     params.require(stock_management_param_key).permit(
-      :sephcocco_product_id,
+      :"sephcocco_#{outlet}_product_id",
       :invoice_number,
       :vendor,
       :status,
