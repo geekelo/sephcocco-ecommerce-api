@@ -72,7 +72,6 @@ module Api::V1::Concerns::StockManagementControllerHelper
     Rails.logger.info "=== Stock Management Create Debug ==="
     Rails.logger.info "Outlet: #{outlet}"
     Rails.logger.info "Raw params: #{params.inspect}"
-    Rails.logger.info "Stock management param key: #{stock_management_param_key}"
     Rails.logger.info "Stock management params: #{stock_management_params.inspect}"
     Rails.logger.info "Product ID key: sephcocco_#{outlet}_product_id"
     Rails.logger.info "Product ID value: #{stock_management_params[:"sephcocco_#{outlet}_product_id"]}"
@@ -202,8 +201,10 @@ module Api::V1::Concerns::StockManagementControllerHelper
   end
 
   def stock_management_params
-    params.require(:stock_management_param_key).permit(
-      :"sephcocco_#{outlet}_product_id",
+    # Frontend is sending data under 'stock_management_param_key' at root level
+    permitted_params = params.require(:stock_management_param_key).permit(
+      :sephcocco_product_id,  # Generic field name from frontend
+      :"sephcocco_#{outlet}_product_id",  # Outlet-specific field name
       :invoice_number,
       :vendor,
       :status,
