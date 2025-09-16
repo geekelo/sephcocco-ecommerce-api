@@ -35,7 +35,7 @@ module Api::V1::Concerns::StockManagementControllerHelper
       # Apply search filter
       if params[:filter][:search_terms].present?
         search_term = "%#{params[:filter][:search_terms]}%"
-        stock_managements = stock_managements.joins(:sephcocco_product)
+        stock_managements = stock_managements.joins(:"sephcocco_#{outlet}_product")
                                             .where(
                                               "invoice_number ILIKE ? OR vendor ILIKE ? OR sephcocco_#{outlet}_products.name ILIKE ? OR stock::text ILIKE ? OR price::text ILIKE ?",
                                               search_term, search_term, search_term, search_term, search_term
@@ -68,8 +68,36 @@ module Api::V1::Concerns::StockManagementControllerHelper
   end
 
   def create
+    # Debug logging
+    Rails.logger.info "=== Stock Management Create Debug ==="
+    Rails.logger.info "Outlet: #{outlet}"
+    Rails.logger.info "Raw params: #{params.inspect}"
+    Rails.logger.info "Stock management param key: #{stock_management_param_key}"
+    Rails.logger.info "Stock management params: #{stock_management_params.inspect}"
+    Rails.logger.info "Product ID key: sephcocco_#{outlet}_product_id"
+    Rails.logger.info "Product ID value: #{stock_management_params[:"sephcocco_#{outlet}_product_id"]}"
+    
     # Get the product first
-    product = product_class.find(stock_management_params[:"sephcocco_#{outlet}_product_id"])
+    product_id = stock_management_params[:"sephcocco_#{outlet}_product_id"]
+    if product_id.blank?
+      render json: { 
+        error: "Product ID is required", 
+        expected_field: "sephcocco_#{outlet}_product_id",
+        received_params: stock_management_params.keys
+      }, status: :unprocessable_entity
+      return
+    end
+    
+    begin
+      product = product_class.find(product_id)
+    rescue ActiveRecord::RecordNotFound
+      render json: { 
+        error: "Product not found", 
+        product_id: product_id,
+        product_class: product_class.name
+      }, status: :not_found
+      return
+    end
     old_stock = product.amount_in_stock
     old_price = product.price
 
@@ -77,6 +105,18 @@ module Api::V1::Concerns::StockManagementControllerHelper
     params_hash = stock_management_params.to_h
     params_hash[:stock] ||= {}
     params_hash[:price] ||= {}
+    
+    # Validate required fields
+    if params_hash[:stock][:add_stock].blank?
+      render json: { error: "add_stock is required in stock object" }, status: :unprocessable_entity
+      return
+    end
+    
+    if params_hash[:price][:cost_price].blank? || params_hash[:price][:profit_markup].blank?
+      render json: { error: "cost_price and profit_markup are required in price object" }, status: :unprocessable_entity
+      return
+    end
+    
     params_hash[:stock][:old_stock] = old_stock
     params_hash[:price][:old_price] = old_price
     params_hash[:stock][:new_stock] = old_stock + params_hash[:stock][:add_stock].to_i
