@@ -202,7 +202,7 @@ module Api::V1::Concerns::StockManagementControllerHelper
   end
 
   def stock_management_params
-    params.require(stock_management_param_key).permit(
+    params.require(:stock_management_param_key).permit(
       :"sephcocco_#{outlet}_product_id",
       :invoice_number,
       :vendor,
@@ -212,9 +212,6 @@ module Api::V1::Concerns::StockManagementControllerHelper
     )
   end
 
-  def stock_management_param_key
-    "sephcocco_#{outlet}_stock_management"
-  end
 
   def stock_management_class
     raise NotImplementedError, "You must implement the stock_management_class method"
