@@ -211,6 +211,13 @@ module Api::V1::Concerns::StockManagementControllerHelper
       stock: {},
       price: {}
     )
+    
+    # If frontend sent generic product_id, map it to outlet-specific field
+    if permitted_params[:sephcocco_product_id].present? && permitted_params[:"sephcocco_#{outlet}_product_id"].blank?
+      permitted_params[:"sephcocco_#{outlet}_product_id"] = permitted_params[:sephcocco_product_id]
+    end
+    
+    permitted_params
   end
 
 
