@@ -159,11 +159,29 @@ module Api::V1::Concerns::ProductsControllerHelper
 
   def destroy
     @product.destroy
+    if admin?
+      AdminActivities::CreateService.new(
+        user: current_user,
+        activity_type: "delete",
+        activity_name: "Product",
+        activity_description: "Product Deleted: #{@product.name}",
+        outlet: outlet
+      ).call
+    end
     render json: { message: "Product deleted successfully" }, status: :ok
   end
 
   def switch_visibility
     @product.update(visible: !@product.visible)
+    if admin?
+      AdminActivities::CreateService.new(
+        user: current_user,
+        activity_type: "update",
+        activity_name: "Product",
+        activity_description: "Product Visibility Updated: #{@product.name}",
+        outlet: outlet
+      ).call
+    end
     serializer = product_serializer
 
    render json: {
@@ -177,6 +195,13 @@ module Api::V1::Concerns::ProductsControllerHelper
       @product.increment!(:likes)
       like_class.create(user_key => current_user.id, product_key => @product.id)
       serializer = product_serializer if current_user.sephcocco_user_role.name == "user"
+      AdminNotifications::CreateService.new(
+        action_type: "product_liked",
+        action_id: @product.id,
+        user: current_user,
+        notification_class: admin_notification_class,
+        outlet: outlet
+      ).call
       render json: { message: "Product liked successfully", product: serializer.new(@product, scope: current_user) }, status: :created
     else
       render json: { message: "Product already liked" }, status: :unprocessable_entity
@@ -189,6 +214,13 @@ module Api::V1::Concerns::ProductsControllerHelper
         like_class.where(product_key => @product.id, user_key => current_user.id).destroy_all
         @product.decrement!(:likes)
         serializer = product_serializer if current_user.sephcocco_user_role.name == "user"
+        AdminNotifications::CreateService.new(
+          action_type: "product_unliked",
+          action_id: @product.id,
+          user: current_user,
+          notification_class: admin_notification_class,
+          outlet: outlet
+        ).call
         render json: { message: "Product unliked successfully", product: serializer.new(@product, scope: current_user) }, status: :ok
       else
         render json: { message: "Product not liked by user" }, status: :unprocessable_entity
@@ -206,6 +238,15 @@ module Api::V1::Concerns::ProductsControllerHelper
     product.other_image_keys << params[:image_key]
     
     if product.save
+      if admin?
+        AdminActivities::CreateService.new(
+          user: current_user,
+          activity_type: "update",
+          activity_name: "Product",
+          activity_description: "Product Image Appended: #{@product.name}",
+          outlet: outlet
+        ).call
+      end
       render json: {
         message: 'Image appended successfully',
         product: product_serializer.new(product, scope: current_user)
@@ -220,6 +261,15 @@ module Api::V1::Concerns::ProductsControllerHelper
     product.image_key = params[:image_key]
     
     if product.save
+      if admin?
+        AdminActivities::CreateService.new(
+          user: current_user,
+          activity_type: "update",
+          activity_name: "Product",
+          activity_description: "Product Main Image Updated: #{@product.name}",
+          outlet: outlet
+        ).call
+      end
       render json: {
         message: 'Main image updated successfully',
         product: product_serializer.new(product, scope: current_user)

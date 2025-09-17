@@ -77,6 +77,13 @@ class Api::V1::SephcoccoUsersController < ApplicationController
 
     # Update other user attributes
     if @user.update(user_attributes)
+      AdminActivities::CreateService.new(
+        user: current_user,
+        activity_type: "update",
+        activity_name: "User",
+        activity_description: "User Updated: #{@user.name}",
+        outlet: @user.sephcocco_outlets.first.name
+      ).call
       render json: { message: "User updated successfully" }, status: :ok
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
@@ -114,6 +121,13 @@ class Api::V1::SephcoccoUsersController < ApplicationController
 
   def suspend_user
     if @user.update(suspended: true)
+      AdminActivities::CreateService.new(
+        user: current_user,
+        activity_type: "update",
+        activity_name: "User",
+        activity_description: "User Suspended: #{@user.name}",
+        outlet: @user.sephcocco_outlets.first.name
+      ).call
       render json: { message: "User suspended successfully" }, status: :ok
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
@@ -122,6 +136,13 @@ class Api::V1::SephcoccoUsersController < ApplicationController
 
   def unsuspend_user
     if @user.update(suspended: false)
+      AdminActivities::CreateService.new(
+        user: current_user,
+        activity_type: "update",
+        activity_name: "User",
+        activity_description: "User Unsuspended: #{@user.name}",
+        outlet: @user.sephcocco_outlets.first.name
+      ).call
       render json: { message: "User unsuspended successfully" }, status: :ok
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
