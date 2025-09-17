@@ -11,7 +11,7 @@
 # db/seeds/sephcocco_user_roles.rb
 
 roles = %w[user admin rider]
-subroles = %w[logistics support supperadmin stock accountant]
+subroles = %w[logistics frontdesk manager supperadmin stock accountant]
 
 roles.each do |role_name|
   SephcoccoUserRole.find_or_create_by!(name: role_name)
