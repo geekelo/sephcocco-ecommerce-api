@@ -7,7 +7,7 @@ module MigrationHelpers
         t.jsonb :stock, default: {}
         t.jsonb :price, default: {}
         t.string :vendor, null: false
-        t.string :status, null: false, default: "pending" # pending, approved, cancelled, queried
+        t.string :status, null: false, default: "pending" # pending, approved, declined
         t.timestamps
 
         # stock: {

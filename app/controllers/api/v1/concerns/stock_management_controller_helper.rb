@@ -68,15 +68,6 @@ module Api::V1::Concerns::StockManagementControllerHelper
   end
 
   def create
-    # Debug logging
-    Rails.logger.info "=== Stock Management Create Debug ==="
-    Rails.logger.info "Outlet: #{outlet}"
-    Rails.logger.info "Raw params: #{params.inspect}"
-    Rails.logger.info "Stock management param key: #{stock_management_param_key}"
-    Rails.logger.info "Stock management params: #{stock_management_params.inspect}"
-    Rails.logger.info "Product ID key: sephcocco_#{outlet}_product_id"
-    Rails.logger.info "Product ID value: #{stock_management_params[:"sephcocco_#{outlet}_product_id"]}"
-    
     # Get the product first
     product_id = stock_management_params[:"sephcocco_#{outlet}_product_id"]
     if product_id.blank?
@@ -147,9 +138,32 @@ module Api::V1::Concerns::StockManagementControllerHelper
       if @stock_management.status == "approved"
         # update the product stock and price
         product = product_class.find(@stock_management.send(:"sephcocco_#{outlet}_product_id"))
-        product.update(amount_in_stock: @stock_management.stock['new_stock'])
-        product.update(price: @stock_management.price['new_price'])
-        product.save!
+        
+        Rails.logger.info "=== Stock Management Approval Debug ==="
+        Rails.logger.info "Stock management ID: #{@stock_management.id}"
+        Rails.logger.info "Stock data: #{@stock_management.stock.inspect}"
+        Rails.logger.info "Price data: #{@stock_management.price.inspect}"
+        
+        # Ensure we have valid stock and price data
+        new_stock = @stock_management.stock&.dig('new_stock')
+        new_price = @stock_management.price&.dig('new_price')
+        
+        Rails.logger.info "Extracted new_stock: #{new_stock.inspect}"
+        Rails.logger.info "Extracted new_price: #{new_price.inspect}"
+        
+        if new_stock.present? && new_stock.to_i >= 0
+          Rails.logger.info "Updating product stock to: #{new_stock.to_i}"
+          product.update!(amount_in_stock: new_stock.to_i)
+        else
+          Rails.logger.error "Invalid new_stock value: #{new_stock} for stock management #{@stock_management.id}"
+        end
+        
+        if new_price.present? && new_price.to_f > 0
+          Rails.logger.info "Updating product price to: #{new_price.to_f}"
+          product.update!(price: new_price.to_f)
+        else
+          Rails.logger.error "Invalid new_price value: #{new_price} for stock management #{@stock_management.id}"
+        end
       end
       # Create admin activity
       AdminActivities::CreateService.new(
