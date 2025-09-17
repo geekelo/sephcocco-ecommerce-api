@@ -14,6 +14,7 @@ class Restaurant::Admin::SephcoccoRestaurantStockManagementSerializer < ActiveMo
       id: object&.sephcocco_restaurant_product&.id,
       name: object&.sephcocco_restaurant_product&.name,
       barcode: object&.sephcocco_restaurant_product&.barcode,
+      main_image_url: object&.sephcocco_restaurant_product&.main_image_url,
     }
   end
 

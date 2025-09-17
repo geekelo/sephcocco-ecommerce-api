@@ -14,6 +14,7 @@ class Pharmacy::Admin::SephcoccoPharmacyStockManagementSerializer < ActiveModel:
       id: object&.sephcocco_pharmacy_product&.id,
       name: object&.sephcocco_pharmacy_product&.name,
       barcode: object&.sephcocco_pharmacy_product&.barcode,
+      main_image_url: object&.sephcocco_pharmacy_product&.main_image_url,
     }
   end
 

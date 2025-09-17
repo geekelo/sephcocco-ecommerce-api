@@ -15,6 +15,7 @@ class Lounge::Admin::SephcoccoLoungeStockManagementSerializer < ActiveModel::Ser
       id: object&.sephcocco_lounge_product&.id,
       name: object&.sephcocco_lounge_product&.name,
       barcode: object&.sephcocco_lounge_product&.barcode,
+      main_image_url: object&.sephcocco_lounge_product&.main_image_url,
     }
   end
 
