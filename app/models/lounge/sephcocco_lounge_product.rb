@@ -7,7 +7,7 @@ module Lounge
     end
   
     def self.join_table_name
-      :sephcocco_lounge_product_categories_products
+      :lounge_product_categories_lounge_products
     end
   
     def self.category_association_foreign_key_name
