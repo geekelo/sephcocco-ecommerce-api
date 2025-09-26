@@ -50,6 +50,10 @@ class Api::V1::Pharmacy::SephcoccoPharmacyProductsController < ApplicationContro
     "pharmacy"
   end
 
+  def admin_notification_class
+    Pharmacy::SephcoccoPharmacyAdminNotification
+  end
+
   def product_params
     params.require(:product).permit(
       :name,

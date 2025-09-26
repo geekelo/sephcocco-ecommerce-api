@@ -47,7 +47,7 @@ class Api::V1::Lounge::SephcoccoLoungeProductsController < ApplicationController
   end
 
   def admin_notification_class
-    Lounge::SephcoccoLoungeAdminNotification 
+    Lounge::SephcoccoLoungeAdminNotification
   end
 
   def product_params
