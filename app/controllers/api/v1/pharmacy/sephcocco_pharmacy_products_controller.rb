@@ -34,6 +34,10 @@ class Api::V1::Pharmacy::SephcoccoPharmacyProductsController < ApplicationContro
     :sephcocco_pharmacy_product_id
   end
 
+  def admin_notification_class
+    Pharmacy::SephcoccoPharmacyAdminNotification
+  end
+
   def user_key
     :sephcocco_user_id
   end

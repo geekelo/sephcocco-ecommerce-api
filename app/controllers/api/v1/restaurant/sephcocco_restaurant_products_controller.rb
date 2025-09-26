@@ -24,6 +24,10 @@ class Api::V1::Restaurant::SephcoccoRestaurantProductsController < ApplicationCo
     Restaurant::SephcoccoRestaurantProductSerializer
   end
 
+  def admin_notification_class
+    Restaurant::SephcoccoRestaurantAdminNotification
+  end
+
   def product_serializer
     if current_user&.sephcocco_user_role&.name == "admin"
       Restaurant::Admin::SephcoccoRestaurantProductSerializer
