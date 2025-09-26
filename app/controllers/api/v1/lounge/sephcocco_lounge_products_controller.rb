@@ -46,6 +46,10 @@ class Api::V1::Lounge::SephcoccoLoungeProductsController < ApplicationController
     "lounge"
   end
 
+  def admin_notification_class
+    Lounge::SephcoccoLoungeAdminNotification
+  end
+
   def product_params
     params.require(:product).permit(
       :name,
