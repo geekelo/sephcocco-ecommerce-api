@@ -136,6 +136,10 @@ module Api::V1::Concerns::ProductsControllerHelper
       end
       render json: @product, serializer: product_serializer, scope: current_user, status: :created
     else
+      if product_class.exists?(["LOWER(name) = ?", product_params[:name].downcase])
+        return render json: { error: "Product name already exists" }, status: :unprocessable_entity
+      end
+      
       render json: @product.errors, status: :unprocessable_entity
     end
   end
