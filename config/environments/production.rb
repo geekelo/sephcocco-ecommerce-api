@@ -99,15 +99,27 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
-  config.action_mailer.smtp_settings = {
-    address: "smtp.gmail.com",
-    port: 587,
-    domain: "gmail.com",
-    user_name: ENV["SMTP_USERNAME"],
-    password: ENV["SMTP_PASSWORD"],
-    authentication: "plain",
-    enable_starttls_auto: true
-  }
+  config.action_mailer.delivery_method = :smtp
+config.action_mailer.smtp_settings = {
+  address: "mail.delightolga.com",   # or sometimes: "smtp.yourdomain.com"
+  port: 587,                        # usually 587 for TLS
+  domain: "delightolga.com",
+  user_name: "sephcocco@delightolga.com",  # full email address
+  password: "Sephcocco",       # cPanel email password
+  authentication: :login,
+  enable_starttls_auto: true
+}
+
+
+  # config.action_mailer.smtp_settings = {
+  #   address: "smtp.gmail.com",
+  #   port: 587,
+  #   domain: "gmail.com",
+  #   user_name: ENV["SMTP_USERNAME"],
+  #   password: ENV["SMTP_PASSWORD"],
+  #   authentication: "plain",
+  #   enable_starttls_auto: true
+  # }
 
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
