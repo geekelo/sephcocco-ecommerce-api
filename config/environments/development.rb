@@ -99,13 +99,15 @@ Rails.application.configure do
 
 
   config.action_mailer.delivery_method = :smtp
-config.action_mailer.smtp_settings = {
-  address: "mail.delightolga.com",   # or sometimes: "smtp.yourdomain.com"
-  port: 587,                        # usually 587 for TLS
-  domain: "delightolga.com",
-  user_name: "sephcocco@delightolga.com",  # full email address
-  password: "Sephcocco",       # cPanel email password
-  authentication: :login,
-  enable_starttls_auto: true
-}
+  config.action_mailer.smtp_settings = {
+    address: "mail.delightolga.com",   # keep as mail.domain.com
+    port: 465,                         # OR 587 depending on SSL/TLS
+    domain: "delightolga.com",         # just the domain, not /webmail
+    user_name: "sephcocco@delightolga.com", # full email
+    password: "Sephcocco",             # your cPanel mailbox password
+    authentication: :plain,            # :login or :plain usually works
+    ssl: true,                         # use this if you’re on port 465
+    enable_starttls_auto: true         # use this if you’re on port 587
+  }
+  
 end
