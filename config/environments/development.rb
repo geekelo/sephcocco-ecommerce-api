@@ -98,16 +98,13 @@ Rails.application.configure do
   # }
 
 
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    address: "mail.delightolga.com",   # keep as mail.domain.com
-    port: 465,                         # OR 587 depending on SSL/TLS
-    domain: "delightolga.com",         # just the domain, not /webmail
-    user_name: "sephcocco@delightolga.com", # full email
-    password: "Sephcocco",             # your cPanel mailbox password
-    authentication: :plain,            # :login or :plain usually works
-    ssl: true,                         # use this if you’re on port 465
-    enable_starttls_auto: true         # use this if you’re on port 587
+  # SendGrid Configuration using API
+  config.action_mailer.delivery_method = :sendgrid
+  config.action_mailer.sendgrid_settings = {
+    api_key: ENV['SENDGRID_API_KEY']
   }
+  
+  # Set default from address
+  config.action_mailer.default_url_options = { host: 'localhost:3000' }
   
 end
