@@ -111,7 +111,17 @@ Rails.application.configure do
   # Set default from address
   # config.action_mailer.default_url_options = { host: ENV['HOST'] || 'sephcocco.com.ng' }
   
-
+# For port 465 (SSL)
+config.action_mailer.smtp_settings = {
+  address: "mail.delightolga.com",
+  port: 465,
+  user_name: "sephcocco@delightolga.com",
+  password: "Sephcocco",
+  authentication: :login,
+  ssl: true,
+  tls: true,
+  enable_starttls_auto: true
+}
 
   # config.action_mailer.smtp_settings = {
   #   address: "smtp.gmail.com",
