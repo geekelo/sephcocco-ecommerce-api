@@ -111,17 +111,18 @@ Rails.application.configure do
   # Set default from address
   # config.action_mailer.default_url_options = { host: ENV['HOST'] || 'sephcocco.com.ng' }
   
-# For port 465 (SSL)
-config.action_mailer.smtp_settings = {
-  address: "mail.delightolga.com",
-  port: 465,
-  user_name: "sephcocco@delightolga.com",
-  password: "Sephcocco",
-  authentication: :login,
-  ssl: true,
-  tls: true,
-  enable_starttls_auto: true
-}
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: "mail.delighttolga.com",
+    port: 587,
+    user_name: "sephcocco@delighttolga.com",
+    password: ENV["EMAIL_PASSWORD"], # put real password in Render env var
+    domain: "render.com",            # important: same as your manual HELO
+    authentication: :login,          # same as you tested manually
+    enable_starttls_auto: true,      # STARTTLS for port 587
+    openssl_verify_mode: 'none'      # (only if you get cert verify errors)
+  }
+  
 
   # config.action_mailer.smtp_settings = {
   #   address: "smtp.gmail.com",
