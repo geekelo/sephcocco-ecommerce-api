@@ -100,10 +100,12 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
   
   # SendGrid Configuration using API
-  config.action_mailer.delivery_method = :sendgrid
-  config.action_mailer.sendgrid_settings = {
-    api_key: ENV["SENDGRID_API_KEY"]
-  }
+# config/environments/production.rb
+config.action_mailer.delivery_method = :sendgrid
+config.action_mailer.delivery_methods = {
+  sendgrid: SendGridDeliveryMethod.new(api_key: ENV["SENDGRID_API_KEY"])
+}
+
   
   
   # Set default from address
