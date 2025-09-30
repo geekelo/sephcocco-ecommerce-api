@@ -18,14 +18,32 @@ class SendGridDeliveryMethod
     Array(mail.cc).each  { |addr| personalization.add_cc(Email.new(email: addr)) }
     Array(mail.bcc).each { |addr| personalization.add_bcc(Email.new(email: addr)) }
 
-    content =
-      if mail.html_part
-        Content.new(type: "text/html", value: mail.html_part.body.to_s)
-      elsif mail.text_part
-        Content.new(type: "text/plain", value: mail.text_part.body.to_s)
-      else
-        Content.new(type: "text/plain", value: mail.body.to_s)
-      end
+     content =
+       if mail.html_part
+         # Extract only the body content from HTML part
+         html_content = mail.html_part.body.to_s
+         # Remove DOCTYPE and html/head tags, keep only body content
+         if html_content.include?('<body')
+           body_match = html_content.match(/<body[^>]*>(.*?)<\/body>/m)
+           html_content = body_match ? body_match[1] : html_content
+         end
+         Content.new(type: "text/html", value: html_content.html_safe)
+       elsif mail.text_part
+         Content.new(type: "text/plain", value: mail.text_part.body.to_s)
+       else
+         # For single part emails, check if it's HTML
+         body_content = mail.body.to_s
+         if body_content.include?('<html') || body_content.include?('<div') || body_content.include?('<p>')
+           # Extract body content if it's HTML
+           if body_content.include?('<body')
+             body_match = body_content.match(/<body[^>]*>(.*?)<\/body>/m)
+             body_content = body_match ? body_match[1] : body_content
+           end
+           Content.new(type: "text/html", value: body_content.html_safe)
+         else
+           Content.new(type: "text/plain", value: body_content)
+         end
+       end
 
     sg_mail = Mail.new
     sg_mail.from = from
