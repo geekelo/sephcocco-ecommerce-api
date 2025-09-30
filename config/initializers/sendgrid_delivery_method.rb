@@ -4,7 +4,7 @@ class SendGridDeliveryMethod
   include SendGrid
 
   def initialize(settings)
-    @api_key = settings[:api_key]
+    @api_key = settings[:api_key] || ENV['SENDGRID_API_KEY']
   end
 
   def deliver!(mail)
@@ -52,3 +52,16 @@ end
 
 # Register the custom delivery method
 ActionMailer::Base.add_delivery_method :sendgrid, SendGridDeliveryMethod
+
+# Add the sendgrid_settings method to ActionMailer
+class ActionMailer::Base
+  class_attribute :sendgrid_settings, default: {}
+  
+  def self.sendgrid_settings=(settings)
+    @sendgrid_settings = settings
+  end
+  
+  def self.sendgrid_settings
+    @sendgrid_settings || {}
+  end
+end
