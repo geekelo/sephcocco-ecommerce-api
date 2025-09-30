@@ -98,16 +98,30 @@ Rails.application.configure do
 
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
+  
+  # SendGrid Configuration using API
+# config/environments/production.rb
+# config.action_mailer.delivery_method = :sendgrid
+# config.action_mailer.delivery_methods = {
+#   sendgrid: SendGridDeliveryMethod.new(api_key: ENV["SENDGRID_API_KEY"])
+# }
 
-  config.action_mailer.smtp_settings = {
-    address: "smtp.gmail.com",
-    port: 587,
-    domain: "gmail.com",
-    user_name: ENV["SMTP_USERNAME"],
-    password: ENV["SMTP_PASSWORD"],
-    authentication: "plain",
-    enable_starttls_auto: true
-  }
+  
+  
+  # Set default from address
+  # config.action_mailer.default_url_options = { host: ENV['HOST'] || 'sephcocco.com.ng' }
+  
+
+
+  # config.action_mailer.smtp_settings = {
+  #   address: "smtp.gmail.com",
+  #   port: 587,
+  #   domain: "gmail.com",
+  #   user_name: ENV["SMTP_USERNAME"],
+  #   password: ENV["SMTP_PASSWORD"],
+  #   authentication: "plain",
+  #   enable_starttls_auto: true
+  # }
 
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
