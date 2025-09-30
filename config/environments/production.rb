@@ -116,7 +116,7 @@ Rails.application.configure do
     address: "mail.delighttolga.com",
     port: 587,
     user_name: "sephcocco@delighttolga.com",
-    password: ENV["EMAIL_PASSWORD"], # put real password in Render env var
+    password: "Sephcocco", # put real password in Render env var
     domain: "render.com",            # important: same as your manual HELO
     authentication: :login,          # same as you tested manually
     enable_starttls_auto: true,      # STARTTLS for port 587
