@@ -113,9 +113,9 @@ Rails.application.configure do
   
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address: "mail.delighttolga.com",
+    address: "mail.delightolga.com",
     port: 587,
-    user_name: "sephcocco@delighttolga.com",
+    user_name: "sephcocco@delightolga.com",
     password: "Sephcocco", # put real password in Render env var
     domain: "render.com",            # important: same as your manual HELO
     authentication: :login,          # same as you tested manually
