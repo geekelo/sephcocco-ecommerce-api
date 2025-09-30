@@ -123,7 +123,8 @@ config.action_mailer.smtp_settings = {
   open_timeout: 70,
   read_timeout: 70,
   tls: false,
-enable_starttls_auto: true,
+  ssl: false,
+  tls: true,   # sometimes needed if your server forces TLS
 }
 
   
