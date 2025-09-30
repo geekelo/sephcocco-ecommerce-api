@@ -101,15 +101,15 @@ Rails.application.configure do
   
   # SendGrid Configuration using API
 # config/environments/production.rb
-config.action_mailer.delivery_method = :sendgrid
-config.action_mailer.delivery_methods = {
-  sendgrid: SendGridDeliveryMethod.new(api_key: ENV["SENDGRID_API_KEY"])
-}
+# config.action_mailer.delivery_method = :sendgrid
+# config.action_mailer.delivery_methods = {
+#   sendgrid: SendGridDeliveryMethod.new(api_key: ENV["SENDGRID_API_KEY"])
+# }
 
   
   
   # Set default from address
-  config.action_mailer.default_url_options = { host: ENV['HOST'] || 'sephcocco.com.ng' }
+  # config.action_mailer.default_url_options = { host: ENV['HOST'] || 'sephcocco.com.ng' }
   
 
 

@@ -99,13 +99,13 @@ Rails.application.configure do
 
 
   # SendGrid Configuration using API
-config.action_mailer.delivery_method = :sendgrid
-config.action_mailer.delivery_methods = {
-  sendgrid: SendGridDeliveryMethod.new(api_key: ENV["SENDGRID_API_KEY"])
-}
+# config.action_mailer.delivery_method = :sendgrid
+# config.action_mailer.delivery_methods = {
+#   sendgrid: SendGridDeliveryMethod.new(api_key: ENV["SENDGRID_API_KEY"])
+# }
  
   
-  # Set default from address
-  config.action_mailer.default_url_options = { host: 'localhost:3000' }
+   # Set default from address
+  # config.action_mailer.default_url_options = { host: 'localhost:3000' }
   
 end

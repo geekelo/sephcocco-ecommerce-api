@@ -1,3 +1,4 @@
+# config/initializers/sendgrid_delivery_method.rb
 require "sendgrid-ruby"
 
 class SendGridDeliveryMethod
@@ -13,9 +14,9 @@ class SendGridDeliveryMethod
     subject = mail.subject
 
     personalization = Personalization.new
-    Array(mail.to).each   { |addr| personalization.add_to(Email.new(email: addr)) }
-    Array(mail.cc).each   { |addr| personalization.add_cc(Email.new(email: addr)) }
-    Array(mail.bcc).each  { |addr| personalization.add_bcc(Email.new(email: addr)) }
+    Array(mail.to).each  { |addr| personalization.add_to(Email.new(email: addr)) }
+    Array(mail.cc).each  { |addr| personalization.add_cc(Email.new(email: addr)) }
+    Array(mail.bcc).each { |addr| personalization.add_bcc(Email.new(email: addr)) }
 
     content =
       if mail.html_part
@@ -42,5 +43,10 @@ class SendGridDeliveryMethod
   end
 end
 
-# Register the custom delivery method
+# Register custom delivery method
 ActionMailer::Base.add_delivery_method :sendgrid, SendGridDeliveryMethod
+ActionMailer::Base.class_attribute :sendgrid_settings, default: {}
+
+# Configure ActionMailer (this runs for all envs; you can guard with Rails.env.production?)
+ActionMailer::Base.delivery_method = :sendgrid
+ActionMailer::Base.sendgrid_settings = { api_key: ENV["SENDGRID_API_KEY"] }
