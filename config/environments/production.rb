@@ -111,21 +111,21 @@ Rails.application.configure do
   # Set default from address
   # config.action_mailer.default_url_options = { host: ENV['HOST'] || 'sephcocco.com.ng' }
   
-  config.action_mailer.delivery_method = :smtp
-config.action_mailer.smtp_settings = {
-  address: "mail.delightolga.com",
-  port: 587,
-  domain: "render.com", # important
-  user_name: "sephcocco@delightolga.com",
-  password: "Sephcocco",
-  authentication: :login,
-  enable_starttls_auto: true,
-  open_timeout: 70,
-  read_timeout: 70,
-  tls: false,
-  ssl: false,
-  tls: true,   # sometimes needed if your server forces TLS
-}
+#   config.action_mailer.delivery_method = :smtp
+# config.action_mailer.smtp_settings = {
+#   address: "mail.delightolga.com",
+#   port: 587,
+#   domain: "render.com", # important
+#   user_name: "sephcocco@delightolga.com",
+#   password: "Sephcocco",
+#   authentication: :login,
+#   enable_starttls_auto: true,
+#   open_timeout: 70,
+#   read_timeout: 70,
+#   tls: false,
+#   ssl: false,
+#   tls: true,   # sometimes needed if your server forces TLS
+# }
 
   
 

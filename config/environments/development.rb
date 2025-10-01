@@ -87,16 +87,16 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
 
 # For port 465 (SSL)
-config.action_mailer.smtp_settings = {
-  address: "mail.delightolga.com",
-  port: 465,
-  user_name: "sephcocco@delightolga.com",
-  password: "Sephcocco",
-  authentication: :login,
-  ssl: true,
-  tls: true,
-  enable_starttls_auto: true
-}
+# config.action_mailer.smtp_settings = {
+#   address: "mail.delightolga.com",
+#   port: 465,
+#   user_name: "sephcocco@delightolga.com",
+#   password: "Sephcocco",
+#   authentication: :login,
+#   ssl: true,
+#   tls: true,
+#   enable_starttls_auto: true
+# }
 
   # config.action_mailer.smtp_settings = {
   #   address: "smtp.gmail.com",
