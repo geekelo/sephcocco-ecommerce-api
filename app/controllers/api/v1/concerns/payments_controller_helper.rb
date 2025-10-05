@@ -136,7 +136,6 @@ module Api::V1::Concerns::PaymentsControllerHelper
       Rails.logger.info "Payment Create - Current User ID: #{current_user.id}"
       Rails.logger.info "Payment Create - Payment Association: #{payment_association}"
       payment = current_user.send(payment_association).new(payment_params_with_user)
-      Rails.logger.info "Payment Create - Payment Valid: #{payment.valid?}"
       Rails.logger.info "Payment Create - Payment Errors: #{payment.errors.full_messages}" unless payment.valid?
       if payment.save
         AdminNotifications::CreateService.new(
@@ -166,7 +165,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
           Rails.logger.info "Payment Create - React Native - Payment User: #{payment.sephcocco_user&.email}"
           Rails.logger.info "Payment Create - React Native - Payment Amount: #{payment.amount}"
           
-          if payment.valid? && payment.sephcocco_user.present?
+          if payment.sephcocco_user.present?
             response = init(payment.sephcocco_user.email, payment.amount)
             payment.update(transaction_id: response["data"]["reference"])
             render json: { message: "Transaction initialized successfully", data: response }, status: :created
