@@ -143,19 +143,23 @@ module Api::V1::Concerns::StockManagementControllerHelper
         Rails.logger.info "Stock management ID: #{@stock_management.id}"
         Rails.logger.info "Stock data: #{@stock_management.stock.inspect}"
         Rails.logger.info "Price data: #{@stock_management.price.inspect}"
+        Rails.logger.info "Current product stock: #{product.amount_in_stock}"
+        Rails.logger.info "Current product price: #{product.price}"
         
-        # Ensure we have valid stock and price data
-        new_stock = @stock_management.stock&.dig('new_stock')
+        # Get the add_stock amount to add to current stock
+        add_stock = @stock_management.stock&.dig('add_stock')
         new_price = @stock_management.price&.dig('new_price')
         
-        Rails.logger.info "Extracted new_stock: #{new_stock.inspect}"
-        Rails.logger.info "Extracted new_price: #{new_price.inspect}"
+        Rails.logger.info "Add stock amount: #{add_stock.inspect}"
+        Rails.logger.info "New price: #{new_price.inspect}"
         
-        if new_stock.present? && new_stock.to_i >= 0
-          Rails.logger.info "Updating product stock to: #{new_stock.to_i}"
-          product.update!(amount_in_stock: new_stock.to_i)
+        if add_stock.present? && add_stock.to_i > 0
+          # Add the stock to current stock instead of replacing it
+          updated_stock = product.amount_in_stock + add_stock.to_i
+          Rails.logger.info "Updating product stock to: #{updated_stock} (current: #{product.amount_in_stock} + add: #{add_stock.to_i})"
+          product.update!(amount_in_stock: updated_stock)
         else
-          Rails.logger.error "Invalid new_stock value: #{new_stock} for stock management #{@stock_management.id}"
+          Rails.logger.error "Invalid add_stock value: #{add_stock} for stock management #{@stock_management.id}"
         end
         
         if new_price.present? && new_price.to_f > 0
