@@ -12,6 +12,7 @@ class Lounge::User::SephcoccoLoungeProductSerializer < ActiveModel::Serializer
               :discount_price,
               :price,
               :categories,
+              :added_to_pending_order,
               :created_at,
               :updated_at
 
@@ -28,6 +29,13 @@ class Lounge::User::SephcoccoLoungeProductSerializer < ActiveModel::Serializer
       true
     end
   end
+
+    # added to pending order
+    def added_to_pending_order
+      user = scope
+      return false unless user
+      object&.sephcocco_lounge_orders&.exists?(sephcocco_user_id: user.id, status: "pending")
+    end
 
   def liked_by_user
     user = scope
