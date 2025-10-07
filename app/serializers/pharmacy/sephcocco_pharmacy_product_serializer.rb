@@ -14,7 +14,6 @@ class Pharmacy::SephcoccoPharmacyProductSerializer < ActiveModel::Serializer
               :visible,
               :barcode,
               :categories,
-              :added_to_pending_order,
               :created_at,
               :updated_at
 
@@ -32,13 +31,6 @@ class Pharmacy::SephcoccoPharmacyProductSerializer < ActiveModel::Serializer
 
   def out_of_stock_status
     object.amount_in_stock <= 0
-  end
-
-  # added to pending order
-  def added_to_pending_order
-    user = scope
-    return false unless user
-    object&.sephcocco_pharmacy_orders&.exists?(sephcocco_user_id: user.id, status: "pending")
   end
 
   def liked_by_user
