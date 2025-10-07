@@ -98,12 +98,13 @@ module Api::V1::Concerns::OrdersControllerHelper
     end
 
     # check if product is already in pending order
-    product_id = order_params[:"sephcocco_#{outlet.name.downcase}_product_id"]
+    outlet_name = outlet.is_a?(String) ? outlet : outlet.name
+    product_id = order_params[:"sephcocco_#{outlet_name.downcase}_product_id"]
     if product_id.present?
       product = product_class.find(product_id)
       # Check if this product already has a pending order from this user
       if current_user.send(order_association).exists?(
-        "sephcocco_#{outlet}_product_id": product_id,
+        "sephcocco_#{outlet_name.downcase}_product_id": product_id,
         status: "pending"
       )
         return render json: { error: "Product is already in pending order" }, status: :unprocessable_entity
