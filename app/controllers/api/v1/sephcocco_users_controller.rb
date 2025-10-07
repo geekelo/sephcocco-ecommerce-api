@@ -1,7 +1,7 @@
 class Api::V1::SephcoccoUsersController < ApplicationController
   before_action :authenticate_user!, except: [ :request_email_confirmation_token, :confirm_email ]
   before_action :check_admin_role, only: [ :index, :create, :update_user_outlets ]
-  before_action :set_user, only: [ :show, :update, :destroy, :update_user_outlets, :switch_user_role, :suspend_user, :unsuspend_user ]
+  before_action :set_user, only: [ :show, :update, :destroy, :update_user_outlets, :switch_user_role, :suspend_user, :unsuspend_user, :soft_delete_user ]
 
   def index
     if current_user.sephcocco_user_role.name == "admin"
@@ -89,6 +89,27 @@ class Api::V1::SephcoccoUsersController < ApplicationController
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
   end
+
+  # soft delete user
+  def soft_delete_user
+    return render json: { message: "User already deleted" }, status: :ok if @user.deleted_at.present?
+  
+    if @user.update(deleted_at: Time.current)
+      outlet_name = @user.sephcocco_outlets.first&.name || "N/A"
+  
+      AdminActivities::CreateService.new(
+        user: current_user,
+        activity_type: "update",
+        activity_name: "User",
+        activity_description: "User deleted: #{@user.name}",
+        outlet: outlet_name
+      ).call
+  
+      render json: { message: "User deleted successfully" }, status: :ok
+    else
+      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+    end
+  end  
 
   def update_user_outlets
     if params[:user][:outlets].present?
