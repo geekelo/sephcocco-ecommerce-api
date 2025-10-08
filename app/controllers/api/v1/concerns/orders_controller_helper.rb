@@ -100,9 +100,16 @@ module Api::V1::Concerns::OrdersControllerHelper
     # check if product is already in pending order
     outlet_name = outlet.is_a?(String) ? outlet : outlet.name
     product_id = order_params[:"sephcocco_#{outlet_name.downcase}_product_id"]
+    Rails.logger.info "Product ID: #{product_id}"
     if product_id.present?
       product = product_class.find(product_id)
       # Check if this product already has a pending order from this user
+      Rails.logger.info "Current user: #{current_user.id}"
+      Rails.logger.info "Order association: #{order_association}"
+      Rails.logger.info "Product: #{product.id}"
+      Rails.logger.info "Product name: #{product.name}"
+      Rails.logger.info "Product price: #{product.price}"
+      Rails.logger.info "Product stock: #{product.amount_in_stock}"
       if current_user.send(order_association).exists?(
         "sephcocco_#{outlet_name.downcase}_product_id": product_id,
         status: "pending"
@@ -117,8 +124,6 @@ module Api::V1::Concerns::OrdersControllerHelper
     else
       order = current_user.send(order_association).new(order_params.merge(unit_price: unit_price))
     end
-
-
 
     # Set the total price before saving
     order.set_order_total(unit_price, order_params[:quantity])
