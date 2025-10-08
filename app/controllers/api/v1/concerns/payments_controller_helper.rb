@@ -81,8 +81,20 @@ module Api::V1::Concerns::PaymentsControllerHelper
 
     if order_ids.present?
       order_ids.each do |order_id|
-        order = order_class.find(order_id)
-        order_total_price += order.total_price
+        begin
+          order = order_class.find(order_id)
+          order_total_price += order.total_price
+        rescue ActiveRecord::RecordNotFound
+          Rails.logger.error "Payment Create - Order not found: #{order_id} for outlet: #{outlet}"
+          Rails.logger.error "Payment Create - All order IDs: #{order_ids.inspect}"
+          Rails.logger.error "Payment Create - Order class: #{order_class.name}"
+          return render json: { 
+            error: "Order with ID #{order_id} not found or does not belong to #{outlet} outlet",
+            order_id: order_id,
+            outlet: outlet,
+            order_class: order_class.name
+          }, status: :unprocessable_entity
+        end
       end
     else
       return render json: { error: "No orders found" }, status: :unprocessable_entity
@@ -114,15 +126,20 @@ module Api::V1::Concerns::PaymentsControllerHelper
         ).call
         if order_ids.present?
           order_ids.each do |order_id|
-            order = order_class.find(order_id)
-            # update the payment id
-            order.update("sephcocco_#{outlet}_payment_id" => payment.id)
-            if payment.status == "paid"
-              order.change_order_status("awaiting payment approval")
-            elsif payment.status == "payment confirmed"
-              order.change_order_status("paid")
+            begin
+              order = order_class.find(order_id)
+              # update the payment id
+              order.update("sephcocco_#{outlet}_payment_id" => payment.id)
+              if payment.status == "paid"
+                order.change_order_status("awaiting payment approval")
+              elsif payment.status == "payment confirmed"
+                order.change_order_status("paid")
+              end
+              payment.orders << order
+            rescue ActiveRecord::RecordNotFound
+              Rails.logger.error "Payment Create - Order not found during update: #{order_id} for outlet: #{outlet}"
+              # Continue with other orders even if one fails
             end
-            payment.orders << order
           end
         end
         render json: payment, each_serializer: payment_serializer, status: :created
@@ -136,7 +153,6 @@ module Api::V1::Concerns::PaymentsControllerHelper
       Rails.logger.info "Payment Create - Current User ID: #{current_user.id}"
       Rails.logger.info "Payment Create - Payment Association: #{payment_association}"
       payment = current_user.send(payment_association).new(payment_params_with_user)
-      Rails.logger.info "Payment Create - Payment Valid: #{payment.valid?}"
       Rails.logger.info "Payment Create - Payment Errors: #{payment.errors.full_messages}" unless payment.valid?
       if payment.save
         AdminNotifications::CreateService.new(
@@ -148,15 +164,20 @@ module Api::V1::Concerns::PaymentsControllerHelper
         ).call
         if order_ids.present?
           order_ids.each do |order_id|
-            order = order_class.find(order_id)
-            # update the payment id
-            order.update("sephcocco_#{outlet}_payment_id" => payment.id)
-            if payment.status == "paid"
-              order.change_order_status("awaiting payment approval")
-            elsif payment.status == "payment confirmed"
-              order.change_order_status("paid")
+            begin
+              order = order_class.find(order_id)
+              # update the payment id
+              order.update("sephcocco_#{outlet}_payment_id" => payment.id)
+              if payment.status == "paid"
+                order.change_order_status("awaiting payment approval")
+              elsif payment.status == "payment confirmed"
+                order.change_order_status("paid")
+              end
+              payment.orders << order
+            rescue ActiveRecord::RecordNotFound
+              Rails.logger.error "Payment Create - Order not found during update: #{order_id} for outlet: #{outlet}"
+              # Continue with other orders even if one fails
             end
-            payment.orders << order
           end
         end
 
@@ -166,7 +187,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
           Rails.logger.info "Payment Create - React Native - Payment User: #{payment.sephcocco_user&.email}"
           Rails.logger.info "Payment Create - React Native - Payment Amount: #{payment.amount}"
           
-          if payment.valid? && payment.sephcocco_user.present?
+          if payment.sephcocco_user.present?
             response = init(payment.sephcocco_user.email, payment.amount)
             payment.update(transaction_id: response["data"]["reference"])
             render json: { message: "Transaction initialized successfully", data: response }, status: :created

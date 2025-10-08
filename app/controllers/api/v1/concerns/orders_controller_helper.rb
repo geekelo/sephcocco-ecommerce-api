@@ -97,6 +97,18 @@ module Api::V1::Concerns::OrdersControllerHelper
       return render json: { error: "Customer is required for admin order creation" }, status: :unprocessable_entity
     end
 
+     # Check for existing pending order for this product
+    existing_order = order_class.find_by(
+      sephcocco_user_id: current_user.id,
+      "sephcocco_#{outlet.name.downcase}_product_id": order_params[:"sephcocco_#{outlet.name.downcase}_product_id"],
+      status: "pending"
+    )
+    
+    if existing_order.present?
+      return render json: { error: "You already have a pending order for this product", message: "You already have a pending order for this product" }, status: :unprocessable_entity
+    end
+
+
     unit_price = params[:unit_price] || product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"]).price
     if admin?
       order = @customer.send(order_association).new(order_params.merge(unit_price: unit_price))

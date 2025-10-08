@@ -13,7 +13,7 @@ class Restaurant::SephcoccoRestaurantProductSerializer < ActiveModel::Serializer
               :other_image_urls,
               :visible,
               :barcode,
-              :categories,
+              :categories,          
               :created_at,
               :updated_at
 

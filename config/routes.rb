@@ -35,6 +35,7 @@ Rails.application.routes.draw do
           post "request_email_confirmation_token" => "sephcocco_users#request_email_confirmation_token"
           patch "confirm_email" => "sephcocco_users#confirm_email"
           get "get_user_subroles" => "sephcocco_users#get_user_subroles"
+          patch "soft_delete_user" => "sephcocco_users#soft_delete_user"
         end
       end
 

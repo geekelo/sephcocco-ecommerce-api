@@ -14,4 +14,8 @@ class UserMailer < ApplicationMailer
     @user = user
     mail(to: @user.email, subject: "Email Confirmation")
   end
+
+  def test_email
+    mail(to: "efuelight12@gmail.com", subject: "Test Email")
+  end
 end

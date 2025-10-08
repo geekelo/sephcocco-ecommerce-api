@@ -23,11 +23,8 @@ module Api::V1::Concerns::ProductsControllerHelper
       product_class.all
     end
 
-    if user&.sephcocco_user_role&.name == "admin"
-      products = products
-    elsif user&.sephcocco_user_role&.name == "user"
-      products = products.where(visible: true)
-    else
+    # Admin should see all products (visible and hidden), users should only see visible ones
+    unless user&.sephcocco_user_role&.name == "admin" || current_user&.sephcocco_user_role&.name == "admin"
       products = products.where(visible: true)
     end
 

@@ -33,7 +33,6 @@ class Pharmacy::SephcoccoPharmacyProductSerializer < ActiveModel::Serializer
     object.amount_in_stock <= 0
   end
 
-
   def liked_by_user
     user = scope
     return false unless user
