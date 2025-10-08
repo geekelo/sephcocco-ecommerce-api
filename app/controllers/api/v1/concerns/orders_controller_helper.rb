@@ -403,4 +403,16 @@ module Api::V1::Concerns::OrdersControllerHelper
   def admin?
     current_user&.sephcocco_user_role&.name == "admin"
   end
+
+  def product_class
+    raise NotImplementedError, "You must implement the product_class method"
+  end
+
+  def like_class
+    raise NotImplementedError, "You must implement the like_class method"
+  end
+
+  def admin_notification_class
+    raise NotImplementedError, "You must implement the admin_notification_class method"
+  end
 end
