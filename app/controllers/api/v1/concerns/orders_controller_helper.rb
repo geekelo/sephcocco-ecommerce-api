@@ -98,40 +98,37 @@ module Api::V1::Concerns::OrdersControllerHelper
     end
 
     # check if product is already in pending order
-    outlet_name = outlet.is_a?(String) ? outlet : outlet.name.to_s
-    product_id = order_params[:"sephcocco_#{outlet_name.downcase}_product_id"]
-    Rails.logger.info "Outlet: #{outlet.inspect}"
-    Rails.logger.info "Outlet name: #{outlet_name}"
-    Rails.logger.info "Product ID: #{product_id}"
+    # outlet_name = outlet.is_a?(String) ? outlet : outlet.name.to_s
+    # product_id = order_params[:"sephcocco_#{outlet_name.downcase}_product_id"]
     
-    if product_id.present?
-      begin
-        product = product_class.find(product_id)
-        # Check if this product already has a pending order from this user
-        Rails.logger.info "Current user: #{current_user.id}"
-        Rails.logger.info "Order association: #{order_association}"
-        Rails.logger.info "Product: #{product.id}"
-        Rails.logger.info "Product name: #{product.name}"
-        Rails.logger.info "Product price: #{product.price}"
-        Rails.logger.info "Product stock: #{product.amount_in_stock}"
-        Rails.logger.info "Checking for pending orders..."
-        Rails.logger.info "Query params: sephcocco_#{outlet_name.downcase}_product_id => #{product_id}, status => pending"
-        pending_exists = current_user.send(order_association).where(
-          "sephcocco_#{outlet_name.downcase}_product_id" => product_id,
-          status: "pending"
-        ).exists?
-        Rails.logger.info "Pending exists: #{pending_exists}"
-        if pending_exists
-          Rails.logger.info "Product already in pending order - returning error"
-          return render json: { error: "Product is already in pending order" }, status: :unprocessable_entity
-        end
-        Rails.logger.info "No pending orders found - continuing..."
-      rescue => e
-        Rails.logger.error "Error during pending order check: #{e.message}"
-        Rails.logger.error e.backtrace.first(5).join("\n")
-        return render json: { error: "Error checking pending orders: #{e.message}" }, status: :unprocessable_entity
-      end
-    end
+    # if product_id.present?
+    #   begin
+    #     product = product_class.find(product_id)
+    #     # Check if this product already has a pending order from this user
+    #     Rails.logger.info "Current user: #{current_user.id}"
+    #     Rails.logger.info "Order association: #{order_association}"
+    #     Rails.logger.info "Product: #{product.id}"
+    #     Rails.logger.info "Product name: #{product.name}"
+    #     Rails.logger.info "Product price: #{product.price}"
+    #     Rails.logger.info "Product stock: #{product.amount_in_stock}"
+    #     Rails.logger.info "Checking for pending orders..."
+    #     Rails.logger.info "Query params: sephcocco_#{outlet_name.downcase}_product_id => #{product_id}, status => pending"
+    #     pending_exists = current_user.send(order_association).where(
+    #       "sephcocco_#{outlet_name.downcase}_product_id" => product_id,
+    #       status: "pending"
+    #     ).exists?
+    #     Rails.logger.info "Pending exists: #{pending_exists}"
+    #     if pending_exists
+    #       Rails.logger.info "Product already in pending order - returning error"
+    #       return render json: { error: "Product is already in pending order" }, status: :unprocessable_entity
+    #     end
+    #     Rails.logger.info "No pending orders found - continuing..."
+    #   rescue => e
+    #     Rails.logger.error "Error during pending order check: #{e.message}"
+    #     Rails.logger.error e.backtrace.first(5).join("\n")
+    #     return render json: { error: "Error checking pending orders: #{e.message}" }, status: :unprocessable_entity
+    #   end
+    # end
 
     Rails.logger.info "About to get unit_price"
     unit_price = params[:unit_price] || (product_id.present? ? product_class.find(product_id).price : nil)
