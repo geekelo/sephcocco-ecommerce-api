@@ -99,7 +99,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
     # check if product is already in pending order
     outlet_name = outlet.is_a?(String) ? outlet : outlet.name
-    product_id = order_params[:"sephcocco_#{outlet.downcase}_product_id"]
+    product_id = order_params[:"sephcocco_#{outlet_name.downcase}_product_id"]
     Rails.logger.info "Product ID: #{product_id}"
     if product_id.present?
       product = product_class.find(product_id)
