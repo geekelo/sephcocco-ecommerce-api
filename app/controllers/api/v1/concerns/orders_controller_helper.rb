@@ -115,10 +115,13 @@ module Api::V1::Concerns::OrdersControllerHelper
         Rails.logger.info "Product price: #{product.price}"
         Rails.logger.info "Product stock: #{product.amount_in_stock}"
         Rails.logger.info "Checking for pending orders..."
-        if current_user.send(order_association).exists?(
-          "sephcocco_#{outlet_name.downcase}_product_id": product_id,
+        Rails.logger.info "Query params: sephcocco_#{outlet_name.downcase}_product_id => #{product_id}, status => pending"
+        pending_exists = current_user.send(order_association).where(
+          "sephcocco_#{outlet_name.downcase}_product_id" => product_id,
           status: "pending"
-        )
+        ).exists?
+        Rails.logger.info "Pending exists: #{pending_exists}"
+        if pending_exists
           Rails.logger.info "Product already in pending order - returning error"
           return render json: { error: "Product is already in pending order" }, status: :unprocessable_entity
         end
@@ -182,6 +185,7 @@ module Api::V1::Concerns::OrdersControllerHelper
        
       render json: order, status: :created
     else
+      Rails.logger.error "Order not saved: #{order&.errors&.full_messages}"
       render json: order&.errors || { error: "Invalid customer" }, status: :unprocessable_entity
     end
   end
