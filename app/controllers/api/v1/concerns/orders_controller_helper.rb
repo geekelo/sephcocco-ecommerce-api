@@ -97,59 +97,17 @@ module Api::V1::Concerns::OrdersControllerHelper
       return render json: { error: "Customer is required for admin order creation" }, status: :unprocessable_entity
     end
 
-    # check if product is already in pending order
-    # outlet_name = outlet.is_a?(String) ? outlet : outlet.name.to_s
-    # product_id = order_params[:"sephcocco_#{outlet_name.downcase}_product_id"]
-    
-    # if product_id.present?
-    #   begin
-    #     product = product_class.find(product_id)
-    #     # Check if this product already has a pending order from this user
-    #     Rails.logger.info "Current user: #{current_user.id}"
-    #     Rails.logger.info "Order association: #{order_association}"
-    #     Rails.logger.info "Product: #{product.id}"
-    #     Rails.logger.info "Product name: #{product.name}"
-    #     Rails.logger.info "Product price: #{product.price}"
-    #     Rails.logger.info "Product stock: #{product.amount_in_stock}"
-    #     Rails.logger.info "Checking for pending orders..."
-    #     Rails.logger.info "Query params: sephcocco_#{outlet_name.downcase}_product_id => #{product_id}, status => pending"
-    #     pending_exists = current_user.send(order_association).where(
-    #       "sephcocco_#{outlet_name.downcase}_product_id" => product_id,
-    #       status: "pending"
-    #     ).exists?
-    #     Rails.logger.info "Pending exists: #{pending_exists}"
-    #     if pending_exists
-    #       Rails.logger.info "Product already in pending order - returning error"
-    #       return render json: { error: "Product is already in pending order" }, status: :unprocessable_entity
-    #     end
-    #     Rails.logger.info "No pending orders found - continuing..."
-    #   rescue => e
-    #     Rails.logger.error "Error during pending order check: #{e.message}"
-    #     Rails.logger.error e.backtrace.first(5).join("\n")
-    #     return render json: { error: "Error checking pending orders: #{e.message}" }, status: :unprocessable_entity
-    #   end
-    # end
-
-    Rails.logger.info "About to get unit_price"
-    unit_price = params[:unit_price] || (product_id.present? ? product_class.find(product_id).price : nil)
-    Rails.logger.info "Unit price: #{unit_price}"
-    
-    Rails.logger.info "About to create order"
+    unit_price = params[:unit_price] || product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"]).price
     if admin?
       order = @customer.send(order_association).new(order_params.merge(unit_price: unit_price))
     else
       order = current_user.send(order_association).new(order_params.merge(unit_price: unit_price))
     end
-    Rails.logger.info "Order created: #{order.inspect}"
+
+
 
     # Set the total price before saving
-    Rails.logger.info "About to set order total"
     order.set_order_total(unit_price, order_params[:quantity])
-    Rails.logger.info "Order total set"
-    
-    Rails.logger.info "Order valid?: #{order.valid?}"
-    Rails.logger.info "Order errors: #{order.errors.full_messages}" unless order.valid?
-    Rails.logger.info "About to save order"
     
     if order&.save
       if admin?
@@ -182,7 +140,6 @@ module Api::V1::Concerns::OrdersControllerHelper
        
       render json: order, status: :created
     else
-      Rails.logger.error "Order not saved: #{order&.errors&.full_messages}"
       render json: order&.errors || { error: "Invalid customer" }, status: :unprocessable_entity
     end
   end
@@ -423,17 +380,5 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def admin?
     current_user&.sephcocco_user_role&.name == "admin"
-  end
-
-  def product_class
-    raise NotImplementedError, "You must implement the product_class method"
-  end
-
-  def like_class
-    raise NotImplementedError, "You must implement the like_class method"
-  end
-
-  def admin_notification_class
-    raise NotImplementedError, "You must implement the admin_notification_class method"
   end
 end
