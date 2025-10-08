@@ -105,7 +105,7 @@ module Api::V1::Concerns::OrdersControllerHelper
     )
     
     if existing_order.present?
-      return render json: { error: "You already have a pending order for this product" }, status: :unprocessable_entity
+      return render json: { error: "You already have a pending order for this product", message: "You already have a pending order for this product" }, status: :unprocessable_entity
     end
 
 
