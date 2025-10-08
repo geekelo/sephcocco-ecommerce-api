@@ -128,6 +128,9 @@ module Api::V1::Concerns::OrdersControllerHelper
     # Set the total price before saving
     order.set_order_total(unit_price, order_params[:quantity])
     
+    Rails.logger.info "Order valid?: #{order.valid?}"
+    Rails.logger.info "Order errors: #{order.errors.full_messages}" unless order.valid?
+    
     if order&.save
       if admin?
         AdminNotifications::CreateService.new(
