@@ -103,10 +103,17 @@ module Api::V1::Concerns::OrdersControllerHelper
       "sephcocco_#{outlet.name.downcase}_product_id": order_params[:"sephcocco_#{outlet.name.downcase}_product_id"],
       status: "pending"
     )
-    
+       
     if existing_order.present?
       return render json: { error: "You already have a pending order for this product", message: "You already have a pending order for this product" }, status: :unprocessable_entity
     end
+
+    # check if product is out of stock
+    amount_in_stock = product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"]).amount_in_stock
+    if amount_in_stock == 0 || amount_in_stock < order_params[:quantity]
+      return render json: { error: "Product is out of stock, available stock is #{amount_in_stock}" }, status: :unprocessable_entity
+    end
+
 
 
     unit_price = params[:unit_price] || product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"]).price
@@ -116,12 +123,17 @@ module Api::V1::Concerns::OrdersControllerHelper
       order = current_user.send(order_association).new(order_params.merge(unit_price: unit_price))
     end
 
-
-
     # Set the total price before saving
     order.set_order_total(unit_price, order_params[:quantity])
     
     if order&.save
+      # update the product stock if quantity is present
+      if order_params[:quantity].present?
+        product = product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"])
+        product.update!(amount_in_stock: amount_in_stock - order_params[:quantity])
+        product.save!
+      end
+
       if admin?
         AdminNotifications::CreateService.new(
           action_type: "order",
@@ -132,23 +144,23 @@ module Api::V1::Concerns::OrdersControllerHelper
         ).call
       end
 
-       # like the product (only if not already liked)
-       product = product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"])
-     
-       
-       # Create like only if it doesn't already exist
-       existing_like = like_class.find_by(
-         like_class.user_foreign_key => current_user.id, 
-         like_class.product_foreign_key => product.id
-       )
-       
-       unless existing_like
-         like_class.create(
-           like_class.user_foreign_key => current_user.id, 
-           like_class.product_foreign_key => product.id
-         )
-         product.increment!(:likes)
-       end
+      # like the product (only if not already liked)
+      product = product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"])
+    
+      
+      # Create like only if it doesn't already exist
+      existing_like = like_class.find_by(
+        like_class.user_foreign_key => current_user.id, 
+        like_class.product_foreign_key => product.id
+      )
+      
+      unless existing_like
+        like_class.create(
+          like_class.user_foreign_key => current_user.id, 
+          like_class.product_foreign_key => product.id
+        )
+        product.increment!(:likes)
+      end
        
       render json: order, status: :created
     else
@@ -158,33 +170,47 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def update
     old_status = @order.status
+    if order_params[:quantity].present?
+      amount_in_stock = product_class.find(@order.send(:"sephcocco_#{outlet.name.downcase}_product_id")).amount_in_stock
+      if order_params[:quantity] > amount_in_stock || amount_in_stock == 0
+        return render json: { error: "Product is out of stock, available stock is #{amount_in_stock}" }, status: :unprocessable_entity
+      end
+    end
+
     if @order.update(order_params)
       @order.set_order_total(@order.unit_price, @order.quantity)
       @order.update_stages(order_params[:status]) if order_params[:status].present?
+      # update the product stock if quantity is present
+      if order_params[:quantity].present?
+        product = product_class.find(@order.send(:"sephcocco_#{outlet.name.downcase}_product_id"))
+        product.update!(amount_in_stock: amount_in_stock - order_params[:quantity])
+        product.save!
+      end
 
       # Send status update email if status changed
       if order_params[:status].present? && old_status != @order.status
         OrderMailer.with(order: @order, old_status: old_status).order_status_updated_email.deliver_now
-      end
 
-      if @order.status == "delivering"
-        # create shipping for order
-        shipping_class = "#{outlet.name.capitalize}::Sephcocco#{outlet.name.capitalize}Shipping".constantize
-        shipping_class.create(
-          "sephcocco_#{outlet.name.downcase}_order_id" => @order.id,
-          status: "pending",
-          tracking_number: @order.order_number
-        )
 
-        # notify customer about the order via email
-        OrderMailer.with(order: @order).order_created_email.deliver_now
-      end
-
-      if @order.status == "refunded"
-        # Deduct from payment
-        payment = payment_class.find_by(id: @order.payment_id)
-        payment.update(amount: payment.amount - @order.total_price)
-        payment.save!
+        if @order.status == "delivering"
+          # create shipping for order
+          shipping_class = "#{outlet.name.capitalize}::Sephcocco#{outlet.name.capitalize}Shipping".constantize
+          shipping_class.create(
+            "sephcocco_#{outlet.name.downcase}_order_id" => @order.id,
+            status: "pending",
+            tracking_number: @order.order_number
+          )
+  
+          # notify customer about the order via email
+          OrderMailer.with(order: @order).order_created_email.deliver_now
+        end
+  
+        if @order.status == "refunded"
+          # Deduct from payment
+          payment = payment_class.find_by(id: @order.payment_id)
+          payment.update(amount: payment.amount - @order.total_price)
+          payment.save!
+        end
       end
 
       if admin?
