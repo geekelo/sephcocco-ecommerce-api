@@ -83,6 +83,12 @@ module Api::V1::Concerns::PaymentsControllerHelper
       order_ids.each do |order_id|
         begin
           order = order_class.find(order_id)
+          product = product_class.find(order.send(:"sephcocco_#{outlet}_product_id"))
+          
+          # check if product is out of stock
+          if product.amount_in_stock == 0 || product.amount_in_stock < order.quantity
+            return render json: { error: "#{product.name} is out of stock, available stock is #{product.amount_in_stock}" }, status: :unprocessable_entity
+          end
           order_total_price += order.total_price
         rescue ActiveRecord::RecordNotFound
           Rails.logger.error "Payment Create - Order not found: #{order_id} for outlet: #{outlet}"
@@ -129,12 +135,6 @@ module Api::V1::Concerns::PaymentsControllerHelper
             begin
               order = order_class.find(order_id)
               product = product_class.find(order.send(:"sephcocco_#{outlet}_product_id"))
-              
-              # check if product is out of stock
-              if product.amount_in_stock == 0 || product.amount_in_stock < order.quantity
-                return render json: { error: "#{product.name} is out of stock, available stock is #{product.amount_in_stock}" }, status: :unprocessable_entity
-              end
-
               # update the payment id
               order.update("sephcocco_#{outlet}_payment_id" => payment.id)
             
