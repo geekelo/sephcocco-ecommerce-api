@@ -165,7 +165,7 @@ module Api::V1::Concerns::OrdersControllerHelper
     if order_params[:quantity].present?
       amount_in_stock = product_class.find(@order.send(:"sephcocco_#{outlet.name.downcase}_product_id")).amount_in_stock
       if order_params[:quantity] > amount_in_stock || amount_in_stock == 0
-        return render json: { error: "Product is out of stock, available stock is #{amount_in_stock}" }, status: :unprocessable_entity
+        return render json: { error: "Product is out of stock, available stock is #{amount_in_stock}", amount_in_stock: amount_in_stock }, status: :unprocessable_entity
       end
     end
 
