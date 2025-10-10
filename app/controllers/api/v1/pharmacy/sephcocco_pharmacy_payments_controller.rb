@@ -44,6 +44,7 @@ class Api::V1::Pharmacy::SephcoccoPharmacyPaymentsController < ApplicationContro
       :status,
       :transaction_id,
       :reference,
+      :delivery_location_id,
       orders_ids: []
     )
   end

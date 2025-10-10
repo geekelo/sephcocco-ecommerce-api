@@ -42,6 +42,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantPaymentsController < ApplicationCo
       :payment_method,
       :status,
       :transaction_id,
+      :delivery_location_id,
       orders_ids: []
     )
   end

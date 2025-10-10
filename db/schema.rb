@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_14_130000) do
+ActiveRecord::Schema[7.2].define(version: 2025_10_10_091702) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -42,6 +42,12 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_14_130000) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "lounge_product_categories_lounge_products", id: false, force: :cascade do |t|
+    t.uuid "sephcocco_lounge_product_id", null: false
+    t.uuid "sephcocco_lounge_product_category_id", null: false
+    t.index ["sephcocco_lounge_product_id", "sephcocco_lounge_product_category_id"], name: "index_products_categories_on_product_and_category", unique: true
+  end
+
   create_table "pharmacy_product_categories_pharmacy_products", id: false, force: :cascade do |t|
     t.uuid "pharmacy_product_id", null: false
     t.uuid "pharmacy_product_category_id", null: false
@@ -68,6 +74,15 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_14_130000) do
     t.index ["rider_id", "active"], name: "index_rider_locations_on_rider_id_and_active"
     t.index ["rider_id"], name: "index_rider_locations_on_rider_id"
     t.index ["timestamp"], name: "index_rider_locations_on_timestamp"
+  end
+
+  create_table "sephcocco_locations", force: :cascade do |t|
+    t.string "location", null: false
+    t.decimal "logistics_price", precision: 16, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location"], name: "index_sephcocco_locations_on_location"
+    t.index ["logistics_price"], name: "index_sephcocco_locations_on_logistics_price"
   end
 
   create_table "sephcocco_lounge_admin_activities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -169,12 +184,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_14_130000) do
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_sephcocco_lounge_product_categories_on_name", unique: true
     t.index ["slug"], name: "index_sephcocco_lounge_product_categories_on_slug", unique: true
-  end
-
-  create_table "sephcocco_lounge_product_categories_products", id: false, force: :cascade do |t|
-    t.uuid "sephcocco_lounge_product_id", null: false
-    t.uuid "sephcocco_lounge_product_category_id", null: false
-    t.index ["sephcocco_lounge_product_id", "sephcocco_lounge_product_category_id"], name: "index_products_categories_on_product_and_category", unique: true
   end
 
   create_table "sephcocco_lounge_product_likes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -589,6 +598,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_14_130000) do
     t.datetime "email_confirmation_sent_at"
     t.boolean "email_confirmed", default: false
     t.uuid "sephcocco_user_subrole_id"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_sephcocco_users_on_deleted_at"
     t.index ["email"], name: "index_sephcocco_users_on_email", unique: true
     t.index ["sephcocco_user_role_id"], name: "index_sephcocco_users_on_sephcocco_user_role_id"
     t.index ["sephcocco_user_subrole_id"], name: "index_sephcocco_users_on_sephcocco_user_subrole_id"

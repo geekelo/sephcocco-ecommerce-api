@@ -76,8 +76,9 @@ module Api::V1::Concerns::PaymentsControllerHelper
     order_ids = payment_params[:orders_ids]
     # Convert UUIDs to strings for the orders array field
     order_strings = order_ids&.map(&:to_s) || []
-    actual_payment_params = payment_params.except(:orders_ids).merge(orders: order_strings)
+    actual_payment_params = payment_params.except(:orders_ids, :delivery_location_id).merge(orders: order_strings)
     order_total_price = 0
+    delivery_price = 0
 
     if order_ids.present?
       order_ids.each do |order_id|
@@ -105,6 +106,15 @@ module Api::V1::Concerns::PaymentsControllerHelper
     else
       return render json: { error: "No orders found" }, status: :unprocessable_entity
     end
+
+    # check if delivery location is present
+    if payment_params[:delivery_location_id].present?
+      delivery_location = SephcoccoLocation.find(payment_params[:delivery_location_id])
+      delivery_price = delivery_location.logistics_price
+    end
+
+    # add delivery price to order total price
+    order_total_price += delivery_price
 
     # Convert amount to BigDecimal for comparison
     payment_amount = BigDecimal(actual_payment_params[:amount].to_s)
@@ -166,6 +176,8 @@ module Api::V1::Concerns::PaymentsControllerHelper
       payment = current_user.send(payment_association).new(payment_params_with_user)
       Rails.logger.info "Payment Create - Payment Errors: #{payment.errors.full_messages}" unless payment.valid?
       if payment.save
+        payment.update(delivery_location: { location: delivery_location.location, logistics_price: delivery_price })
+        payment.save!
         AdminNotifications::CreateService.new(
           action_type: "payment",
           action_id: payment.id,
@@ -340,6 +352,12 @@ module Api::V1::Concerns::PaymentsControllerHelper
       
       if payment
         Rails.logger.info "Payment verified and confirmed: #{payment.id}"
+
+        # check if payment amount paid is less than the order total price
+        if body['data']['amount'] < payment.amount
+          return render json: { error: "Payment amount does not match the order total price", data: body['data'] }, status: :unprocessable_entity
+        end
+
         payment.update(status: "payment confirmed")
         # notify customer about the payment via email
         PaymentMailer.with(payment: payment).payment_confirmed_email.deliver_now
@@ -389,6 +407,21 @@ module Api::V1::Concerns::PaymentsControllerHelper
     Rails.logger.error "Payment verification error: #{e.message}"
     Rails.logger.error "Payment verification error backtrace: #{e.backtrace.first(5).join("\n")}"
     render json: { error: e.message }, status: :internal_server_error
+  end
+
+  def update_delivery_location
+    payment = payment_class.find(params[:id])
+    delivery_location = params[:delivery_location_id]
+    if delivery_location.present?
+      delivery_location = SephcoccoLocation.find(delivery_location)
+      delivery_price = delivery_location.logistics_price
+
+      # update the payment amount
+      previous_amount = payment.amount
+      new_amount = (payment.amount - delivery_price).to_f + delivery_price
+      payment.update(amount: new_amount.to_d, delivery_location: { location: delivery_location.location, logistics_price: delivery_price })
+      payment.save!
+    end
   end
 
   private
