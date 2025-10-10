@@ -114,8 +114,6 @@ module Api::V1::Concerns::OrdersControllerHelper
       return render json: { error: "Product is out of stock, available stock is #{amount_in_stock}" }, status: :unprocessable_entity
     end
 
-
-
     unit_price = params[:unit_price] || product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"]).price
     if admin?
       order = @customer.send(order_association).new(order_params.merge(unit_price: unit_price))
@@ -127,13 +125,6 @@ module Api::V1::Concerns::OrdersControllerHelper
     order.set_order_total(unit_price, order_params[:quantity])
     
     if order&.save
-      # update the product stock if quantity is present
-      if order_params[:quantity].present?
-        product = product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"])
-        product.update!(amount_in_stock: amount_in_stock - order_params[:quantity])
-        product.save!
-      end
-
       if admin?
         AdminNotifications::CreateService.new(
           action_type: "order",
@@ -170,6 +161,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def update
     old_status = @order.status
+    # check if product is out of stock
     if order_params[:quantity].present?
       amount_in_stock = product_class.find(@order.send(:"sephcocco_#{outlet.name.downcase}_product_id")).amount_in_stock
       if order_params[:quantity] > amount_in_stock || amount_in_stock == 0
@@ -180,17 +172,10 @@ module Api::V1::Concerns::OrdersControllerHelper
     if @order.update(order_params)
       @order.set_order_total(@order.unit_price, @order.quantity)
       @order.update_stages(order_params[:status]) if order_params[:status].present?
-      # update the product stock if quantity is present
-      if order_params[:quantity].present?
-        product = product_class.find(@order.send(:"sephcocco_#{outlet.name.downcase}_product_id"))
-        product.update!(amount_in_stock: amount_in_stock - order_params[:quantity])
-        product.save!
-      end
 
       # Send status update email if status changed
       if order_params[:status].present? && old_status != @order.status
         OrderMailer.with(order: @order, old_status: old_status).order_status_updated_email.deliver_now
-
 
         if @order.status == "delivering"
           # create shipping for order

@@ -128,8 +128,19 @@ module Api::V1::Concerns::PaymentsControllerHelper
           order_ids.each do |order_id|
             begin
               order = order_class.find(order_id)
+              product = product_class.find(order.send(:"sephcocco_#{outlet}_product_id"))
+              
+              # check if product is out of stock
+              if product.amount_in_stock == 0 || product.amount_in_stock < order.quantity
+                return render json: { error: "#{product.name} is out of stock, available stock is #{product.amount_in_stock}" }, status: :unprocessable_entity
+              end
+
               # update the payment id
               order.update("sephcocco_#{outlet}_payment_id" => payment.id)
+            
+              # update the product stock
+              product.update!(amount_in_stock: product.amount_in_stock - order.quantity)
+              product.save!
               if payment.status == "paid"
                 order.change_order_status("awaiting payment approval")
               elsif payment.status == "payment confirmed"
@@ -166,8 +177,12 @@ module Api::V1::Concerns::PaymentsControllerHelper
           order_ids.each do |order_id|
             begin
               order = order_class.find(order_id)
+              product = product_class.find(order.send(:"sephcocco_#{outlet}_product_id"))
               # update the payment id
               order.update("sephcocco_#{outlet}_payment_id" => payment.id)
+              # update the product stock
+              product.update!(amount_in_stock: product.amount_in_stock - order.quantity)
+              product.save!
               if payment.status == "paid"
                 order.change_order_status("awaiting payment approval")
               elsif payment.status == "payment confirmed"
@@ -212,28 +227,34 @@ module Api::V1::Concerns::PaymentsControllerHelper
         if @payment.orders.is_a?(Array) && @payment.orders.any?
           @payment.orders.each do |order_id|
             order = order_class.find_by(id: order_id)
+            product = product_class.find(order.send(:"sephcocco_#{outlet}_product_id"))
             next unless order
-          if status == "payment confirmed"
-            # notify customer about the payment via email
-            PaymentMailer.with(payment: @payment).payment_confirmed_email.deliver_now
-            order.change_order_status("paid")
-            @payment.sephcocco_user.update(payment_ref: @payment.sephcocco_user.payment_ref.next)
-          elsif status == "cancelled"
-            # notify customer about payment cancellation
-            PaymentMailer.with(payment: @payment, reason: "Payment was cancelled").payment_failed_email.deliver_now
-            order.change_order_status("payment cancelled")
-          elsif status == "paid"
-            order.change_order_status("awaiting payment approval")
-          elsif status == "declined"
-            # notify customer about payment decline
-            PaymentMailer.with(payment: @payment, reason: "Payment was declined").payment_declined_email.deliver_now
-            order.change_order_status("payment declined")
-          elsif status == "failed"
-            # notify customer about payment failure
-            PaymentMailer.with(payment: @payment, reason: "Payment processing failed").payment_failed_email.deliver_now
-            order.change_order_status("payment failed")
+            if status == "payment confirmed"
+              # notify customer about the payment via email
+              PaymentMailer.with(payment: @payment).payment_confirmed_email.deliver_now
+              order.change_order_status("paid")
+
+              @payment.sephcocco_user.update(payment_ref: @payment.sephcocco_user.payment_ref.next)
+            elsif status == "cancelled"
+              # notify customer about payment cancellation
+              PaymentMailer.with(payment: @payment, reason: "Payment was cancelled").payment_failed_email.deliver_now
+              order.change_order_status("payment cancelled")
+              product.update!(amount_in_stock: product.amount_in_stock + order.quantity)
+              product.save!
+            elsif status == "paid"
+              order.change_order_status("awaiting payment approval")
+            elsif status == "declined"
+              # notify customer about payment decline
+              PaymentMailer.with(payment: @payment, reason: "Payment was declined").payment_declined_email.deliver_now
+              order.change_order_status("payment declined")
+              product.update!(amount_in_stock: product.amount_in_stock + order.quantity)
+              product.save!
+            elsif status == "failed"
+              # notify customer about payment failure
+              PaymentMailer.with(payment: @payment, reason: "Payment processing failed").payment_failed_email.deliver_now
+              order.change_order_status("payment failed")
+            end
           end
-        end
         end
       end
       

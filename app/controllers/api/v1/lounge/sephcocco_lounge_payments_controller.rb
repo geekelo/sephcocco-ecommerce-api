@@ -15,6 +15,10 @@ class Api::V1::Lounge::SephcoccoLoungePaymentsController < ApplicationController
     Lounge::SephcoccoLoungeOrder
   end
 
+  def product_class
+    Lounge::SephcoccoLoungeProduct
+  end
+
   def outlet
     'lounge'
   end
