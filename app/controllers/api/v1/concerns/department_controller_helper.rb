@@ -1,4 +1,4 @@
-module DepartmentControllerHelper
+module Api::V1::Concerns::DepartmentControllerHelper
   extend ActiveSupport::Concern
 
   included do
