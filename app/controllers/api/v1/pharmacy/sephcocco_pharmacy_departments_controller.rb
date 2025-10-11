@@ -1,5 +1,5 @@
 class Api::V1::Pharmacy::SephcoccoPharmacyDepartmentsController < ApplicationController
-  include DepartmentControllerHelper
+  include Api::V1::Concerns::DepartmentControllerHelper
 
   private
 
