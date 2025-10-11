@@ -23,6 +23,13 @@ module Api::V1::Concerns::OrdersControllerHelper
                            search_term, search_term, search_term, search_term, search_term, search_term
                          )        
         end
+
+        # Apply department_id filter
+        if params[:filter][:department_id].present?
+          orders = orders.joins(:"sephcocco_#{outlet}_department")
+          orders = orders.where(:"sephcocco_#{outlet}_department.id" => params[:filter][:department_id])
+        end
+        
         if params[:filter][:start_date].present? && params[:filter][:end_date].present?
           orders = orders.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
         elsif params[:filter][:start_date].present?

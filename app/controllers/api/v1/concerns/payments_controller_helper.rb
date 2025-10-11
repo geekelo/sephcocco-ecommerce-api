@@ -41,6 +41,12 @@ module Api::V1::Concerns::PaymentsControllerHelper
       if params[:filter][:payment_method].present?
         payments = payments.where(payment_method: params[:filter][:payment_method])
       end
+
+      # Apply department_id filter
+      if params[:filter][:department_id].present?
+        payments = payments.joins(:"sephcocco_#{outlet}_department")
+        payments = payments.where(:"sephcocco_#{outlet}_department.id" => params[:filter][:department_id])
+      end
   
       # Apply search_param filter
       if params[:filter][:search_terms].present?

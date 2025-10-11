@@ -26,6 +26,12 @@ module Api::V1::Concerns::ShippingControllerHelper
                                            shippings = shippings.joins(:"sephcocco_#{outlet}_order" => :sephcocco_user).joins("LEFT JOIN sephcocco_users AS riders ON riders.id = sephcocco_#{outlet}_shippings.rider_id").where("tracking_number ILIKE ? OR riders.name ILIKE ? OR sephcocco_users.name ILIKE ? OR sephcocco_#{outlet}_orders.order_number ILIKE ?", search_term, search_term, search_term, search_term)
         end
 
+        # Apply department_id filter
+        if params[:filter][:department_id].present?
+          shippings = shippings.joins(:"sephcocco_#{outlet}_department")
+          shippings = shippings.where(:"sephcocco_#{outlet}_department.id" => params[:filter][:department_id])
+        end
+
         if params[:filter][:start_date].present? && params[:filter][:end_date].present?
           shippings = shippings.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
         elsif params[:filter][:start_date].present?
