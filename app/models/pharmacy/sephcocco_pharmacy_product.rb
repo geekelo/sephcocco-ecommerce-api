@@ -50,4 +50,7 @@ class Pharmacy::SephcoccoPharmacyProduct < ApplicationRecord
   
   # Add stock management association
   has_many :sephcocco_pharmacy_stock_managements, class_name: "Pharmacy::SephcoccoPharmacyStockManagement", foreign_key: :sephcocco_pharmacy_product_id, dependent: :destroy
+  
+  # Add department association
+  belongs_to :sephcocco_pharmacy_department, class_name: "Pharmacy::SephcoccoPharmacyDepartment", optional: true
 end

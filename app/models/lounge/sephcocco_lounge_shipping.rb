@@ -1,6 +1,7 @@
 class Lounge::SephcoccoLoungeShipping < ApplicationRecord
   belongs_to :sephcocco_lounge_order
   belongs_to :rider, class_name: "SephcoccoUser", optional: true
+  belongs_to :sephcocco_lounge_department, class_name: "Lounge::SephcoccoLoungeDepartment", optional: true
 
   validates :tracking_number, presence: true
   validates :status, presence: true

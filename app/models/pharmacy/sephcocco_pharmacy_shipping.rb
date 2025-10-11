@@ -1,6 +1,7 @@
 class Pharmacy::SephcoccoPharmacyShipping < ApplicationRecord
   belongs_to :sephcocco_pharmacy_order
   belongs_to :rider, class_name: "SephcoccoUser", optional: true
+  belongs_to :sephcocco_pharmacy_department, class_name: "Pharmacy::SephcoccoPharmacyDepartment", optional: true
 
   validates :tracking_number, presence: true
   validates :status, presence: true

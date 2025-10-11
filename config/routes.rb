@@ -39,6 +39,8 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :sephcocco_locations, only: [ :index, :create, :update, :destroy ]
+
       # Rider location tracking
       resources :rider_locations, only: [ :index, :show ] do
         collection do
@@ -110,6 +112,15 @@ Rails.application.routes.draw do
           end
         end
         resources :sephcocco_lounge_stock_managements
+        resources :sephcocco_lounge_departments do
+          collection do
+            get :get_active
+          end
+          member do
+            patch :disable
+            patch :enable
+          end
+        end
       end
 
       # PHARMACY
@@ -176,6 +187,15 @@ Rails.application.routes.draw do
           end
         end
         resources :sephcocco_pharmacy_stock_managements
+        resources :sephcocco_pharmacy_departments do
+          collection do
+            get :get_active
+          end
+          member do
+            patch :disable
+            patch :enable
+          end
+        end
       end
 
       # RESTAURANT
@@ -243,6 +263,15 @@ Rails.application.routes.draw do
           end
         end
         resources :sephcocco_restaurant_stock_managements
+        resources :sephcocco_restaurant_departments do
+          collection do
+            get :get_active
+          end
+          member do
+            patch :disable
+            patch :enable
+          end
+        end
       end
     end
   end

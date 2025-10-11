@@ -51,5 +51,8 @@ module Lounge
     
     # Add stock management association
     has_many :sephcocco_lounge_stock_managements, class_name: "Lounge::SephcoccoLoungeStockManagement", foreign_key: :sephcocco_lounge_product_id, dependent: :destroy
+    
+    # Add department association
+    belongs_to :sephcocco_lounge_department, class_name: "Lounge::SephcoccoLoungeDepartment", optional: true
   end
 end

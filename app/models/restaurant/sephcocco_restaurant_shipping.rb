@@ -1,6 +1,7 @@
 class Restaurant::SephcoccoRestaurantShipping < ApplicationRecord
   belongs_to :sephcocco_restaurant_order
   belongs_to :rider, class_name: "SephcoccoUser", optional: true
+  belongs_to :sephcocco_restaurant_department, class_name: "Restaurant::SephcoccoRestaurantDepartment", optional: true
 
   validates :tracking_number, presence: true
   validates :status, presence: true
