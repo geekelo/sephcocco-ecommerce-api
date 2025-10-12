@@ -14,14 +14,17 @@ class MailtrapDeliveryMethod
     Rails.logger.info "MailtrapDeliveryMethod - ActionMailer::Base.mailtrap_settings: #{ActionMailer::Base.mailtrap_settings.inspect}"
     
     # Support both api_key and api_token for flexibility
-    # Also check ActionMailer's mailtrap_settings if not passed directly
     api_token = @settings[:api_token] || @settings[:api_key] ||
                 ActionMailer::Base.mailtrap_settings[:api_token] ||
                 ActionMailer::Base.mailtrap_settings[:api_key]
     
     Rails.logger.info "MailtrapDeliveryMethod - api_token: #{api_token ? api_token[0..10] + '...' : 'nil'}"
     
-    raise "Mailtrap API token is required" if api_token.nil? || api_token.empty?
+    if api_token.nil? || api_token.empty?
+      error_msg = "Mailtrap API token is required. Please set MAILTRAP_API_TOKEN environment variable."
+      Rails.logger.error error_msg
+      raise error_msg
+    end
 
     # Get settings from either direct settings or ActionMailer config
     sandbox = @settings[:sandbox] || ActionMailer::Base.mailtrap_settings[:sandbox]
@@ -29,14 +32,22 @@ class MailtrapDeliveryMethod
     
     # Determine if we're using sandbox or production
     endpoint = if sandbox
+      if inbox_id.nil? || inbox_id.empty?
+        raise "Mailtrap inbox_id is required for sandbox mode"
+      end
       "https://sandbox.api.mailtrap.io/api/send/#{inbox_id}"
     else
       "https://send.api.mailtrap.io/api/send"
     end
 
+    Rails.logger.info "MailtrapDeliveryMethod - Endpoint: #{endpoint}"
+    Rails.logger.info "MailtrapDeliveryMethod - Mode: #{sandbox ? 'sandbox' : 'production'}"
+
     uri = URI(endpoint)
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
+    http.read_timeout = 30
+    http.open_timeout = 30
 
     request = Net::HTTP::Post.new(uri.path)
     request['Api-Token'] = api_token
@@ -47,17 +58,50 @@ class MailtrapDeliveryMethod
     request.body = payload.to_json
 
     Rails.logger.info "Sending email via Mailtrap API to: #{mail.to.join(', ')}"
+    Rails.logger.debug "Mailtrap payload: #{payload.inspect}"
     
-    response = http.request(request)
+    begin
+      response = http.request(request)
+      
+      Rails.logger.info "Mailtrap response code: #{response.code}"
+      Rails.logger.info "Mailtrap response body: #{response.body}"
 
-    unless response.is_a?(Net::HTTPSuccess)
-      error_message = "Mailtrap API error: #{response.code} - #{response.body}"
-      Rails.logger.error error_message
-      raise error_message
+      unless response.is_a?(Net::HTTPSuccess)
+        # Parse error response for better debugging
+        error_body = JSON.parse(response.body) rescue { message: response.body }
+        
+        error_message = case response.code.to_i
+        when 401
+          "Mailtrap authentication failed (401 Unauthorized). " \
+          "Please verify your API token is correct and is a PRODUCTION token (not sandbox). " \
+          "Error: #{error_body['errors']&.join(', ') || error_body['message']}"
+        when 403
+          "Mailtrap access forbidden (403). Check your API token permissions. " \
+          "Error: #{error_body['errors']&.join(', ') || error_body['message']}"
+        when 422
+          "Mailtrap validation error (422). Check your email payload. " \
+          "Error: #{error_body['errors']&.join(', ') || error_body['message']}"
+        when 429
+          "Mailtrap rate limit exceeded (429). Please try again later."
+        else
+          "Mailtrap API error (#{response.code}): #{error_body['errors']&.join(', ') || error_body['message'] || response.body}"
+        end
+        
+        Rails.logger.error error_message
+        raise error_message
+      end
+
+      Rails.logger.info "Email sent successfully via Mailtrap API"
+      response
+    rescue Net::OpenTimeout, Net::ReadTimeout => e
+      error_msg = "Mailtrap API timeout: #{e.message}"
+      Rails.logger.error error_msg
+      raise error_msg
+    rescue StandardError => e
+      Rails.logger.error "Mailtrap delivery error: #{e.class} - #{e.message}"
+      Rails.logger.error e.backtrace.first(5).join("\n")
+      raise
     end
-
-    Rails.logger.info "Email sent successfully via Mailtrap API"
-    response
   end
 
   private
