@@ -78,13 +78,27 @@ Rails.application.configure do
   # config.active_job.queue_adapter = :resque
   # config.active_job.queue_name_prefix = "sephcocco_lounge_api_production"
 
+  # Mailtrap API Configuration for Production (Live Sending)
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.delivery_method = :mailtrap
+  
+  # Set Mailtrap settings for production (NO inbox_id needed for live sending)
+  config.after_initialize do
+    ActionMailer::Base.mailtrap_settings = {
+      api_key: ENV['MAILTRAP_API_TOKEN'],
+      sandbox: false,  # Use production API for live sending (sends real emails)
+      category: 'production'  # Optional: categorize emails for analytics
+      # NOTE: inbox_id is NOT needed for production - only for sandbox/development
+    }
+  end
+  
+  config.action_mailer.default_url_options = { host: ENV['HOST'] || 'sephcocco.com.ng', protocol: 'https' }
+  config.action_mailer.default_options = { from: ENV.fetch('MAILTRAP_FROM_EMAIL', 'no-reply@sephcocco.com') }
+
   # Disable caching for Action Mailer templates even if Action Controller
   # caching is enabled.
   config.action_mailer.perform_caching = false
-
-  # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
