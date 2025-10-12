@@ -50,7 +50,7 @@ class MailtrapDeliveryMethod
     http.open_timeout = 30
 
     request = Net::HTTP::Post.new(uri.path)
-    request['Api-Token'] = api_token
+    request['Api-Token'] = "ad87bab7c1cec93e025bf2900bdd3e91"
     request['Content-Type'] = 'application/json'
 
     # Build the email payload
