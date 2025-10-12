@@ -39,7 +39,7 @@ class MailtrapDeliveryMethod
     http.use_ssl = true
 
     request = Net::HTTP::Post.new(uri.path)
-    request['Authorization'] = "Bearer #{api_token}"
+    request['Api-Token'] = api_token
     request['Content-Type'] = 'application/json'
 
     # Build the email payload
