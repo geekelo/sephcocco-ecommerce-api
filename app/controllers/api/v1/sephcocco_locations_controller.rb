@@ -8,7 +8,7 @@ class Api::V1::SephcoccoLocationsController < ApplicationController
     # Apply filters if they exist
     if params[:filter].present?
       if params[:filter][:search_terms].present?
-        @locations = @locations.where("location ILIKE ?", "location_price ILIKE ?", "%#{params[:filter][:search_terms]}%", "%#{params[:filter][:search_terms]}%")
+        @locations = @locations.where("location ILIKE ?", "logistics_price ILIKE ?", "%#{params[:filter][:search_terms]}%", "%#{params[:filter][:search_terms]}%")
       end
       if params[:filter][:start_date].present? && params[:filter][:end_date].present?
         @locations = @locations.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
