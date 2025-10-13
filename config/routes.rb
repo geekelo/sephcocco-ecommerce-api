@@ -121,6 +121,7 @@ Rails.application.routes.draw do
             patch :enable
           end
         end
+        resources :sephcocco_lounge_vendors
       end
 
       # PHARMACY
@@ -196,6 +197,7 @@ Rails.application.routes.draw do
             patch :enable
           end
         end
+        resources :sephcocco_pharmacy_vendors
       end
 
       # RESTAURANT
@@ -272,6 +274,7 @@ Rails.application.routes.draw do
             patch :enable
           end
         end
+        resources :sephcocco_restaurant_vendors
       end
     end
   end
