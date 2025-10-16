@@ -7,7 +7,8 @@ class Restaurant::Admin::SephcoccoRestaurantPaymentSerializer < ActiveModel::Ser
                :updated_at,
                :transaction_id,
                :orders,
-               :payment_method
+               :payment_method,
+               :delivery_location,
 
   attribute :paid_orders
 

@@ -7,6 +7,7 @@ class Pharmacy::User::SephcoccoPharmacyPaymentSerializer < ActiveModel::Serializ
               :sephcocco_user_id,
               :transaction_id,
               :payment_method,
+              :delivery_location,
               :orders
 
   attribute :paid_orders
