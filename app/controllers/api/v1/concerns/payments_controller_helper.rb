@@ -126,9 +126,9 @@ module Api::V1::Concerns::PaymentsControllerHelper
     payment_amount = BigDecimal(actual_payment_params[:amount].to_s)
     
     if payment_amount < order_total_price
-      return render json: { error: "Amount is less than the order total price" }, status: :unprocessable_entity
+      return render json: { error: "Amount is less than the order total price. The order total price is #{order_total_price} and the amount is #{payment_amount}" }, status: :unprocessable_entity
     elsif payment_amount > order_total_price 
-      return render json: { error: "Amount is greater than the order total price" }, status: :unprocessable_entity
+      return render json: { error: "Amount is greater than the order total price. The order total price is #{order_total_price} and the amount is #{payment_amount}" }, status: :unprocessable_entity
     end
 
     # Debug logging
