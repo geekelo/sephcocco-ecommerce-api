@@ -1,6 +1,25 @@
 class Lounge::Admin::SephcoccoLoungeStockManagementSerializer < ActiveModel::Serializer
-  attributes :id, :invoice_number, :vendor, :status, :product, :stock, :price, :created_at, :updated_at
+  attributes :id, :invoice_number, :vendor, :department, :status, :product, :stock, :price, :created_at, :updated_at
 
+  def vendor
+    if object.sephcocco_lounge_vendor
+      {
+        id: object.sephcocco_lounge_vendor.id,
+        name: object.sephcocco_lounge_vendor.name,
+        email: object.sephcocco_lounge_vendor.email,
+        phone: object.sephcocco_lounge_vendor.phone
+      }
+    end
+  end
+
+  def department
+    if object.sephcocco_lounge_department
+      {
+        id: object.sephcocco_lounge_department.id,
+        name: object.sephcocco_lounge_department.name
+      }
+    end
+  end
 
   def stock
     {
@@ -27,5 +46,4 @@ class Lounge::Admin::SephcoccoLoungeStockManagementSerializer < ActiveModel::Ser
       profit_markup: object.price['profit_markup']
     }
   end
-  belongs_to :sephcocco_lounge_product, serializer: Lounge::SephcoccoLoungeProductSerializer
 end

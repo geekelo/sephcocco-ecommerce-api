@@ -1,5 +1,25 @@
 class Restaurant::Admin::SephcoccoRestaurantStockManagementSerializer < ActiveModel::Serializer
-  attributes :id, :invoice_number, :vendor, :status, :product, :stock, :price, :created_at, :updated_at
+  attributes :id, :invoice_number, :vendor, :department, :status, :product, :stock, :price, :created_at, :updated_at
+
+  def vendor
+    if object.sephcocco_restaurant_vendor
+      {
+        id: object.sephcocco_restaurant_vendor.id,
+        name: object.sephcocco_restaurant_vendor.name,
+        email: object.sephcocco_restaurant_vendor.email,
+        phone: object.sephcocco_restaurant_vendor.phone
+      }
+    end
+  end
+
+  def department
+    if object.sephcocco_restaurant_department
+      {
+        id: object.sephcocco_restaurant_department.id,
+        name: object.sephcocco_restaurant_department.name
+      }
+    end
+  end
 
   def stock
     {
@@ -26,6 +46,4 @@ class Restaurant::Admin::SephcoccoRestaurantStockManagementSerializer < ActiveMo
       profit_markup: object.price['profit_markup']
     }
   end
-
-  belongs_to :sephcocco_restaurant_product, serializer: Restaurant::SephcoccoRestaurantProductSerializer
 end
