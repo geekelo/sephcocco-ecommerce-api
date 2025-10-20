@@ -61,6 +61,7 @@ class Api::V1::Pharmacy::SephcoccoPharmacyProductsController < ApplicationContro
       :price,
       :visible,
       :barcode,
+      :sephcocco_pharmacy_department_id,
       category_ids: [],
       other_image_urls: []
     )

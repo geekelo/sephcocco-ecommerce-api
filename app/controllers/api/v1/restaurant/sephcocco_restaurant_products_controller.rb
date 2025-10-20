@@ -60,6 +60,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantProductsController < ApplicationCo
       :price,
       :visible,
       :barcode,
+      :sephcocco_restaurant_department_id,
       category_ids: [],
       other_image_urls: []
     )
