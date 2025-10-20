@@ -79,7 +79,7 @@ module Api::V1::Concerns::DepartmentControllerHelper
   end
 
   def department_params
-    params.require(department_param_key).permit(:name, :description, :active)
+    params.require(department_param_key).permit(:name, :address, :active)
   end
 
   # To be implemented by including controllers
