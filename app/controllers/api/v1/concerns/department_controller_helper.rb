@@ -79,7 +79,17 @@ module Api::V1::Concerns::DepartmentControllerHelper
   end
 
   def department_params
-    params.require(department_param_key).permit(:name, :address, :active)
+    permitted = params.require(department_param_key).permit(:name, :description, :address, :active)
+    
+    # Map address to description for backward compatibility
+    if permitted[:address].present? && permitted[:description].blank?
+      permitted[:description] = permitted[:address]
+    end
+    
+    # Remove address since it's not a database column
+    permitted.delete(:address)
+    
+    permitted
   end
 
   # To be implemented by including controllers
