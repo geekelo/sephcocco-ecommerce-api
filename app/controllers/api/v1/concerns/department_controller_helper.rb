@@ -8,8 +8,38 @@ module Api::V1::Concerns::DepartmentControllerHelper
   # GET /departments
   def index
     departments = department_class.all.order(created_at: :desc)
+
+    if params[:filter].present?
+      if params[:filter][:search_terms].present?
+        search_term = "%#{params[:filter][:search_terms]}%"
+        departments = departments.where("name ILIKE ? OR address ILIKE ?", search_term, search_term)
+      end
+      if params[:filter][:status].present?
+        if params[:filter][:status] == "enabled"
+          departments = departments.where(active: true)
+        elsif params[:filter][:status] == "disabled"
+          departments = departments.where(active: false)
+        end
+      end
+      if params[:filter][:start_date].present? && params[:filter][:end_date].present?
+        departments = departments.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
+      elsif params[:filter][:start_date].present?
+        departments = departments.where('created_at >= ?', params[:filter][:start_date])
+      elsif params[:filter][:end_date].present?
+        departments = departments.where('created_at <= ?', params[:filter][:end_date])
+      end
+      departments = departments.order(created_at: :desc)
+      departments = departments.page(params[:page]).per(params[:per_page] || 20)
+    end
     
-    render json: departments, status: :ok
+    render json: {
+      departments: ActiveModelSerializers::SerializableResource.new(departments, each_serializer: department_serializer_class).as_json,
+      meta: {
+        total_count: departments.total_count,
+        total_pages: departments.total_pages,
+        current_page: departments.current_page
+      }
+    }
   end
 
   # GET /departments/active
