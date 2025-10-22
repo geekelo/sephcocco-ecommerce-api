@@ -56,6 +56,12 @@ module Api::V1::Concerns::PaymentsControllerHelper
           term: term
         )
       end
+
+      # filter by department
+      if params[:filter][:department_id].present?
+        payments = payments.joins(orders: :"sephcocco_#{outlet}_product")
+                          .where(:"sephcocco_#{outlet}_products" => { :"sephcocco_#{outlet}_department_id" => params[:filter][:department_id] })
+      end
     end
 
     # Sort by date
