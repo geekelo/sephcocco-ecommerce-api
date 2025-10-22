@@ -37,8 +37,8 @@ module Api::V1::Concerns::ProductsControllerHelper
 
       # Apply department_id filter
       if params[:filter][:department_id].present?
-        products = products.joins(:"sephcocco_#{outlet}_department")
-        products = products.where(:"sephcocco_#{outlet}_department.id" => params[:filter][:department_id])
+        products = products.joins(:"sephcocco_#{outlet.name.downcase}_department")
+        products = products.where(:"sephcocco_#{outlet.name.downcase}_department.id" => params[:filter][:department_id])
       end
 
       # Apply visibility or status filter

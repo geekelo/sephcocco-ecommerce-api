@@ -26,8 +26,8 @@ module Api::V1::Concerns::OrdersControllerHelper
 
         # Apply department_id filter
         if params[:filter][:department_id].present?
-          orders = orders.joins(:"sephcocco_#{outlet}_department")
-          orders = orders.where(:"sephcocco_#{outlet}_department.id" => params[:filter][:department_id])
+          orders = orders.joins(:"sephcocco_#{outlet.name.downcase}_department")
+          orders = orders.where(:"sephcocco_#{outlet.name.downcase}_department.id" => params[:filter][:department_id])
         end
         
         if params[:filter][:start_date].present? && params[:filter][:end_date].present?

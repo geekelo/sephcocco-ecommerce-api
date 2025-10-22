@@ -44,8 +44,8 @@ module Api::V1::Concerns::PaymentsControllerHelper
 
       # Apply department_id filter
       if params[:filter][:department_id].present?
-        payments = payments.joins(:"sephcocco_#{outlet}_department")
-        payments = payments.where(:"sephcocco_#{outlet}_department.id" => params[:filter][:department_id])
+        payments = payments.joins(:"sephcocco_#{outlet.name.downcase}_department")
+        payments = payments.where(:"sephcocco_#{outlet.name.downcase}_department.id" => params[:filter][:department_id])
       end
   
       # Apply search_param filter
@@ -55,12 +55,6 @@ module Api::V1::Concerns::PaymentsControllerHelper
           "CAST(#{payment_class.table_name}.amount AS TEXT) ILIKE :term OR #{payment_class.table_name}.transaction_id ILIKE :term OR sephcocco_users.name ILIKE :term OR #{payment_class.table_name}.id::text ILIKE :term OR #{payment_class.table_name}.status ILIKE :term OR #{payment_class.table_name}.payment_method ILIKE :term OR orders::text ILIKE :term",
           term: term
         )
-      end
-
-      # filter by department
-      if params[:filter][:department_id].present?
-        payments = payments.joins(orders: :"sephcocco_#{outlet}_product")
-                          .where(:"sephcocco_#{outlet}_products" => { :"sephcocco_#{outlet}_department_id" => params[:filter][:department_id] })
       end
     end
 
