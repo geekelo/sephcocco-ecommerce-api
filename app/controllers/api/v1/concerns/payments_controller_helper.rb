@@ -44,8 +44,8 @@ module Api::V1::Concerns::PaymentsControllerHelper
 
       # Apply department_id filter
       if params[:filter][:department_id].present?
-        payments = payments.joins(:"sephcocco_#{outlet.name.downcase}_department")
-        payments = payments.where(:"sephcocco_#{outlet.name.downcase}_department.id" => params[:filter][:department_id])
+        payments = payments.joins(:"sephcocco_#{outlet.downcase}_department")
+        payments = payments.where(:"sephcocco_#{outlet.downcase}_department.id" => params[:filter][:department_id])
       end
   
       # Apply search_param filter
