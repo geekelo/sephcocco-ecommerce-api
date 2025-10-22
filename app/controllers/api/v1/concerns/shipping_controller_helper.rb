@@ -28,8 +28,8 @@ module Api::V1::Concerns::ShippingControllerHelper
 
         # Apply department_id filter
         if params[:filter][:department_id].present?
-          shippings = shippings.joins(:"sephcocco_#{outlet.name.downcase}_department")
-          shippings = shippings.where(:"sephcocco_#{outlet.name.downcase}_department.id" => params[:filter][:department_id])
+          shippings = shippings.joins(:"sephcocco_#{outlet.downcase}_department")
+          shippings = shippings.where(:"sephcocco_#{outlet.downcase}_department.id" => params[:filter][:department_id])
         end
 
         if params[:filter][:start_date].present? && params[:filter][:end_date].present?
