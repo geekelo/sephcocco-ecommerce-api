@@ -9,6 +9,7 @@ module Api::V1::Concerns::AnalyticsControllerHelper
   def index
     month = params[:month]&.to_i || Date.current.month
     year = params[:year]&.to_i || Date.current.year
+    department_id = params[:department_id]
     
     render json: {
       total_products: total_products_count,
@@ -118,19 +119,23 @@ module Api::V1::Concerns::AnalyticsControllerHelper
   private
 
   def total_products_count
-    product_class.count
+    # sort by department_id
+    product_class.where(:"sephcocco_#{outlet.downcase}_department_id" => department_id).count
   end
 
   def total_payment_received_amount
-    payment_class.where(status: 'payment confirmed').sum(:amount)
+    # filter by department_id
+    payment_class.where(status: 'payment confirmed', :"sephcocco_#{outlet.downcase}_department_id" => department_id).sum(:amount)
   end
 
   def total_orders_count
-    order_class.count
+    # filter by department_id
+    order_class.where(:"sephcocco_#{outlet.downcase}_department_id" => department_id).count
   end
 
   def total_unresolved_chats_count
-    message_class.where(status: ['open', 'pending']).count
+    # filter by department_id
+    message_class.where(status: ['open', 'pending'], :"sephcocco_#{outlet.downcase}_department_id" => department_id).count
   end
 
   def unresolved_chats_list
