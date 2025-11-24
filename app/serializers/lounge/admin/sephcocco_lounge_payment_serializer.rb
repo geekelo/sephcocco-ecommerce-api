@@ -7,7 +7,8 @@ class Lounge::Admin::SephcoccoLoungePaymentSerializer < ActiveModel::Serializer
                :updated_at,
                :transaction_id,
                :orders,
-               :payment_method
+               :payment_method,
+               :delivery_location
 
   attribute :paid_orders
 

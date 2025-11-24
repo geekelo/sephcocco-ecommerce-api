@@ -50,4 +50,7 @@ class Restaurant::SephcoccoRestaurantProduct < ApplicationRecord
   
   # Add stock management association
   has_many :sephcocco_restaurant_stock_managements, class_name: "Restaurant::SephcoccoRestaurantStockManagement", foreign_key: :sephcocco_restaurant_product_id, dependent: :destroy
+  
+  # Add department association
+  belongs_to :sephcocco_restaurant_department, class_name: "Restaurant::SephcoccoRestaurantDepartment", optional: true
 end

@@ -9,6 +9,10 @@ module Api::V1::Lounge
       Lounge::SephcoccoLoungeProduct
     end
 
+    def outlet
+      "lounge"
+    end
+
     def payment_class
       Lounge::SephcoccoLoungePayment
     end

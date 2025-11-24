@@ -15,6 +15,10 @@ class Api::V1::Restaurant::SephcoccoRestaurantPaymentsController < ApplicationCo
     Restaurant::SephcoccoRestaurantOrder
   end
 
+  def product_class
+    Restaurant::SephcoccoRestaurantProduct
+  end
+
   def outlet
     'restaurant'
   end
@@ -38,6 +42,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantPaymentsController < ApplicationCo
       :payment_method,
       :status,
       :transaction_id,
+      :delivery_location_id,
       orders_ids: []
     )
   end

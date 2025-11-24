@@ -41,6 +41,12 @@ module Api::V1::Concerns::PaymentsControllerHelper
       if params[:filter][:payment_method].present?
         payments = payments.where(payment_method: params[:filter][:payment_method])
       end
+
+      # Apply department_id filter
+      if params[:filter][:department_id].present?
+        payments = payments.joins(:"sephcocco_#{outlet.downcase}_department")
+        payments = payments.where(:"sephcocco_#{outlet.downcase}_department.id" => params[:filter][:department_id])
+      end
   
       # Apply search_param filter
       if params[:filter][:search_terms].present?
@@ -76,13 +82,20 @@ module Api::V1::Concerns::PaymentsControllerHelper
     order_ids = payment_params[:orders_ids]
     # Convert UUIDs to strings for the orders array field
     order_strings = order_ids&.map(&:to_s) || []
-    actual_payment_params = payment_params.except(:orders_ids).merge(orders: order_strings)
+    actual_payment_params = payment_params.except(:orders_ids, :delivery_location_id).merge(orders: order_strings)
     order_total_price = 0
+    delivery_price = 0
 
     if order_ids.present?
       order_ids.each do |order_id|
         begin
           order = order_class.find(order_id)
+          product = product_class.find(order.send(:"sephcocco_#{outlet}_product_id"))
+          
+          # check if product is out of stock
+          if product.amount_in_stock == 0 || product.amount_in_stock < order.quantity
+            return render json: { error: "#{product.name} is out of stock, available stock is #{product.amount_in_stock}" }, status: :unprocessable_entity
+          end
           order_total_price += order.total_price
         rescue ActiveRecord::RecordNotFound
           Rails.logger.error "Payment Create - Order not found: #{order_id} for outlet: #{outlet}"
@@ -100,13 +113,22 @@ module Api::V1::Concerns::PaymentsControllerHelper
       return render json: { error: "No orders found" }, status: :unprocessable_entity
     end
 
+    # check if delivery location is present
+    if payment_params[:delivery_location_id].present?
+      delivery_location = SephcoccoLocation.find(payment_params[:delivery_location_id])
+      delivery_price = delivery_location.logistics_price
+    end
+
+    # add delivery price to order total price
+    order_total_price += delivery_price
+
     # Convert amount to BigDecimal for comparison
     payment_amount = BigDecimal(actual_payment_params[:amount].to_s)
     
     if payment_amount < order_total_price
-      return render json: { error: "Amount is less than the order total price" }, status: :unprocessable_entity
+      return render json: { error: "Amount is less than the order total price. The order total price is #{order_total_price} and the amount is #{payment_amount}" }, status: :unprocessable_entity
     elsif payment_amount > order_total_price 
-      return render json: { error: "Amount is greater than the order total price" }, status: :unprocessable_entity
+      return render json: { error: "Amount is greater than the order total price. The order total price is #{order_total_price} and the amount is #{payment_amount}" }, status: :unprocessable_entity
     end
 
     # Debug logging
@@ -128,8 +150,13 @@ module Api::V1::Concerns::PaymentsControllerHelper
           order_ids.each do |order_id|
             begin
               order = order_class.find(order_id)
+              product = product_class.find(order.send(:"sephcocco_#{outlet}_product_id"))
               # update the payment id
               order.update("sephcocco_#{outlet}_payment_id" => payment.id)
+            
+              # update the product stock
+              product.update!(amount_in_stock: product.amount_in_stock - order.quantity)
+              product.save!
               if payment.status == "paid"
                 order.change_order_status("awaiting payment approval")
               elsif payment.status == "payment confirmed"
@@ -155,6 +182,8 @@ module Api::V1::Concerns::PaymentsControllerHelper
       payment = current_user.send(payment_association).new(payment_params_with_user)
       Rails.logger.info "Payment Create - Payment Errors: #{payment.errors.full_messages}" unless payment.valid?
       if payment.save
+        payment.update(delivery_location: { location: delivery_location.location, logistics_price: delivery_price })
+        payment.save!
         AdminNotifications::CreateService.new(
           action_type: "payment",
           action_id: payment.id,
@@ -166,8 +195,12 @@ module Api::V1::Concerns::PaymentsControllerHelper
           order_ids.each do |order_id|
             begin
               order = order_class.find(order_id)
+              product = product_class.find(order.send(:"sephcocco_#{outlet}_product_id"))
               # update the payment id
               order.update("sephcocco_#{outlet}_payment_id" => payment.id)
+              # update the product stock
+              product.update!(amount_in_stock: product.amount_in_stock - order.quantity)
+              product.save!
               if payment.status == "paid"
                 order.change_order_status("awaiting payment approval")
               elsif payment.status == "payment confirmed"
@@ -212,28 +245,34 @@ module Api::V1::Concerns::PaymentsControllerHelper
         if @payment.orders.is_a?(Array) && @payment.orders.any?
           @payment.orders.each do |order_id|
             order = order_class.find_by(id: order_id)
+            product = product_class.find(order.send(:"sephcocco_#{outlet}_product_id"))
             next unless order
-          if status == "payment confirmed"
-            # notify customer about the payment via email
-            PaymentMailer.with(payment: @payment).payment_confirmed_email.deliver_now
-            order.change_order_status("paid")
-            @payment.sephcocco_user.update(payment_ref: @payment.sephcocco_user.payment_ref.next)
-          elsif status == "cancelled"
-            # notify customer about payment cancellation
-            PaymentMailer.with(payment: @payment, reason: "Payment was cancelled").payment_failed_email.deliver_now
-            order.change_order_status("payment cancelled")
-          elsif status == "paid"
-            order.change_order_status("awaiting payment approval")
-          elsif status == "declined"
-            # notify customer about payment decline
-            PaymentMailer.with(payment: @payment, reason: "Payment was declined").payment_declined_email.deliver_now
-            order.change_order_status("payment declined")
-          elsif status == "failed"
-            # notify customer about payment failure
-            PaymentMailer.with(payment: @payment, reason: "Payment processing failed").payment_failed_email.deliver_now
-            order.change_order_status("payment failed")
+            if status == "payment confirmed"
+              # notify customer about the payment via email
+              PaymentMailer.with(payment: @payment).payment_confirmed_email.deliver_now
+              order.change_order_status("paid")
+
+              @payment.sephcocco_user.update(payment_ref: @payment.sephcocco_user.payment_ref.next)
+            elsif status == "cancelled"
+              # notify customer about payment cancellation
+              PaymentMailer.with(payment: @payment, reason: "Payment was cancelled").payment_failed_email.deliver_now
+              order.change_order_status("payment cancelled")
+              product.update!(amount_in_stock: product.amount_in_stock + order.quantity)
+              product.save!
+            elsif status == "paid"
+              order.change_order_status("awaiting payment approval")
+            elsif status == "declined"
+              # notify customer about payment decline
+              PaymentMailer.with(payment: @payment, reason: "Payment was declined").payment_declined_email.deliver_now
+              order.change_order_status("payment declined")
+              product.update!(amount_in_stock: product.amount_in_stock + order.quantity)
+              product.save!
+            elsif status == "failed"
+              # notify customer about payment failure
+              PaymentMailer.with(payment: @payment, reason: "Payment processing failed").payment_failed_email.deliver_now
+              order.change_order_status("payment failed")
+            end
           end
-        end
         end
       end
       
@@ -319,6 +358,12 @@ module Api::V1::Concerns::PaymentsControllerHelper
       
       if payment
         Rails.logger.info "Payment verified and confirmed: #{payment.id}"
+
+        # check if payment amount paid is less than the order total price
+        if body['data']['amount'] < payment.amount
+          return render json: { error: "Payment amount does not match the order total price", data: body['data'] }, status: :unprocessable_entity
+        end
+
         payment.update(status: "payment confirmed")
         # notify customer about the payment via email
         PaymentMailer.with(payment: payment).payment_confirmed_email.deliver_now
@@ -368,6 +413,21 @@ module Api::V1::Concerns::PaymentsControllerHelper
     Rails.logger.error "Payment verification error: #{e.message}"
     Rails.logger.error "Payment verification error backtrace: #{e.backtrace.first(5).join("\n")}"
     render json: { error: e.message }, status: :internal_server_error
+  end
+
+  def update_delivery_location
+    payment = payment_class.find(params[:id])
+    delivery_location = params[:delivery_location_id]
+    if delivery_location.present?
+      delivery_location = SephcoccoLocation.find(delivery_location)
+      delivery_price = delivery_location.logistics_price
+
+      # update the payment amount
+      previous_amount = payment.amount
+      new_amount = (payment.amount - delivery_price).to_f + delivery_price
+      payment.update(amount: new_amount.to_d, delivery_location: { location: delivery_location.location, logistics_price: delivery_price })
+      payment.save!
+    end
   end
 
   private

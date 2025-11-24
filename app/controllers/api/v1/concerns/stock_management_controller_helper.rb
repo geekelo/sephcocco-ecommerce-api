@@ -19,8 +19,13 @@ module Api::V1::Concerns::StockManagementControllerHelper
       end
       
       # Apply vendor filter
-      if params[:filter][:vendor].present?
-        stock_managements = stock_managements.where("vendor ILIKE ?", "%#{params[:filter][:vendor]}%")
+      if params[:filter][:vendor_id].present?
+        stock_managements = stock_managements.where(:"sephcocco_#{outlet}_vendor_id" => params[:filter][:vendor_id])
+      end
+      
+      # Apply department filter
+      if params[:filter][:department_id].present?
+        stock_managements = stock_managements.where(:"sephcocco_#{outlet}_department_id" => params[:filter][:department_id])
       end
       
       # Apply date filter
@@ -36,8 +41,9 @@ module Api::V1::Concerns::StockManagementControllerHelper
       if params[:filter][:search_terms].present?
         search_term = "%#{params[:filter][:search_terms]}%"
         stock_managements = stock_managements.joins(:"sephcocco_#{outlet}_product")
+                                            .left_joins(:"sephcocco_#{outlet}_vendor")
                                             .where(
-                                              "invoice_number ILIKE ? OR vendor ILIKE ? OR sephcocco_#{outlet}_products.name ILIKE ? OR stock::text ILIKE ? OR price::text ILIKE ?",
+                                              "invoice_number ILIKE ? OR sephcocco_#{outlet}_vendors.name ILIKE ? OR sephcocco_#{outlet}_products.name ILIKE ? OR stock::text ILIKE ? OR price::text ILIKE ?",
                                               search_term, search_term, search_term, search_term, search_term
                                             )
       end
@@ -211,8 +217,9 @@ module Api::V1::Concerns::StockManagementControllerHelper
   def stock_management_params
     params.require(stock_management_param_key).permit(
       :"sephcocco_#{outlet}_product_id",
+      :"sephcocco_#{outlet}_vendor_id",
+      :"sephcocco_#{outlet}_department_id",
       :invoice_number,
-      :vendor,
       :status,
       stock: {},
       price: {}

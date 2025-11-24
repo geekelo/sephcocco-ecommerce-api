@@ -6,7 +6,7 @@ class CreateJoinTableLoungeProductsCategories < ActiveRecord::Migration[7.2]
   def up
     create_product_category_join_table(
       prefix: 'sephcocco_lounge',
-         product_table: 'lounge_products',
+      product_table: 'lounge_products',
       category_table: 'lounge_product_categories'
     )
   end

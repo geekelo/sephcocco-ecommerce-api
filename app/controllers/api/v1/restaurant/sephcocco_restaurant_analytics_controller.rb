@@ -9,6 +9,10 @@ module Api::V1::Restaurant
       Restaurant::SephcoccoRestaurantProduct
     end
 
+    def outlet
+      "restaurant"
+    end
+
     def payment_class
       Restaurant::SephcoccoRestaurantPayment
     end

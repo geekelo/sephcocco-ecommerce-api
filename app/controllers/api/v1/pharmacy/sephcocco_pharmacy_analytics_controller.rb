@@ -9,6 +9,10 @@ module Api::V1::Pharmacy
       Pharmacy::SephcoccoPharmacyProduct
     end
 
+    def outlet
+      "pharmacy"
+    end
+
     def payment_class
       Pharmacy::SephcoccoPharmacyPayment
     end

@@ -61,6 +61,7 @@ class Api::V1::Lounge::SephcoccoLoungeProductsController < ApplicationController
       :price,
       :visible,
       :barcode,
+      :sephcocco_lounge_department_id,
       category_ids: [],
       other_image_urls: []
     )

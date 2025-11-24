@@ -35,6 +35,12 @@ module Api::V1::Concerns::ProductsControllerHelper
         products = products.where("#{product_class.table_name}.name ILIKE ?", "%#{params[:filter][:search_terms]}%")
       end
 
+      # Apply department_id filter
+      if params[:filter][:department_id].present?
+        products = products.joins(:"sephcocco_#{outlet.downcase}_department")
+        products = products.where(:"sephcocco_#{outlet.downcase}_department.id" => params[:filter][:department_id])
+      end
+
       # Apply visibility or status filter
       if params[:filter][:status].present?
         if params[:filter][:status] == "public"
@@ -136,7 +142,6 @@ module Api::V1::Concerns::ProductsControllerHelper
       if product_class.exists?(["LOWER(name) = ?", product_params[:name].downcase])
         return render json: { error: "Product name already exists" }, status: :unprocessable_entity
       end
-      
       render json: @product.errors, status: :unprocessable_entity
     end
   end
