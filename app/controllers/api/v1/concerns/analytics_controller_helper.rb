@@ -120,21 +120,25 @@ module Api::V1::Concerns::AnalyticsControllerHelper
 
   def total_products_count
     # sort by department_id
+    department_id = params[:department_id]
     product_class.where(:"sephcocco_#{outlet.downcase}_department_id" => department_id).count
   end
 
   def total_payment_received_amount
     # filter by department_id
+    department_id = params[:department_id]
     payment_class.where(status: 'payment confirmed', :"sephcocco_#{outlet.downcase}_department_id" => department_id).sum(:amount)
   end
 
   def total_orders_count
     # filter by department_id
+    department_id = params[:department_id]
     order_class.where(:"sephcocco_#{outlet.downcase}_department_id" => department_id).count
   end
 
   def total_unresolved_chats_count
     # filter by department_id
+    department_id = params[:department_id]
     message_class.where(status: ['open', 'pending'], :"sephcocco_#{outlet.downcase}_department_id" => department_id).count
   end
 
