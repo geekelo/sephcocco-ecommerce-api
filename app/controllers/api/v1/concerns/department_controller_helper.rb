@@ -12,7 +12,7 @@ module Api::V1::Concerns::DepartmentControllerHelper
     if params[:filter].present?
       if params[:filter][:search_terms].present?
         search_term = "%#{params[:filter][:search_terms]}%"
-        departments = departments.where("name ILIKE ? OR address ILIKE ?", search_term, search_term)
+        departments = departments.where("name ILIKE ? OR description ILIKE ?", search_term, search_term)
       end
       if params[:filter][:status].present?
         if params[:filter][:status] == "enabled"
@@ -28,18 +28,24 @@ module Api::V1::Concerns::DepartmentControllerHelper
       elsif params[:filter][:end_date].present?
         departments = departments.where('created_at <= ?', params[:filter][:end_date])
       end
-      departments = departments.order(created_at: :desc)
-      departments = departments.page(params[:page]).per(params[:per_page] || 20)
     end
     
-    render json: {
-      departments: ActiveModelSerializers::SerializableResource.new(departments, each_serializer: department_serializer_class).as_json,
-      meta: {
-        total_count: departments.total_count,
-        total_pages: departments.total_pages,
-        current_page: departments.current_page
+    # Apply pagination if page params are present
+    if params[:page].present?
+      departments = departments.page(params[:page]).per(params[:per_page] || 20)
+      
+      render json: {
+        departments: departments.as_json,
+        meta: {
+          total_count: departments.total_count,
+          total_pages: departments.total_pages,
+          current_page: departments.current_page,
+          per_page: departments.limit_value
+        }
       }
-    }
+    else
+      render json: departments.as_json, status: :ok
+    end
   end
 
   # GET /departments/active
