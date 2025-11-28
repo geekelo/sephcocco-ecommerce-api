@@ -13,7 +13,8 @@ class Restaurant::SephcoccoRestaurantProductSerializer < ActiveModel::Serializer
               :other_image_urls,
               :visible,
               :barcode,
-              :categories,          
+              :categories,
+              :department,          
               :created_at,
               :updated_at
 
@@ -37,5 +38,13 @@ class Restaurant::SephcoccoRestaurantProductSerializer < ActiveModel::Serializer
     user = scope
     return false unless user
     object&.sephcocco_restaurant_product_likes&.exists?(sephcocco_user_id: user.id)
+  end
+
+  def department
+    return nil unless object.sephcocco_restaurant_department.present?
+    {
+      id: object.sephcocco_restaurant_department.id,
+      name: object.sephcocco_restaurant_department.name
+    }
   end
 end

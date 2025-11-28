@@ -10,12 +10,21 @@ class Restaurant::Admin::SephcoccoRestaurantProductSerializer < ActiveModel::Ser
               :likes,
               :liked_by_user,
               :discount_price,
+              :department,
               :visible,
               :price,
               :categories,
               :created_at,
               :updated_at,
-              
+
+  def department
+    return nil unless object.sephcocco_restaurant_department.present?
+    {
+      id: object.sephcocco_restaurant_department.id,
+      name: object.sephcocco_restaurant_department.name
+    }
+  end
+
   def categories
     object.sephcocco_restaurant_product_categories.map do |category|
       Restaurant::Admin::SephcoccoRestaurantProductCategorySerializer.new(category)

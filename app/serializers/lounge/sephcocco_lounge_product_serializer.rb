@@ -13,6 +13,7 @@ class Lounge::SephcoccoLoungeProductSerializer < ActiveModel::Serializer
               :other_image_urls,
               :visible,
               :barcode,
+              :department,
               :categories,
               :created_at,
               :updated_at
@@ -37,5 +38,13 @@ class Lounge::SephcoccoLoungeProductSerializer < ActiveModel::Serializer
     user = scope
     return false unless user
     object&.sephcocco_lounge_product_likes&.exists?(sephcocco_user_id: user.id)
+  end
+
+  def department
+    return nil unless object.sephcocco_lounge_department.present?
+    {
+      id: object.sephcocco_lounge_department.id,
+      name: object.sephcocco_lounge_department.name
+    }
   end
 end
