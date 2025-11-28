@@ -5,8 +5,8 @@ class Api::V1::SephcoccoUsersController < ApplicationController
 
   def index
     if current_user.sephcocco_user_role.name == "admin"
-      @users = SephcoccoUser.excludes(deleted_at: nil)
-      
+      @users = SephcoccoUser.where.not(deleted_at: nil)
+
       # Calculate summary statistics
       total_admins = SephcoccoUser.joins(:sephcocco_user_role).where(sephcocco_user_roles: { name: "admin" }).count
       total_customers = SephcoccoUser.joins(:sephcocco_user_role).where(sephcocco_user_roles: { name: "user" }).count
