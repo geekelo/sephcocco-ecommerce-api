@@ -5,16 +5,16 @@ class Api::V1::SephcoccoUsersController < ApplicationController
 
   def index
     if current_user.sephcocco_user_role.name == "admin"
-      @users = SephcoccoUser.where.not(deleted_at: nil)
-      
-      # Calculate summary statistics
-      total_admins = SephcoccoUser.joins(:sephcocco_user_role).where(sephcocco_user_roles: { name: "admin" }).count
-      total_customers = SephcoccoUser.joins(:sephcocco_user_role).where(sephcocco_user_roles: { name: "user" }).count
-      total_riders = SephcoccoUser.joins(:sephcocco_user_role).where(sephcocco_user_roles: { name: "rider" }).count
-      total_users = SephcoccoUser.count
-      total_active_accounts = SephcoccoUser.where(suspended: false).count
-      total_inactive_accounts = SephcoccoUser.where(suspended: true).count
-      total_suspended = SephcoccoUser.where(suspended: true).count
+      @users = SephcoccoUser.where(deleted_at: nil)
+
+      # Calculate summary statistics (excluding deleted users)
+      total_admins = SephcoccoUser.where(deleted_at: nil).joins(:sephcocco_user_role).where(sephcocco_user_roles: { name: "admin" }).count
+      total_customers = SephcoccoUser.where(deleted_at: nil).joins(:sephcocco_user_role).where(sephcocco_user_roles: { name: "user" }).count
+      total_riders = SephcoccoUser.where(deleted_at: nil).joins(:sephcocco_user_role).where(sephcocco_user_roles: { name: "rider" }).count
+      total_users = SephcoccoUser.where(deleted_at: nil).count
+      total_active_accounts = SephcoccoUser.where(deleted_at: nil, suspended: false).count
+      total_inactive_accounts = SephcoccoUser.where(deleted_at: nil, suspended: true).count
+      total_suspended = SephcoccoUser.where(deleted_at: nil, suspended: true).count
       
         # filter by name
         if params[:filter].present?
