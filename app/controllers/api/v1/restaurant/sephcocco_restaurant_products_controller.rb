@@ -50,10 +50,6 @@ class Api::V1::Restaurant::SephcoccoRestaurantProductsController < ApplicationCo
     "restaurant"
   end
 
-  def admin_notification_class
-    Restaurant::SephcoccoRestaurantAdminNotification
-  end
-
   def product_params
     params.require(:product).permit(
       :name,
@@ -61,6 +57,7 @@ class Api::V1::Restaurant::SephcoccoRestaurantProductsController < ApplicationCo
       :long_description,
       :main_image_url,
       :amount_in_stock,
+      :discount_price,
       :price,
       :visible,
       :barcode,
