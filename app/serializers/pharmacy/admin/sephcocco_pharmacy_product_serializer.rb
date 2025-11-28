@@ -13,6 +13,7 @@ class Pharmacy::Admin::SephcoccoPharmacyProductSerializer < ActiveModel::Seriali
               :other_image_urls,
               :barcode,
               :categories,
+              :department,
               :created_at,
               :updated_at,
 
@@ -30,5 +31,13 @@ class Pharmacy::Admin::SephcoccoPharmacyProductSerializer < ActiveModel::Seriali
 
   def out_of_stock_status
     object.amount_in_stock <= 0
+  end
+
+  def department
+    return nil unless object.sephcocco_pharmacy_department.present?
+    {
+      id: object.sephcocco_pharmacy_department.id,
+      name: object.sephcocco_pharmacy_department.name
+    }
   end
 end

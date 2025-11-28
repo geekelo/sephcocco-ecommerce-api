@@ -12,7 +12,8 @@ class Pharmacy::SephcoccoPharmacyProductSerializer < ActiveModel::Serializer
               :main_image_url,
               :other_image_urls,
               :visible,
-              :barcode,
+              :barcode,   
+              :department,
               :categories,
               :created_at,
               :updated_at
@@ -37,5 +38,13 @@ class Pharmacy::SephcoccoPharmacyProductSerializer < ActiveModel::Serializer
     user = scope
     return false unless user
     object&.sephcocco_pharmacy_product_likes&.exists?(sephcocco_user_id: user.id)
+  end
+
+  def department
+    return nil unless object.sephcocco_pharmacy_department.present?
+    {
+      id: object.sephcocco_pharmacy_department.id,
+      name: object.sephcocco_pharmacy_department.name
+    }
   end
 end
