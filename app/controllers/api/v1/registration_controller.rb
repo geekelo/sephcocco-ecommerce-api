@@ -114,7 +114,7 @@ class Api::V1::RegistrationController < ApplicationController
   def email_already_exists?
     existing_user = SephcoccoUser.find_by(email: params[:user][:email])
     existing_user.present? && existing_user.deleted_at.blank?
-  end
+  end 
 
   def restore_user(user)
     user.update(deleted_at: nil)
