@@ -29,13 +29,18 @@ class Api::V1::RegistrationController < ApplicationController
           # Map outlet names to their records
           outlets = SephcoccoOutlet.where(name: user_params[:outlets])
 
-          # Associate only if found
-          user.sephcocco_outlets << outlets if outlets&.any?
+          # Associate only if found, avoiding duplicates
+          if outlets&.any?
+            user.sephcocco_outlets |= outlets
+          end
         end
 
         if user_params[:subroles].present?
           subroles = SephcoccoUserSubrole.where(name: user_params[:subroles])
-          user.sephcocco_user_subroles << subroles if subroles&.any?
+          # Associate only if found, avoiding duplicates
+          if subroles&.any?
+            user.sephcocco_user_subroles |= subroles
+          end
         end
 
         if user.sephcocco_user_role.name == "admin" 
