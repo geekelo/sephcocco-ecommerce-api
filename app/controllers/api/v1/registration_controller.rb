@@ -15,10 +15,12 @@ class Api::V1::RegistrationController < ApplicationController
         sephcocco_user_role_id: user_role_id || SephcoccoUserRole.find_by(name: "user")&.id # Default to 'user' role if not specified
       )
 
-      if SephcoccoUser.find_by(email: params[:user][:email]).deleted_at.present?
-        user = SephcoccoUser.find_by(email: params[:user][:email])
-        restore_user(user)
-        user.update(extracted_user_params.merge(email_confirmed: true, suspended: false))
+
+      existing_user = SephcoccoUser.find_by(email: params[:user][:email])
+      if existing_user&.deleted_at.present?
+        restore_user(existing_user)
+        existing_user.update(extracted_user_params.merge(email_confirmed: true, suspended: false))
+        user = existing_user
       else
         user = SephcoccoUser.new(extracted_user_params)
       end
