@@ -5,12 +5,6 @@ class Api::V1::AuthenticationController < ApplicationController
     if user && user.authenticate(params[:user][:password] || "1234567")
       if user.deleted_at.present?
         return render json: { error: "Your account is deleted. Please contact support." }, status: :forbidden
-      elsif user.email_confirmed?
-        return render json: { error: "Your email is not confirmed. Please check your email for confirmation." }, status: :forbidden
-      elsif user.email_confirmation_sent_at.present? && user.email_confirmation_sent_at < 2.hours.ago
-        return render json: { error: "Your email confirmation link has expired. Please request a new one." }, status: :forbidden
-      elsif user.email_confirmation_sent_at.present? && user.email_confirmation_sent_at > 2.hours.ago
-        return render json: { error: "Your email confirmation link has expired. Please request a new one." }, status: :forbidden
       elsif user.suspended?
         return render json: { error: "Your account is suspended. Please contact support." }, status: :forbidden
       end
