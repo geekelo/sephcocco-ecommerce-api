@@ -189,9 +189,13 @@ class Api::V1::SephcoccoUsersController < ApplicationController
       render json: { error: "User not found" }, status: :unprocessable_entity
       return
     end
-    user.generate_email_confirmation_token!
-    UserMailer.email_confirmation(user).deliver_now
-    render json: { message: "Email confirmation token requested successfully" }, status: :ok
+    generated_token =user.generate_email_confirmation_token!
+    if generated_token.present?
+      UserMailer.email_confirmation(user).deliver_now
+      render json: { message: "Email confirmation token requested successfully" }, status: :ok
+    else
+      render json: { error: "Failed to generate email confirmation token" }, status: :unprocessable_entity
+    end
   end
 
   def confirm_email
