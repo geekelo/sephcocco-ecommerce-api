@@ -11,7 +11,17 @@ class Restaurant::User::SephcoccoRestaurantPaymentSerializer < ActiveModel::Seri
               :delivery_location
 
   attribute :paid_orders
+  attribute :orders_details
 
+  def orders_details
+    object.sephcocco_restaurant_orders.map do |order|
+      {
+        id: order.id,
+        order_number: order.order_number,
+        status: order.status,
+      }
+    end
+  end
   def paid_orders
     return [] unless object.orders.is_a?(Array)
     

@@ -12,6 +12,8 @@ class Pharmacy::Admin::SephcoccoPharmacyPaymentSerializer < ActiveModel::Seriali
                :delivery_location
 
   attribute :paid_orders
+  attribute :orders_details
+
 
   def orders_details
     object.sephcocco_pharmacy_orders.map do |order|
