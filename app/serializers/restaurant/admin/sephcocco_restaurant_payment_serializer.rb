@@ -7,10 +7,33 @@ class Restaurant::Admin::SephcoccoRestaurantPaymentSerializer < ActiveModel::Ser
                :updated_at,
                :transaction_id,
                :orders,
+               :orders_details,
                :payment_method,
                :delivery_location
 
   attribute :paid_orders
+
+
+  def orders_details
+    object.sephcocco_restaurant_orders.map do |order|
+      {
+        id: order.id,
+        order_number: order.order_number,
+        status: order.status,
+        total_price: order.total_price,
+        quantity: order.quantity,
+        unit_price: order.unit_price,
+        total_cost: order.total_cost,
+        created_at: order.created_at,
+        product: {
+          id: order.sephcocco_restaurant_product.id,
+          name: order.sephcocco_restaurant_product.name,
+          main_image_url: order.sephcocco_restaurant_product.main_image_url,
+          unit_price: order.sephcocco_restaurant_product.unit_price,
+        },
+      }
+    end
+  end
 
   def paid_orders
     return [] unless object.orders.is_a?(Array)
