@@ -11,35 +11,7 @@ class Lounge::User::SephcoccoLoungePaymentSerializer < ActiveModel::Serializer
              :delivery_location
 
   attribute :paid_orders
-  attribute :orders_details
   
-  def orders_details
-    return [] unless object.orders.is_a?(Array)
-    
-    object.orders.map do |order_id|
-      begin
-        order = Lounge::SephcoccoLoungeOrder.find(order_id)
-        {
-          id: order.id,
-          order_number: order.order_number,
-          status: order.status,
-          total_price: order.total_price,
-          quantity: order.quantity,
-          unit_price: order.unit_price,
-          total_cost: order.total_cost,
-          created_at: order.created_at,
-          product: {
-            id: order.sephcocco_lounge_product.id,
-            name: order.sephcocco_lounge_product.name,
-            main_image_url: order.sephcocco_lounge_product.main_image_url,
-            unit_price: order.sephcocco_lounge_product.unit_price,
-          },
-        }
-      rescue ActiveRecord::RecordNotFound
-        { id: order_id, error: "Order not found" }
-      end
-    end
-  end
   def paid_orders
     return [] unless object.orders.is_a?(Array)
     
@@ -50,6 +22,9 @@ class Lounge::User::SephcoccoLoungePaymentSerializer < ActiveModel::Serializer
           id: order.id,
           order_number: order.order_number,
           status: order.status,
+          quantity: order.quantity,
+          unit_price: order.unit_price,
+          total_cost: order.total_cost,
           total_price: order.total_price,
           created_at: order.created_at,
           product: {
