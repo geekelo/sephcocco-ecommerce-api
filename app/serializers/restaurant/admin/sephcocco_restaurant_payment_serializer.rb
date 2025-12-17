@@ -54,6 +54,9 @@ class Restaurant::Admin::SephcoccoRestaurantPaymentSerializer < ActiveModel::Ser
           status: order.status,
           total_price: order.total_price,
           created_at: order.created_at,
+          quantity: order.quantity,
+          unit_price: order.unit_price,
+          total_cost: order.total_cost,
           product: {
             id: order.sephcocco_restaurant_product.id,
             name: order.sephcocco_restaurant_product.name,

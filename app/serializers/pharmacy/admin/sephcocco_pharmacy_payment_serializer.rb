@@ -55,6 +55,9 @@ class Pharmacy::Admin::SephcoccoPharmacyPaymentSerializer < ActiveModel::Seriali
           status: order.status,
           total_price: order.total_price,
           created_at: order.created_at,
+          quantity: order.quantity,
+          unit_price: order.unit_price,
+          total_cost: order.total_cost,
           product: Pharmacy::Admin::SephcoccoPharmacyProductSerializer.new(order.sephcocco_pharmacy_product).as_json,
           customer: {
             id: order.sephcocco_user.id,
