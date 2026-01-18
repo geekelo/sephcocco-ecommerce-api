@@ -130,4 +130,8 @@ module Api::V1::Concerns::DepartmentControllerHelper
   def department_param_key
     raise NotImplementedError, "You must implement the department_param_key method"
   end
+
+  def department_serializer_class
+    raise NotImplementedError, "You must implement the department_serializer_class method"
+  end
 end

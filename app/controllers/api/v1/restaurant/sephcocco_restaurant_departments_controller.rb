@@ -10,4 +10,8 @@ class Api::V1::Restaurant::SephcoccoRestaurantDepartmentsController < Applicatio
   def department_param_key
     :sephcocco_restaurant_department
   end
+
+  def department_serializer_class
+    Restaurant::SephcoccoRestaurantDepartmentSerializer
+  end
 end

@@ -10,4 +10,8 @@ class Api::V1::Pharmacy::SephcoccoPharmacyDepartmentsController < ApplicationCon
   def department_param_key
     :sephcocco_pharmacy_department
   end
+
+  def department_serializer_class
+    Pharmacy::SephcoccoPharmacyDepartmentSerializer
+  end
 end

@@ -10,4 +10,8 @@ class Api::V1::Lounge::SephcoccoLoungeDepartmentsController < ApplicationControl
   def department_param_key
     :sephcocco_lounge_department
   end
+
+  def department_serializer_class
+    Lounge::SephcoccoLoungeDepartmentSerializer
+  end
 end
