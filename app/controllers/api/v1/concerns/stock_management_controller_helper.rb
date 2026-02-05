@@ -3,9 +3,9 @@ module Api::V1::Concerns::StockManagementControllerHelper
   extend ActiveSupport::Concern
 
   included do
-    before_action :authenticate_user!, only: [:index, :create, :show, :update, :destroy]
+    before_action :authenticate_user!, only: [:index, :create, :show, :update, :destroy, :verify_stock_management]
     before_action :set_stock_management, only: [:show, :update, :destroy]
-    before_action :check_admin_role, only: [:index, :create, :update, :destroy]
+    before_action :check_admin_role, only: [:index, :create, :update, :destroy, :verify_stock_management]
   end
 
   def index
