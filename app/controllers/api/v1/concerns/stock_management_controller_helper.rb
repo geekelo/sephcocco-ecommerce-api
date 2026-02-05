@@ -196,6 +196,70 @@ module Api::V1::Concerns::StockManagementControllerHelper
     end
   end
 
+
+  def verify_stock_management
+    stock_management_ids = params[:stock_management_ids]
+  
+    ActiveRecord::Base.transaction do
+      stock_management_ids.each do |stock_management_id|
+        stock_management = stock_management_class.find(stock_management_id)
+  
+        if params[:status] == "declined"
+          stock_management.update!(status: "declined")
+  
+          description = "Stock Management Declined: #{stock_management.invoice_number}"
+  
+        elsif params[:status] == "approved"
+          product = product_class.find(
+            stock_management.send(:"sephcocco_#{outlet}_product_id")
+          )
+  
+          # Handle both hash and array formats for stock
+          raw_stock = stock_management.stock
+          add_stock = case raw_stock
+                      when Array
+                        raw_stock.sum { |entry| entry['add_stock'].to_i }
+                      when Hash
+                        raw_stock&.dig("add_stock")
+                      else
+                        nil
+                      end
+          new_price = stock_management.price&.dig("new_price")
+  
+          if add_stock.present? && add_stock.to_i > 0
+            updated_stock = product.amount_in_stock + add_stock.to_i
+            product.update!(amount_in_stock: updated_stock)
+          end
+  
+          # (Optional) update price if needed
+          if new_price.present?
+            product.update!(price: new_price)
+          end
+  
+          stock_management.update!(status: "approved")
+  
+          description = "Stock Management Approved: #{stock_management.invoice_number}"
+        else
+          raise ActiveRecord::RecordInvalid.new(stock_management)
+        end
+  
+        AdminActivities::CreateService.new(
+          user: current_user,
+          activity_type: "update",
+          activity_name: "Stock Management",
+          activity_description: description,
+          outlet: outlet
+        ).call
+      end
+    end
+  
+    render json: { message: "Stock management records updated successfully" }, status: :ok
+  
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { errors: e.record.errors.full_messages }, status: :unprocessable_entity
+  end  
+  
+
   private
 
   def set_stock_management

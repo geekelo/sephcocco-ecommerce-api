@@ -111,7 +111,11 @@ Rails.application.routes.draw do
             get :overview_performance
           end
         end
-        resources :sephcocco_lounge_stock_managements
+        resources :sephcocco_lounge_stock_managements do
+          collection do
+            post :verify_stock_management
+          end
+        end
         resources :sephcocco_lounge_departments do
           collection do
             get :get_active
@@ -187,7 +191,11 @@ Rails.application.routes.draw do
             get :overview_performance
           end
         end
-        resources :sephcocco_pharmacy_stock_managements
+        resources :sephcocco_pharmacy_stock_managements do
+          collection do
+            post :verify_stock_management
+          end
+        end
         resources :sephcocco_pharmacy_departments do
           collection do
             get :get_active
@@ -264,7 +272,11 @@ Rails.application.routes.draw do
             get :overview_performance
           end
         end
-        resources :sephcocco_restaurant_stock_managements
+        resources :sephcocco_restaurant_stock_managements do
+          collection do
+            post :verify_stock_management
+          end
+        end
         resources :sephcocco_restaurant_departments do
           collection do
             get :get_active
