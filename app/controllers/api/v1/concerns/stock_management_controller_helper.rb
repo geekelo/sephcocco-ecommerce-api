@@ -3,9 +3,9 @@ module Api::V1::Concerns::StockManagementControllerHelper
   extend ActiveSupport::Concern
 
   included do
-    before_action :authenticate_user!, only: [:index, :create, :show, :update, :destroy, :verify_stock_management]
+    before_action :authenticate_user!, only: [:index, :create, :show, :update, :destroy, :verify_stock_management, :bulk_create]
     before_action :set_stock_management, only: [:show, :update, :destroy]
-    before_action :check_admin_role, only: [:index, :create, :update, :destroy, :verify_stock_management]
+    before_action :check_admin_role, only: [:index, :create, :update, :destroy, :verify_stock_management, :bulk_create]
   end
 
   def index
@@ -196,6 +196,75 @@ module Api::V1::Concerns::StockManagementControllerHelper
     end
   end
 
+  def bulk_create
+    # Accept either top-level :stock_managements or nested under the standard param key
+    records = params[:stock_managements] ||
+              params.dig(stock_management_param_key, :stock_managements)
+  
+    return render json: { error: "stock_managements array required" }, status: :unprocessable_entity if records.blank?
+  
+    created = []
+  
+    ActiveRecord::Base.transaction do
+      records.each do |item|
+        # Ensure we are working with a plain, unsafe hash (not ActionController::Parameters)
+        raw_hash =
+          if item.respond_to?(:to_unsafe_h)
+            item.to_unsafe_h
+          else
+            item
+          end
+
+        # Normalize keys to symbols for internal processing
+        item_hash = raw_hash.deep_symbolize_keys
+
+        product_id = item_hash[:"sephcocco_#{outlet}_product_id"]
+        raise ActiveRecord::RecordInvalid, "Product ID missing" if product_id.blank?
+  
+        product = product_class.find(product_id)
+  
+        add_stock = item_hash.dig(:stock, :add_stock)
+        cost_price = item_hash.dig(:price, :cost_price)
+        profit_markup = item_hash.dig(:price, :profit_markup)
+  
+        raise ActiveRecord::RecordInvalid, "add_stock required" if add_stock.blank?
+        raise ActiveRecord::RecordInvalid, "cost_price & profit_markup required" if cost_price.blank? || profit_markup.blank?
+  
+        old_stock = product.amount_in_stock
+        old_price = product.price
+  
+        item_hash[:stock] ||= {}
+        item_hash[:price] ||= {}
+  
+        item_hash[:stock][:old_stock] = old_stock
+        item_hash[:stock][:new_stock] = old_stock + add_stock.to_i
+  
+        item_hash[:price][:old_price] = old_price
+        item_hash[:price][:new_price] = cost_price.to_f + profit_markup.to_f
+  
+        stock_management = stock_management_class.create!(item_hash)
+  
+        AdminActivities::CreateService.new(
+          user: current_user,
+          activity_type: "create",
+          activity_name: "Stock Management",
+          activity_description: "Stock Management Created: #{stock_management.invoice_number}",
+          outlet: outlet
+        ).call
+  
+        created << stock_management
+      end
+    end
+  
+    render json: created, each_serializer: stock_management_serializer, status: :created
+  
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Product not found" }, status: :not_found
+  
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+  
 
   def verify_stock_management
     stock_management_ids = params[:stock_management_ids]
