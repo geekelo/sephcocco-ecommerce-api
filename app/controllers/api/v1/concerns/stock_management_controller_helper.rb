@@ -197,7 +197,9 @@ module Api::V1::Concerns::StockManagementControllerHelper
   end
 
   def bulk_create
-    records = params[:stock_managements]
+    # Accept either top-level :stock_managements or nested under the standard param key
+    records = params[:stock_managements] ||
+              params.dig(stock_management_param_key, :stock_managements)
   
     return render json: { error: "stock_managements array required" }, status: :unprocessable_entity if records.blank?
   
@@ -205,14 +207,25 @@ module Api::V1::Concerns::StockManagementControllerHelper
   
     ActiveRecord::Base.transaction do
       records.each do |item|
-        product_id = item[:"sephcocco_#{outlet}_product_id"]
+        # Ensure we are working with a plain, unsafe hash (not ActionController::Parameters)
+        raw_hash =
+          if item.respond_to?(:to_unsafe_h)
+            item.to_unsafe_h
+          else
+            item
+          end
+
+        # Normalize keys to symbols for internal processing
+        item_hash = raw_hash.deep_symbolize_keys
+
+        product_id = item_hash[:"sephcocco_#{outlet}_product_id"]
         raise ActiveRecord::RecordInvalid, "Product ID missing" if product_id.blank?
   
         product = product_class.find(product_id)
   
-        add_stock = item.dig(:stock, :add_stock)
-        cost_price = item.dig(:price, :cost_price)
-        profit_markup = item.dig(:price, :profit_markup)
+        add_stock = item_hash.dig(:stock, :add_stock)
+        cost_price = item_hash.dig(:price, :cost_price)
+        profit_markup = item_hash.dig(:price, :profit_markup)
   
         raise ActiveRecord::RecordInvalid, "add_stock required" if add_stock.blank?
         raise ActiveRecord::RecordInvalid, "cost_price & profit_markup required" if cost_price.blank? || profit_markup.blank?
@@ -220,16 +233,16 @@ module Api::V1::Concerns::StockManagementControllerHelper
         old_stock = product.amount_in_stock
         old_price = product.price
   
-        item[:stock] ||= {}
-        item[:price] ||= {}
+        item_hash[:stock] ||= {}
+        item_hash[:price] ||= {}
   
-        item[:stock][:old_stock] = old_stock
-        item[:stock][:new_stock] = old_stock + add_stock.to_i
+        item_hash[:stock][:old_stock] = old_stock
+        item_hash[:stock][:new_stock] = old_stock + add_stock.to_i
   
-        item[:price][:old_price] = old_price
-        item[:price][:new_price] = cost_price.to_f + profit_markup.to_f
+        item_hash[:price][:old_price] = old_price
+        item_hash[:price][:new_price] = cost_price.to_f + profit_markup.to_f
   
-        stock_management = stock_management_class.create!(item)
+        stock_management = stock_management_class.create!(item_hash)
   
         AdminActivities::CreateService.new(
           user: current_user,
