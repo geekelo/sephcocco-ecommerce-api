@@ -114,6 +114,7 @@ Rails.application.routes.draw do
         resources :sephcocco_lounge_stock_managements do
           collection do
             post :verify_stock_management
+            post :bulk_create
           end
         end
         resources :sephcocco_lounge_departments do
@@ -194,6 +195,7 @@ Rails.application.routes.draw do
         resources :sephcocco_pharmacy_stock_managements do
           collection do
             post :verify_stock_management
+            post :bulk_create
           end
         end
         resources :sephcocco_pharmacy_departments do
@@ -275,6 +277,7 @@ Rails.application.routes.draw do
         resources :sephcocco_restaurant_stock_managements do
           collection do
             post :verify_stock_management
+            post :bulk_create
           end
         end
         resources :sephcocco_restaurant_departments do
