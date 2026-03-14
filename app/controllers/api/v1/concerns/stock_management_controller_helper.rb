@@ -275,6 +275,9 @@ module Api::V1::Concerns::StockManagementControllerHelper
   
         if params[:status] == "declined"
           stock_management.update!(status: "declined")
+          # delete the stock management
+          stock_management.destroy
+
   
           description = "Stock Management Declined: #{stock_management.invoice_number}"
   
