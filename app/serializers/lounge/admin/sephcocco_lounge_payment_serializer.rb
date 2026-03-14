@@ -27,11 +27,7 @@ class Lounge::Admin::SephcoccoLoungePaymentSerializer < ActiveModel::Serializer
           quantity: order.quantity,
           unit_price: order.unit_price,
           total_cost: order.total_cost,
-          product: {
-            id: order.sephcocco_lounge_product.id,
-            name: order.sephcocco_lounge_product.name,
-            main_image_url: order.sephcocco_lounge_product.main_image_url,
-          },
+          product: Lounge::Admin::SephcoccoLoungeProductSerializer.new(order.sephcocco_lounge_product).as_json,
           customer: {
             id: order.sephcocco_user.id,
             name: order.sephcocco_user.name,
