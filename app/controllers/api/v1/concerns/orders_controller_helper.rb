@@ -202,6 +202,14 @@ module Api::V1::Concerns::OrdersControllerHelper
           payment = payment_class.find_by(id: @order.payment_id)
           payment.update(amount: payment.amount - @order.total_price)
           payment.save!
+
+          # update the product stock
+          product = product_class.find(@order.send(:"sephcocco_#{outlet.name.downcase}_product_id"))
+          product.update!(amount_in_stock: product.amount_in_stock + @order.quantity)
+          product.save!
+
+          # notify customer about the order refund via email
+          OrderMailer.with(order: @order).order_refunded_email.deliver_now
         end
       end
 
@@ -210,13 +218,12 @@ module Api::V1::Concerns::OrdersControllerHelper
           user: current_user,
           activity_type: "update",
           activity_name: "Order",
-          activity_description: "Order Updated: #{@order.order_number}",
+          activity_description: "Order Status Updated: #{@order.order_number} to #{@order.status}",
           outlet: outlet
         ).call
-        render json: @order, each_serializer: order_serializer_class
-      else
-        render json: @order, each_serializer: order_serializer_class
       end
+
+      render json: @order, each_serializer: order_serializer_class
     else
       render json: @order.errors, status: :unprocessable_entity
     end
