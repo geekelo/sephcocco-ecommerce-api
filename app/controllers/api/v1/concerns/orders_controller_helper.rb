@@ -9,7 +9,8 @@ module Api::V1::Concerns::OrdersControllerHelper
   end
 
   def index
-    if admin?
+    # if admin and not waiters
+    if admin? && current_user.sephcocco_user_subrole.name != "waiters"
       orders = order_class.all
       if params[:filter]
         if params[:filter][:status].present?
