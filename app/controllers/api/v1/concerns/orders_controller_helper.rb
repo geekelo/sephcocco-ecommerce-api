@@ -121,7 +121,7 @@ module Api::V1::Concerns::OrdersControllerHelper
       return render json: { error: "Product is out of stock, available stock is #{amount_in_stock}" }, status: :unprocessable_entity
     end
 
-    unit_price = params[:unit_price] || product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"]).price
+    unit_price = product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"]).price
     if admin?
       order = @customer.send(order_association).new(order_params.merge(unit_price: unit_price))
     else
@@ -377,6 +377,42 @@ module Api::V1::Concerns::OrdersControllerHelper
           current_page: orders.current_page
         }
       }
+    end
+  end
+
+  # Admin order creation
+  def admin_order_creation
+    if admin?
+      @customer = SephcoccoUser.find_by(id: order_params[:sephcocco_user_id])
+      if @customer.nil?
+        return render json: { error: "Customer not found" }, status: :unprocessable_entity
+      end
+    end
+
+    # check if product is out of stock
+    amount_in_stock = product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"]).amount_in_stock
+    if amount_in_stock == 0 || amount_in_stock < order_params[:quantity]
+      return render json: { error: "Product is out of stock, available stock is #{amount_in_stock}" }, status: :unprocessable_entity
+    end
+
+    unit_price = product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"]).price
+    order = @customer.send(order_association).new(order_params.merge(unit_price: unit_price))
+    order.set_order_total(unit_price, order_params[:quantity])
+
+    if order&.save
+      if admin?
+        AdminNotifications::CreateService.new(
+          action_type: "order",
+          action_id: order.id,
+          user: current_user,
+          notification_class: admin_notification_class,
+          outlet: outlet,
+        ).call
+      end
+
+      render json: order, status: :created
+    else
+      render json: order&.errors || { error: "Invalid customer" }, status: :unprocessable_entity
     end
   end
 
