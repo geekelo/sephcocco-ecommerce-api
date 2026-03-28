@@ -3,9 +3,9 @@ module Api::V1::Concerns::OrdersControllerHelper
   extend ActiveSupport::Concern
 
   included do
-    before_action :authenticate_user!, only: [ :index, :create, :show, :update, :destroy, :paid_orders, :pending_orders, :completed_orders, :delivering_orders ]
-    before_action :set_order, only: [ :show, :update, :destroy, :user_order_update, :user_order_destroy ]
-    before_action :set_customer, only: [ :create ]
+    before_action :authenticate_user!, only: [ :index, :create, :show, :update, :destroy, :paid_orders, :pending_orders, :completed_orders, :delivering_orders, :admin_order_creation ]
+    before_action :set_order, only: [ :show, :update, :destroy, :user_order_update, :user_order_destroy, :admin_order_creation ]
+    before_action :set_customer, only: [ :create, :admin_order_creation ]
   end
 
   def index
@@ -116,13 +116,15 @@ module Api::V1::Concerns::OrdersControllerHelper
       return render json: { error: "You already have a pending order for this product", message: "You already have a pending order for this product" }, status: :unprocessable_entity
     end
 
+    product = product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"])
+
     # check if product is out of stock
-    amount_in_stock = product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"]).amount_in_stock
+    amount_in_stock = product.amount_in_stock
     if amount_in_stock == 0 || amount_in_stock < order_params[:quantity]
       return render json: { error: "Product is out of stock, available stock is #{amount_in_stock}" }, status: :unprocessable_entity
     end
 
-    unit_price = product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"]).price
+    unit_price = product.price
     if admin?
       order = @customer.send(order_association).new(order_params.merge(unit_price: unit_price))
     else
@@ -144,9 +146,6 @@ module Api::V1::Concerns::OrdersControllerHelper
       end
 
       # like the product (only if not already liked)
-      product = product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"])
-    
-      
       # Create like only if it doesn't already exist
       existing_like = like_class.find_by(
         like_class.user_foreign_key => current_user.id, 
@@ -383,24 +382,26 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   # Admin order creation
   def admin_order_creation
-    if admin?
-      @customer = SephcoccoUser.find_by(id: order_params[:sephcocco_user_id])
-      if @customer.nil?
-        return render json: { error: "Customer not found" }, status: :unprocessable_entity
+    waiters_order_params[:products].each do |product|
+
+      current_product = product_class.find(product[:"sephcocco_#{outlet.name.downcase}_product_id"].to_i)
+      if current_product.nil?
+        return render json: { error: "Product not found" }, status: :unprocessable_entity
       end
-    end
+  
+      # check if product is out of stock
+      amount_in_stock = current_product.amount_in_stock
+      if amount_in_stock == 0 || amount_in_stock < product[:quantity].to_i
+        return render json: { error: "Product is out of stock, available stock is #{amount_in_stock}" }, status: :unprocessable_entity
+      end
+      
+      unit_price = current_product.price
+      order = current_user.send(order_association).new(unit_price: unit_price, quantity: product[:quantity].to_i, address: waiters_order_params[:address], additional_notes: waiters_order_params[:additional_notes])
+      order.set_order_total(unit_price, product[:quantity].to_i)
+      order.save!
+      current_product.increment!(:likes)
+      current_product.save!
 
-    # check if product is out of stock
-    amount_in_stock = product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"]).amount_in_stock
-    if amount_in_stock == 0 || amount_in_stock < order_params[:quantity]
-      return render json: { error: "Product is out of stock, available stock is #{amount_in_stock}" }, status: :unprocessable_entity
-    end
-
-    unit_price = product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"]).price
-    order = @customer.send(order_association).new(order_params.merge(unit_price: unit_price))
-    order.set_order_total(unit_price, order_params[:quantity])
-
-    if order&.save
       if admin?
         AdminNotifications::CreateService.new(
           action_type: "order",
@@ -410,11 +411,9 @@ module Api::V1::Concerns::OrdersControllerHelper
           outlet: outlet,
         ).call
       end
-
-      render json: order, status: :created
-    else
-      render json: order&.errors || { error: "Invalid customer" }, status: :unprocessable_entity
     end
+
+    render json: { message: "Orders created successfully" }, status: :created
   end
 
   private
