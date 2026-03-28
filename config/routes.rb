@@ -72,6 +72,7 @@ Rails.application.routes.draw do
             get "completed" => "sephcocco_lounge_orders#completed_orders"
             get "paid" => "sephcocco_lounge_orders#paid_orders"
             get "delivering" => "sephcocco_lounge_orders#delivering_orders"
+            post "admin_order_creation" => "sephcocco_lounge_orders#admin_order_creation"
           end
         end
         resources :sephcocco_lounge_payments do
@@ -152,6 +153,7 @@ Rails.application.routes.draw do
             get "completed" => "sephcocco_pharmacy_orders#completed_orders"
             get "paid" => "sephcocco_pharmacy_orders#paid_orders"
             get "delivering" => "sephcocco_pharmacy_orders#delivering_orders"
+            post "admin_order_creation" => "sephcocco_pharmacy_orders#admin_order_creation"
           end
         end
         resources :sephcocco_pharmacy_payments do
@@ -233,6 +235,7 @@ Rails.application.routes.draw do
             get "completed" => "sephcocco_restaurant_orders#completed_orders"
             get "paid" => "sephcocco_restaurant_orders#paid_orders"
             get "delivering" => "sephcocco_restaurant_orders#delivering_orders"
+            post "admin_order_creation" => "sephcocco_restaurant_orders#admin_order_creation"
           end
         end
 

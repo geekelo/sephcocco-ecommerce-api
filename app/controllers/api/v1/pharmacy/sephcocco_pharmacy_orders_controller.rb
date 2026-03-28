@@ -48,6 +48,17 @@ class Api::V1::Pharmacy::SephcoccoPharmacyOrdersController < ApplicationControll
     "sephcocco_Pharmacy"
   end
 
+  def waiters_order_params
+    params.require(:sephcocco_pharmacy_order).permit(
+      products: [
+        :sephcocco_pharmacy_product_id,
+        :quantity,
+      ],
+      :address,
+      :additional_notes
+    )
+  end
+
   def order_params
     if current_user&.sephcocco_user_role&.name == "admin"
       params.require(:sephcocco_pharmacy_order).permit(

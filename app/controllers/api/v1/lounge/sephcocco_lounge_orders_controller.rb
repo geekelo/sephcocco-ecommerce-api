@@ -48,6 +48,17 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
     "sephcocco_Lounge"
   end
 
+  def waiters_order_params
+    params.require(:sephcocco_lounge_order).permit(
+      products: [
+        :sephcocco_lounge_product_id,
+        :quantity,
+      ],
+      :address,
+      :additional_notes
+    )
+  end
+
   def order_params
     if current_user&.sephcocco_user_role&.name == "admin"
       params.require(:sephcocco_lounge_order).permit(
