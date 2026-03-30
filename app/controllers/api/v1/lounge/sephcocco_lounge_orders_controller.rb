@@ -50,12 +50,12 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
 
   def waiters_order_params
     params.require(:sephcocco_lounge_order).permit(
+      :address,
+      :additional_notes,
       products: [
         :sephcocco_lounge_product_id,
-        :quantity,
-      ],
-      :address,
-      :additional_notes
+        :quantity
+      ]
     )
   end
 
@@ -74,7 +74,7 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
         :address,
         :phone_number,
         :additional_notes,
-        stages: [],
+        stages: []
       )
     else
       params.require(:sephcocco_lounge_order).permit(

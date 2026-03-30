@@ -50,12 +50,12 @@ class Api::V1::Pharmacy::SephcoccoPharmacyOrdersController < ApplicationControll
 
   def waiters_order_params
     params.require(:sephcocco_pharmacy_order).permit(
+      :address,
+      :additional_notes,
       products: [
         :sephcocco_pharmacy_product_id,
-        :quantity,
-      ],
-      :address,
-      :additional_notes
+        :quantity
+      ]
     )
   end
 
