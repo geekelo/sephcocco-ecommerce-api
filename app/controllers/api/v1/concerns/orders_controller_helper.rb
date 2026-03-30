@@ -431,7 +431,7 @@ module Api::V1::Concerns::OrdersControllerHelper
     Rails.logger.info "set_customer - user_role: #{current_user&.sephcocco_user_role&.name}"
     Rails.logger.info "set_customer - admin?: #{admin?}"
     
-    if admin? && current_user.sephcocco_user_subrole.name != "waiters"
+    if admin? && current_user.sephcocco_user_subroles.pluck(:name).exclude?("waiters")
       # For admin users, get customer from order params
       customer_id = order_params[:sephcocco_user_id] || current_user.id
       if customer_id.blank?
