@@ -4,7 +4,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   included do
     before_action :authenticate_user!, only: [ :index, :create, :show, :update, :destroy, :paid_orders, :pending_orders, :completed_orders, :delivering_orders, :admin_order_creation ]
-    before_action :set_order, only: [ :show, :update, :destroy, :user_order_update, :user_order_destroy, :admin_order_creation ]
+    before_action :set_order, only: [ :show, :update, :destroy, :user_order_update, :user_order_destroy ]
     before_action :set_customer, only: [ :create, :admin_order_creation ]
   end
 
