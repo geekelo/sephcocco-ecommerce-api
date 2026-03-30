@@ -50,12 +50,12 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
 
   def waiters_order_params
     params.require(:sephcocco_restaurant_order).permit(
+      :address,
+      :additional_notes,
       products: [
         :sephcocco_restaurant_product_id,
-        :quantity,
-      ],
-      :address,
-      :additional_notes
+        :quantity
+      ]
     )
   end
 
