@@ -399,8 +399,8 @@ module Api::V1::Concerns::OrdersControllerHelper
       order = current_user.send(order_association).new(unit_price: unit_price, quantity: product[:quantity].to_i, address: waiters_order_params[:address], additional_notes: waiters_order_params[:additional_notes])
       order.set_order_total(unit_price, product[:quantity].to_i)
       order.save!
-      product.increment!(:likes)
-      product.save!
+      current_product.increment!(:likes)
+      current_product.save!
 
       if admin?
         AdminNotifications::CreateService.new(
