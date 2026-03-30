@@ -396,7 +396,7 @@ module Api::V1::Concerns::OrdersControllerHelper
       end
       
       unit_price = current_product.price
-      order = current_user.send(order_association).new(unit_price: unit_price, quantity: product[:quantity].to_i, address: waiters_order_params[:address], additional_notes: waiters_order_params[:additional_notes])
+      order = @current_user.send(order_association).new(unit_price: unit_price, quantity: product[:quantity].to_i, address: waiters_order_params[:address], additional_notes: waiters_order_params[:additional_notes])
       order.set_order_total(unit_price, product[:quantity].to_i)
       order.save!
       current_product.increment!(:likes)
@@ -433,7 +433,7 @@ module Api::V1::Concerns::OrdersControllerHelper
     
     if admin?
       # For admin users, get customer from order params
-      customer_id = order_params[:sephcocco_user_id]
+      customer_id = order_params[:sephcocco_user_id] || current_user.id
       if customer_id.blank?
         Rails.logger.error "Admin order creation: sephcocco_user_id is required"
         return
