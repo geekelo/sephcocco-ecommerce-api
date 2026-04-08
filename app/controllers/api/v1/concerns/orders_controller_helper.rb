@@ -405,6 +405,7 @@ module Api::V1::Concerns::OrdersControllerHelper
       end
 
       order = customer.send(order_association).new(
+        product_key => current_product.id,
         unit_price: unit_price,
         quantity: qty,
         address: waiters_order_params[:address],
