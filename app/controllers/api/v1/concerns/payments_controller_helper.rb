@@ -183,8 +183,11 @@ module Api::V1::Concerns::PaymentsControllerHelper
       payment = current_user.send(payment_association).new(payment_params_with_user)
       Rails.logger.info "Payment Create - Payment Errors: #{payment.errors.full_messages}" unless payment.valid?
       if payment.save
-        payment.update(delivery_location: { location: delivery_location.location, logistics_price: delivery_price })
-        payment.save!
+        # update the delivery location if it is present
+        if delivery_location.present?
+          payment.update(delivery_location: { location: delivery_location.location, logistics_price: delivery_price })
+          payment.save!
+        end
         AdminNotifications::CreateService.new(
           action_type: "payment",
           action_id: payment.id,
