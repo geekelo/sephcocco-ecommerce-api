@@ -135,7 +135,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
     Rails.logger.info "Payment Create - Order IDs: #{order_ids.inspect}"
     Rails.logger.info "Payment Create - Order Strings: #{order_strings.inspect}"
     Rails.logger.info "Payment Create - Actual Params: #{actual_payment_params.inspect}"
-    if current_user&.sephcocco_user_role&.name == "admin"
+    if current_user&.sephcocco_user_role&.name == "admin" && current_user.sephcocco_user_subroles.pluck(:name).exclude?("waiters")
       payment_params_hash = actual_payment_params.to_h
       payment = @customer&.send(payment_association)&.new(payment_params_hash) || payment_class.new(payment_params_hash)
       if payment.save
@@ -441,17 +441,17 @@ module Api::V1::Concerns::PaymentsControllerHelper
   end
 
   def set_customer
-    if current_user&.sephcocco_user_role&.name == "admin"
+    if current_user&.sephcocco_user_role&.name == "admin" && current_user.sephcocco_user_subroles.pluck(:name).exclude?("waiters")
       # For admin users, get customer from payment params
       customer_id = payment_params[:sephcocco_user_id]
       if customer_id.blank?
         Rails.logger.error "Admin payment creation: sephcocco_user_id is required"
-        return
+        render json: { error: "sephcocco_user_id is required" }, status: :unprocessable_entity and return
       end
       @customer = SephcoccoUser.find_by(id: customer_id)
       if @customer.nil?
         Rails.logger.error "Admin payment creation: Customer not found with ID #{customer_id}"
-        return
+        render json: { error: "Customer not found" }, status: :not_found and return
       end
     else
       # For regular users, they are the customer
