@@ -10,7 +10,8 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def index
     # if admin and not waiters
-    if admin? && current_user.sephcocco_user_subrole.name != "waiters"
+    is_waiter = current_user&.sephcocco_user_subroles&.exists?(name: "waiters")
+    if admin? && !is_waiter
       orders = order_class.all
       if params[:filter]
         if params[:filter][:status].present?
