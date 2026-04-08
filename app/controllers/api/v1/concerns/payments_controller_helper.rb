@@ -114,13 +114,14 @@ module Api::V1::Concerns::PaymentsControllerHelper
     end
 
     # check if delivery location is present
-    if payment_params[:delivery_location_id].present?
+    if payment_params[:delivery_location_id]&.present?
       delivery_location = SephcoccoLocation.find(payment_params[:delivery_location_id])
       delivery_price = delivery_location.logistics_price
+      # add delivery price to order total price
+      order_total_price += delivery_price
     end
 
-    # add delivery price to order total price
-    order_total_price += delivery_price
+
 
     # Convert amount to BigDecimal for comparison
     payment_amount = BigDecimal(actual_payment_params[:amount].to_s)
@@ -135,7 +136,7 @@ module Api::V1::Concerns::PaymentsControllerHelper
     Rails.logger.info "Payment Create - Order IDs: #{order_ids.inspect}"
     Rails.logger.info "Payment Create - Order Strings: #{order_strings.inspect}"
     Rails.logger.info "Payment Create - Actual Params: #{actual_payment_params.inspect}"
-    if current_user&.sephcocco_user_role&.name == "admin"
+    if current_user&.sephcocco_user_role&.name == "admin" && current_user.sephcocco_user_subroles.pluck(:name).exclude?("waiters")
       payment_params_hash = actual_payment_params.to_h
       payment = @customer&.send(payment_association)&.new(payment_params_hash) || payment_class.new(payment_params_hash)
       if payment.save
@@ -182,8 +183,11 @@ module Api::V1::Concerns::PaymentsControllerHelper
       payment = current_user.send(payment_association).new(payment_params_with_user)
       Rails.logger.info "Payment Create - Payment Errors: #{payment.errors.full_messages}" unless payment.valid?
       if payment.save
-        payment.update(delivery_location: { location: delivery_location.location, logistics_price: delivery_price })
-        payment.save!
+        # update the delivery location if it is present
+        if delivery_location.present?
+          payment.update(delivery_location: { location: delivery_location.location, logistics_price: delivery_price })
+          payment.save!
+        end
         AdminNotifications::CreateService.new(
           action_type: "payment",
           action_id: payment.id,
@@ -441,17 +445,17 @@ module Api::V1::Concerns::PaymentsControllerHelper
   end
 
   def set_customer
-    if current_user&.sephcocco_user_role&.name == "admin"
+    if current_user&.sephcocco_user_role&.name == "admin" && current_user.sephcocco_user_subroles.pluck(:name).exclude?("waiters")
       # For admin users, get customer from payment params
       customer_id = payment_params[:sephcocco_user_id]
       if customer_id.blank?
         Rails.logger.error "Admin payment creation: sephcocco_user_id is required"
-        return
+        render json: { error: "sephcocco_user_id is required" }, status: :unprocessable_entity and return
       end
       @customer = SephcoccoUser.find_by(id: customer_id)
       if @customer.nil?
         Rails.logger.error "Admin payment creation: Customer not found with ID #{customer_id}"
-        return
+        render json: { error: "Customer not found" }, status: :not_found and return
       end
     else
       # For regular users, they are the customer
