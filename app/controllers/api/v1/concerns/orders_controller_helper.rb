@@ -384,20 +384,33 @@ module Api::V1::Concerns::OrdersControllerHelper
   def admin_order_creation
     waiters_order_params[:products].each do |product|
 
-      current_product = product_class.find(product[:"sephcocco_#{outlet.name.downcase}_product_id"].to_i)
-      if current_product.nil?
+      product_key = :"sephcocco_#{outlet.name.downcase}_product_id"
+      product_id = product[product_key] || product[product_key.to_s]
+      current_product = product_class.find_by(id: product_id)
+      unless current_product
         return render json: { error: "Product not found" }, status: :unprocessable_entity
       end
   
       # check if product is out of stock
       amount_in_stock = current_product.amount_in_stock
-      if amount_in_stock == 0 || amount_in_stock < product[:quantity].to_i
+      qty = (product[:quantity] || product["quantity"]).to_i
+      if amount_in_stock == 0 || amount_in_stock < qty
         return render json: { error: "Product is out of stock, available stock is #{amount_in_stock}" }, status: :unprocessable_entity
       end
       
       unit_price = current_product.price
-      order = current_user.send(order_association).new(unit_price: unit_price, quantity: product[:quantity].to_i, address: waiters_order_params[:address], additional_notes: waiters_order_params[:additional_notes])
-      order.set_order_total(unit_price, product[:quantity].to_i)
+      customer = admin? ? @customer : current_user
+      if customer.blank?
+        return render json: { error: "sephcocco_user_id is required" }, status: :unprocessable_entity
+      end
+
+      order = customer.send(order_association).new(
+        unit_price: unit_price,
+        quantity: qty,
+        address: waiters_order_params[:address],
+        additional_notes: waiters_order_params[:additional_notes]
+      )
+      order.set_order_total(unit_price, qty)
       order.save!
       current_product.increment!(:likes)
       current_product.save!
