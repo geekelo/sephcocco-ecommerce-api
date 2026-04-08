@@ -114,13 +114,14 @@ module Api::V1::Concerns::PaymentsControllerHelper
     end
 
     # check if delivery location is present
-    if payment_params[:delivery_location_id].present?
+    if payment_params[:delivery_location_id]&.present?
       delivery_location = SephcoccoLocation.find(payment_params[:delivery_location_id])
       delivery_price = delivery_location.logistics_price
+      # add delivery price to order total price
+      order_total_price += delivery_price
     end
 
-    # add delivery price to order total price
-    order_total_price += delivery_price
+
 
     # Convert amount to BigDecimal for comparison
     payment_amount = BigDecimal(actual_payment_params[:amount].to_s)
