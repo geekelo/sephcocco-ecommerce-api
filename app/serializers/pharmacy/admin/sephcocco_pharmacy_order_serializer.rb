@@ -18,7 +18,8 @@ class Pharmacy::Admin::SephcoccoPharmacyOrderSerializer < ActiveModel::Serialize
               :phone_number,
               :additional_notes,
               :shipping_details,
-              :product_details
+              :product_details,
+              :grouped_orders
 
   def product
     object&.sephcocco_pharmacy_product
@@ -32,6 +33,22 @@ class Pharmacy::Admin::SephcoccoPharmacyOrderSerializer < ActiveModel::Serialize
       name: prod.name,
       main_image_url: prod.main_image_url,
     }
+  end
+
+  # Groups a collection of orders by order_number and adds totals per group.
+  def grouped_orders
+    return [] unless object.respond_to?(:group_by)
+
+    object
+      .group_by(&:order_number)
+      .map do |order_number, orders|
+        {
+          order_number: order_number,
+          orders: orders,
+          total_price: orders.sum { |o| o.total_price.to_d },
+          total_quantity: orders.sum(&:quantity)
+        }
+      end
   end
 
   def customer
