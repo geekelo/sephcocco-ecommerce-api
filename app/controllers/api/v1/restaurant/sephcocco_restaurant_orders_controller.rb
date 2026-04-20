@@ -59,6 +59,10 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
     )
   end
 
+  def grouped_orders_serializer_class
+    Restaurant::Admin::GroupedOrdersSerializer
+  end
+
   def order_params
     if current_user&.sephcocco_user_role&.name == "admin"
       params.require(:sephcocco_restaurant_order).permit(

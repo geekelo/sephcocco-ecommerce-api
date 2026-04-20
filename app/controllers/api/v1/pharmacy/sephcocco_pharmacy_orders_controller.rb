@@ -59,6 +59,10 @@ class Api::V1::Pharmacy::SephcoccoPharmacyOrdersController < ApplicationControll
     )
   end
 
+  def grouped_orders_serializer_class
+    Pharmacy::Admin::GroupedOrdersSerializer
+  end
+
   def order_params
     if current_user&.sephcocco_user_role&.name == "admin"
       params.require(:sephcocco_pharmacy_order).permit(

@@ -48,6 +48,10 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
     "sephcocco_Lounge"
   end
 
+  def grouped_orders_serializer_class
+    Lounge::Admin::GroupedOrdersSerializer
+  end
+
   def waiters_order_params
     params.require(:sephcocco_lounge_order).permit(
       :address,
