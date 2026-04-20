@@ -28,6 +28,10 @@ class Api::V1::Lounge::SephcoccoLoungeOrdersController < ApplicationController
     end
   end
 
+  def grouped_orders_serializer_class
+    Lounge::Admin::GroupedOrdersSerializer
+  end
+
   def outlet
     Lounge
   end

@@ -44,6 +44,10 @@ class Api::V1::Restaurant::SephcoccoRestaurantOrdersController < ApplicationCont
     end
   end
 
+  def grouped_orders_serializer_class
+    Restaurant::Admin::GroupedOrdersSerializer
+  end
+
   def order_association_prefix
     "sephcocco_Restaurant"
   end

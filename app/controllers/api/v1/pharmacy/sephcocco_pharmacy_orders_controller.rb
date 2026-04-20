@@ -44,6 +44,10 @@ class Api::V1::Pharmacy::SephcoccoPharmacyOrdersController < ApplicationControll
     end
   end
 
+  def grouped_orders_serializer_class
+    Pharmacy::Admin::GroupedOrdersSerializer
+  end
+
   def order_association_prefix
     "sephcocco_Pharmacy"
   end
