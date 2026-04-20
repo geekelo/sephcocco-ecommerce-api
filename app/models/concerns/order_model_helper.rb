@@ -4,7 +4,7 @@ module OrderModelHelper
 
   included do
     before_create :set_order_status
-    before_create :set_order_number
+    # before_create :set_order_number
     before_create :set_shipping_details, if: -> { respond_to?(:set_shipping_details, true) }
   end
 
@@ -64,7 +64,7 @@ module OrderModelHelper
     self.quantity ||= 1
   end
 
-  def set_order_number
-    self.order_number = SecureRandom.uuid
-  end
+  # def set_order_number
+  #   self.order_number = SecureRandom.uuid
+  # end
 end

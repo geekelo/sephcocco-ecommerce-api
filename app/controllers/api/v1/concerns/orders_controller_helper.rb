@@ -117,6 +117,8 @@ module Api::V1::Concerns::OrdersControllerHelper
       return render json: { error: "You already have a pending order for this product", message: "You already have a pending order for this product" }, status: :unprocessable_entity
     end
 
+    order_number = DateTime.now.strftime("%Y%m%d%H%M%S")
+
     product = product_class.find(order_params[:"sephcocco_#{outlet.name.downcase}_product_id"])
 
     # check if product is out of stock
@@ -133,7 +135,7 @@ module Api::V1::Concerns::OrdersControllerHelper
     end
 
     # Set the total price before saving
-    order.set_order_total(unit_price, order_params[:quantity])
+    order.set_order_total(unit_price, order_params[:quantity], order_number)
     
     if order&.save
       if admin?
@@ -383,8 +385,9 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   # Admin order creation
   def admin_order_creation
-    waiters_order_params[:products].each do |product|
+    order_number = waiters_order_params[:address].lower_case + DateTime.now.strftime("%Y%m%d%H%M%S")
 
+    waiters_order_params[:products].each do |product|
       product_key = :"sephcocco_#{outlet.name.downcase}_product_id"
       product_id = product[product_key] || product[product_key.to_s]
       current_product = product_class.find_by(id: product_id)
@@ -409,12 +412,19 @@ module Api::V1::Concerns::OrdersControllerHelper
         product_key => current_product.id,
         unit_price: unit_price,
         quantity: qty,
-        address: waiters_order_params[:address],
-        additional_notes: waiters_order_params[:additional_notes]
+        address: waiters_order_params[:address].lower_case,
+        additional_notes: waiters_order_params[:additional_notes],
+        order_number: order_number
       )
       order.set_order_total(unit_price, qty)
       order.save!
+      # add the order to the product
+      current_product.orders << order
+      # update the product stock
+      current_product.amount_in_stock -= qty
+      # increment the likes
       current_product.increment!(:likes)
+      # save the product
       current_product.save!
 
       if admin?
