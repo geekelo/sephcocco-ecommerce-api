@@ -249,6 +249,16 @@ module Api::V1::Concerns::OrdersControllerHelper
     end
   end
 
+  def grouped_orders_destroy
+    # destroy orders with the same order number params[:order_number]
+    orders = order_class.where(order_number: params[:order_number])
+    if orders.destroy_all
+      render json: { message: "Grouped orders deleted successfully" }, status: :ok
+    else
+      render json: { error: "Failed to delete grouped orders" }, status: :unprocessable_entity
+    end
+  end
+
   def pending_orders
     if current_user&.sephcocco_user_role&.name == "admin"
       orders = order_class.where(status: "pending").order(created_at: :desc)
