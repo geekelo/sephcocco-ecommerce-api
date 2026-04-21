@@ -82,7 +82,7 @@ module Api::V1::Concerns::OrdersControllerHelper
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
           orders, 
-          each_serializer: order_serializer_class
+          each_serializer: grouped_orders_serializer_class
         ).as_json,
         meta: {
           total_count: orders.total_count,
