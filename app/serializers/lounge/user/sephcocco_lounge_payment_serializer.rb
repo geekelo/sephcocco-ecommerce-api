@@ -22,6 +22,9 @@ class Lounge::User::SephcoccoLoungePaymentSerializer < ActiveModel::Serializer
           id: order.id,
           order_number: order.order_number,
           status: order.status,
+          quantity: order.quantity,
+          unit_price: order.unit_price,
+          total_cost: order.total_cost,
           total_price: order.total_price,
           created_at: order.created_at,
           product: {
