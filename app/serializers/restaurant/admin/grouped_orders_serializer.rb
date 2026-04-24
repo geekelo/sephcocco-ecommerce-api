@@ -22,6 +22,9 @@ module Restaurant
               total_quantity: os.sum(&:quantity),
               payment_status: payment_status,
               payment_details: payment_details,
+              payment_method: payment_details&.payment_method,
+              delivery_location: payment_details&.delivery_location,
+              payment_status: payment_details&.status,
               orders: os.map { |o| serialize_order(o) },
             }
           end
