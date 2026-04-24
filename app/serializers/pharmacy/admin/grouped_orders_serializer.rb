@@ -49,7 +49,9 @@ module Pharmacy
           product_details: prod ? {
             id: prod.id,
             name: prod.name,
-            main_image_url: prod.main_image_url
+            main_image_url: prod.main_image_url,
+            price: prod.price,
+            amount_in_stock: prod.amount_in_stock,
           } : nil
         }
       end
