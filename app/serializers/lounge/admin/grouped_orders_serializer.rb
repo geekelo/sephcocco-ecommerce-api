@@ -24,7 +24,7 @@ module Lounge
               payment_details: payment_details,
               payment_method: payment_details&.payment_method,
               delivery_location: payment_details&.delivery_location,
-              payment_status: payment_details&.status,
+              payment_state: payment_details&.status,
               orders: os.map { |o| serialize_order(o) },
             }
           end
@@ -52,7 +52,8 @@ module Lounge
             main_image_url: prod.main_image_url,
             price: prod.price,
             amount_in_stock: prod.amount_in_stock,
-            description: prod.description,
+            short_description: prod.short_description,
+            long_description: prod.long_description,
             likes: prod.likes,
             discount_price: prod.discount_price,
           } : nil
