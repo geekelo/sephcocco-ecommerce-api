@@ -6,7 +6,7 @@ module Lounge
       attributes :grouped_orders
 
       def grouped_orders
-        orders = object.respond_to?(:to_a) ? object.to_a : Array(object)
+        orders = object.respond_to?(:orders) ? object.orders : (object.respond_to?(:to_a) ? object.to_a : Array(object))
 
         grouped = orders.group_by(&:order_number)
         order_numbers = instance_options[:group_order_numbers] || grouped.keys

@@ -57,7 +57,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
-          orders,
+          GroupedOrdersCollection.new(orders: orders),
           serializer: grouped_orders_serializer_class,
           group_order_numbers: order_numbers
         ).as_json,
@@ -107,7 +107,7 @@ module Api::V1::Concerns::OrdersControllerHelper
       orders = orders.where(order_number: order_numbers).order(created_at: :desc).to_a
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
-          orders,
+          GroupedOrdersCollection.new(orders: orders),
           serializer: grouped_orders_serializer_class,
           group_order_numbers: order_numbers
         ).as_json,
