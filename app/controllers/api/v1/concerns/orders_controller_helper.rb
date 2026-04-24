@@ -41,22 +41,31 @@ module Api::V1::Concerns::OrdersControllerHelper
         end
       end
 
-      orders = orders.order(created_at: :desc)
-      orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
+      per_page = (params[:per_page] || 20).to_i
+      page = (params[:page] || 1).to_i
 
-      # group orders by order_number
-      grouped_orders = orders.group_by(&:order_number)
-      grouped_orders = grouped_orders.order(created_at: :desc).page(params[:page]).per(params[:per_page] || 20) || []
+      group_page = orders
+                   .unscope(:order)
+                   .select("order_number, MAX(created_at) AS last_created_at")
+                   .group(:order_number)
+                   .order("last_created_at DESC")
+                   .page(page)
+                   .per(per_page)
+
+      order_numbers = group_page.map(&:order_number)
+      orders = orders.where(order_number: order_numbers).order(created_at: :desc)
 
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
-        orders, 
-        each_serializer: grouped_orders_serializer_class
+          orders,
+          serializer: grouped_orders_serializer_class,
+          group_order_numbers: order_numbers
         ).as_json,
         meta: {
-          total_count: grouped_orders.count,
-          total_pages: grouped_orders.total_pages,
-          current_page: grouped_orders.current_page
+          total_count: group_page.total_count,
+          total_pages: group_page.total_pages,
+          current_page: group_page.current_page,
+          per_page: group_page.limit_value
         }
       }
     else
@@ -83,16 +92,30 @@ module Api::V1::Concerns::OrdersControllerHelper
           orders = orders.where(order_number: params[:filter][:order_number])
         end
       end
-      orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
+      per_page = (params[:per_page] || 20).to_i
+      page = (params[:page] || 1).to_i
+
+      group_page = orders
+                   .unscope(:order)
+                   .select("order_number, MAX(created_at) AS last_created_at")
+                   .group(:order_number)
+                   .order("last_created_at DESC")
+                   .page(page)
+                   .per(per_page)
+
+      order_numbers = group_page.map(&:order_number)
+      orders = orders.where(order_number: order_numbers).order(created_at: :desc)
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
-          orders, 
-          each_serializer: grouped_orders_serializer_class
+          orders,
+          serializer: grouped_orders_serializer_class,
+          group_order_numbers: order_numbers
         ).as_json,
         meta: {
-          total_count: orders.total_count,
-          total_pages: orders.total_pages,
-          current_page: orders.current_page
+          total_count: group_page.total_count,
+          total_pages: group_page.total_pages,
+          current_page: group_page.current_page,
+          per_page: group_page.limit_value
         }
       }
     end
@@ -493,5 +516,26 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def admin?
     current_user&.sephcocco_user_role&.name == "admin"
+  end
+
+  def grouped_orders_serializer_class
+    outlet_name =
+      if outlet.respond_to?(:name)
+        outlet.name.to_s.downcase
+      else
+        outlet.to_s.downcase
+      end
+
+    case outlet_name
+    when "lounge"
+      Lounge::Admin::GroupedOrdersSerializer
+    when "pharmacy"
+      Pharmacy::Admin::GroupedOrdersSerializer
+    when "restaurant"
+      Restaurant::Admin::GroupedOrdersSerializer
+    else
+      # fallback (shouldn't happen)
+      ActiveModel::Serializer
+    end
   end
 end

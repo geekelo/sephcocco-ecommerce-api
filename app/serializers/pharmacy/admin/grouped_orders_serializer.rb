@@ -8,9 +8,13 @@ module Pharmacy
       def grouped_orders
         orders = object.respond_to?(:to_a) ? object.to_a : Array(object)
 
-        orders
-          .group_by(&:order_number)
-          .map do |order_number, os|
+        grouped = orders.group_by(&:order_number)
+        order_numbers = instance_options[:group_order_numbers] || grouped.keys
+
+        order_numbers.filter_map do |order_number|
+          os = grouped[order_number]
+          next if os.blank?
+
             customer = os.first&.sephcocco_user
 
             payment_status, payment_details = payment_summary_for(os)
@@ -27,7 +31,7 @@ module Pharmacy
               payment_state: payment_details&.status,
               orders: os.map { |o| serialize_order(o) },
             }
-          end
+        end
       end
 
       private
