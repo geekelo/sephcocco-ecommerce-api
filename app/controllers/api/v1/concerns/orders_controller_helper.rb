@@ -52,8 +52,8 @@ module Api::V1::Concerns::OrdersControllerHelper
                    .page(page)
                    .per(per_page)
 
-      order_numbers = group_page.map(&:order_number)
-      orders = orders.where(order_number: order_numbers).order(created_at: :desc)
+      order_numbers = group_page.pluck(:order_number)
+      orders = orders.where(order_number: order_numbers).order(created_at: :desc).to_a
 
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
@@ -103,8 +103,8 @@ module Api::V1::Concerns::OrdersControllerHelper
                    .page(page)
                    .per(per_page)
 
-      order_numbers = group_page.map(&:order_number)
-      orders = orders.where(order_number: order_numbers).order(created_at: :desc)
+      order_numbers = group_page.pluck(:order_number)
+      orders = orders.where(order_number: order_numbers).order(created_at: :desc).to_a
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
           orders,
