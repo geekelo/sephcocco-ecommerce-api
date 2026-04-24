@@ -52,6 +52,9 @@ module Lounge
             main_image_url: prod.main_image_url,
             price: prod.price,
             amount_in_stock: prod.amount_in_stock,
+            description: prod.description,
+            likes: prod.likes,
+            discount_price: prod.discount_price,
           } : nil
         }
       end
