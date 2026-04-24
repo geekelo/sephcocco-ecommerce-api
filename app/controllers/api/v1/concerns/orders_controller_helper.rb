@@ -46,9 +46,9 @@ module Api::V1::Concerns::OrdersControllerHelper
 
       group_page = orders
                    .unscope(:order)
-                   .select("order_number, MAX(created_at) AS last_created_at")
                    .group(:order_number)
-                   .order("last_created_at DESC")
+                   .reorder(Arel.sql("MAX(created_at) DESC"))
+                   .select(:order_number)
                    .page(page)
                    .per(per_page)
 
@@ -97,9 +97,9 @@ module Api::V1::Concerns::OrdersControllerHelper
 
       group_page = orders
                    .unscope(:order)
-                   .select("order_number, MAX(created_at) AS last_created_at")
                    .group(:order_number)
-                   .order("last_created_at DESC")
+                   .reorder(Arel.sql("MAX(created_at) DESC"))
+                   .select(:order_number)
                    .page(page)
                    .per(per_page)
 
