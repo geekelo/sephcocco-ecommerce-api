@@ -43,15 +43,20 @@ module Api::V1::Concerns::OrdersControllerHelper
 
       orders = orders.order(created_at: :desc)
       orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
+
+      # group orders by order_number
+      grouped_orders = orders.group_by(&:order_number)
+      grouped_orders = grouped_orders.order(created_at: :desc).page(params[:page]).per(params[:per_page] || 20) || []
+
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
         orders, 
         each_serializer: grouped_orders_serializer_class
         ).as_json,
         meta: {
-          total_count: orders.total_count,
-          total_pages: orders.total_pages,
-          current_page: orders.current_page
+          total_count: grouped_orders.count,
+          total_pages: grouped_orders.total_pages,
+          current_page: grouped_orders.current_page
         }
       }
     else
