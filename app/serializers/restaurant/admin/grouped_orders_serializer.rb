@@ -65,8 +65,9 @@ module Restaurant
       # Returns [label, payment_details_or_nil]
       def payment_summary_for(orders)
         payments = orders.map(&:sephcocco_restaurant_payment)
-        payment_ids = payments.map(&:id).compact.uniq
-        statuses = payments.map(&:status)
+        non_nil_payments = payments.compact
+        payment_ids = non_nil_payments.map(&:id).uniq
+        statuses = non_nil_payments.map(&:status)
 
         return ["PENDING PAYMENT", nil] if payments.any?(&:nil?) || statuses.uniq.length != 1
 
@@ -83,7 +84,7 @@ module Restaurant
         return ["PENDING PAYMENT", nil] if label == "PENDING PAYMENT"
         return [label, nil] unless payment_ids.length == 1
 
-        [label, payments.first]
+        [label, non_nil_payments.first]
       end
     end
   end
