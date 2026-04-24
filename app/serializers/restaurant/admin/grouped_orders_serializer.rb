@@ -52,6 +52,9 @@ module Restaurant
             main_image_url: prod.main_image_url,
             price: prod.price,
             amount_in_stock: prod.amount_in_stock,
+            description: prod.description,
+            likes: prod.likes,
+            discount_price: prod.discount_price,
           } : nil
         }
       end
@@ -63,7 +66,7 @@ module Restaurant
           email: user.email,
           phone_number: user.phone_number,
           address: user.address,
-          subroles: user.sephcocco_user_subroles.pluck(:name)
+          subroles: user.sephcocco_use^r_subroles.pluck(:name)
         }
       end
 
