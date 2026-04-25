@@ -29,12 +29,17 @@ module Pharmacy
               payment_method: payment_details&.payment_method,
               delivery_location: payment_details&.delivery_location,
               payment_state: payment_details&.status,
-              orders: os.map { |o| serialize_order(o) },
+              orders: serialize_orders(os),
             }
         end
       end
 
       private
+
+      # Returns a list of serialized orders to display all order details in the grouped order
+      def serialize_orders(orders)
+        orders.map { |o| Pharmacy::Admin::SephcoccoPharmacyOrderSerializer.new(o).as_json }
+      end
 
       def serialize_order(order)
         prod = order.sephcocco_pharmacy_product
