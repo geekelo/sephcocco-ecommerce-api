@@ -55,6 +55,7 @@ module Pharmacy
           total_price: order.total_price,
           created_at: order.created_at,
           updated_at: order.updated_at,
+          payment_details: Pharmacy::Admin::SephcoccoPharmacyPaymentSerializer.new(order.sephcocco_pharmacy_payment).as_json,
           product_details: prod ? {
             id: prod.id,
             name: prod.name,
