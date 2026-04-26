@@ -357,17 +357,33 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   def pending_orders
     if current_user&.sephcocco_user_role&.name == "admin"
-      orders = order_class.where(status: "pending").order(created_at: :desc)
-      orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
+      orders = order_class.where(status: "pending")
+
+      per_page = (params[:per_page] || 20).to_i
+      page = (params[:page] || 1).to_i
+
+      group_page = orders
+                   .unscope(:order)
+                   .group(:order_number)
+                   .reorder(Arel.sql("MAX(#{order_class.table_name}.created_at) DESC"))
+                   .select(:order_number)
+                   .page(page)
+                   .per(per_page)
+
+      order_numbers = group_page.pluck(:order_number)
+      orders = orders.where(order_number: order_numbers).order(created_at: :desc).to_a
+
       render json: {
         orders: ActiveModelSerializers::SerializableResource.new(
-          orders, 
-          each_serializer: order_serializer_class
+          GroupedOrdersCollection.new(orders: orders),
+          serializer: grouped_orders_serializer_class,
+          group_order_numbers: order_numbers
         ).as_json,
         meta: {
-          total_count: orders.total_count,
-          total_pages: orders.total_pages,
-          current_page: orders.current_page
+          total_count: group_page.total_count,
+          total_pages: group_page.total_pages,
+          current_page: group_page.current_page,
+          per_page: group_page.limit_value
         }
       }
     else
