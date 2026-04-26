@@ -590,8 +590,8 @@ module Api::V1::Concerns::OrdersControllerHelper
       )
       order.set_order_total(unit_price, qty)
       order.save!
-      # add the order to the product
-      current_product.orders << order
+      # add the order to the product (association name differs per outlet)
+      current_product.public_send(product_class.order_association_name) << order
       # update the product stock
       current_product.amount_in_stock -= qty
       # increment the likes
