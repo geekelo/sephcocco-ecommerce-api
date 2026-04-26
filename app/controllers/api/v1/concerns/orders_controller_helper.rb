@@ -393,16 +393,17 @@ module Api::V1::Concerns::OrdersControllerHelper
     if current_user&.sephcocco_user_role&.name == "admin"
       orders = order_class.where(status: statuses).order(updated_at: :desc)
       orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
-      render json: {
-        orders: ActiveModelSerializers::SerializableResource.new(
-          orders, 
-          each_serializer: order_serializer_class
-        ).as_json,
-        meta: {
-          total_count: orders.total_count,
-          total_pages: orders.total_pages,
-          current_page: orders.current_page
-        }
+      # group orders by order_number and use group orders serializer
+      group_page = orders.group_by(&:order_number).page(params[:page]).per(params[:per_page] || 20) || []
+      render json: ActiveModelSerializers::SerializableResource.new(
+        group_page,
+        serializer: grouped_orders_serializer_class
+      ).as_json,
+      meta: {
+        # use group_page.total_count
+        total_count: group_page.total_count,
+        total_pages: group_page.total_pages,
+        current_page: group_page.current_page
       }
     else
       orders = current_user
