@@ -260,6 +260,7 @@ module Api::V1::Concerns::OrdersControllerHelper
         end
 
         if order.status == "refunded" || order.status == "cancelled" || order.status == "discarded"
+          
           payment = payment_class.find_by(id: order.payment_id)
           if payment
             payment.update(amount: payment.amount - order.total_price)
