@@ -198,49 +198,79 @@ module Api::V1::Concerns::OrdersControllerHelper
   end
 
   def update
-    old_status = @order.status
-    # check if product is out of stock
-    if order_params[:quantity].present?
-      amount_in_stock = product_class.find(@order.send(:"sephcocco_#{outlet.name.downcase}_product_id")).amount_in_stock
-      if order_params[:quantity] > amount_in_stock || amount_in_stock == 0
-        return render json: { error: "Product is out of stock, available stock is #{amount_in_stock}", amount_in_stock: amount_in_stock }, status: :unprocessable_entity
+    if admin? && params[:order_ids].present?
+      return admin_bulk_update_orders
+    end
+
+    update_single_order(@order)
+  end
+
+  private
+
+  def admin_bulk_update_orders
+    order_ids = Array(params[:order_ids]).map(&:to_s).uniq
+    orders = order_class.where(id: order_ids)
+
+    updated = []
+    failed = []
+
+    orders.find_each do |order|
+      ok, payload = update_single_order(order, render: false)
+      if ok
+        updated << payload
+      else
+        failed << { id: order.id, errors: payload }
       end
     end
 
-    if @order.update(order_params)
-      @order.set_order_total(@order.unit_price, @order.quantity)
-      @order.update_stages(order_params[:status]) if order_params[:status].present?
+    if failed.any?
+      render json: { updated: updated, failed: failed }, status: :unprocessable_entity
+    else
+      render json: { updated: updated }, status: :ok
+    end
+  end
 
-      # Send status update email if status changed
-      if order_params[:status].present? && old_status != @order.status
-        OrderMailer.with(order: @order, old_status: old_status).order_status_updated_email.deliver_now
+  def update_single_order(order, render: true)
+    old_status = order.status
 
-        if @order.status == "delivering"
-          # create shipping for order
+    if order_params[:quantity].present?
+      product_id = order.send(:"sephcocco_#{outlet.name.downcase}_product_id")
+      amount_in_stock = product_class.find(product_id).amount_in_stock
+      if order_params[:quantity] > amount_in_stock || amount_in_stock == 0
+        payload = { error: "Product is out of stock, available stock is #{amount_in_stock}", amount_in_stock: amount_in_stock }
+        return render ? render(json: payload, status: :unprocessable_entity) : [false, payload]
+      end
+    end
+
+    if order.update(order_params)
+      order.set_order_total(order.unit_price, order.quantity)
+      order.update_stages(order_params[:status]) if order_params[:status].present?
+
+      if order_params[:status].present? && old_status != order.status
+        OrderMailer.with(order: order, old_status: old_status).order_status_updated_email.deliver_now
+
+        if order.status == "delivering"
           shipping_class = "#{outlet.name.capitalize}::Sephcocco#{outlet.name.capitalize}Shipping".constantize
           shipping_class.create(
-            "sephcocco_#{outlet.name.downcase}_order_id" => @order.id,
+            "sephcocco_#{outlet.name.downcase}_order_id" => order.id,
             status: "pending",
-            tracking_number: @order.order_number
+            tracking_number: order.order_number
           )
-  
-          # notify customer about the order via email
-          OrderMailer.with(order: @order).order_created_email.deliver_now
+          OrderMailer.with(order: order).order_created_email.deliver_now
         end
-  
-        if @order.status == "refunded"
-          # Deduct from payment
-          payment = payment_class.find_by(id: @order.payment_id)
-          payment.update(amount: payment.amount - @order.total_price)
-          payment.save!
 
-          # update the product stock
-          product = product_class.find(@order.send(:"sephcocco_#{outlet.name.downcase}_product_id"))
-          product.update!(amount_in_stock: product.amount_in_stock + @order.quantity)
+        if order.status == "refunded"
+          payment = payment_class.find_by(id: order.payment_id)
+          if payment
+            payment.update(amount: payment.amount - order.total_price)
+            payment.save!
+          end
+
+          product = product_class.find(order.send(:"sephcocco_#{outlet.name.downcase}_product_id"))
+          product.update!(amount_in_stock: product.amount_in_stock + order.quantity)
           product.save!
 
-          # notify customer about the order refund via email
-          OrderMailer.with(order: @order).order_refunded_email.deliver_now
+          OrderMailer.with(order: order).order_refunded_email.deliver_now
         end
       end
 
@@ -249,15 +279,16 @@ module Api::V1::Concerns::OrdersControllerHelper
           user: current_user,
           activity_type: "update",
           activity_name: "Order",
-          activity_description: "Order Status Updated: #{@order.order_number} to #{@order.status}",
+          activity_description: "Order Status Updated: #{order.order_number} to #{order.status}",
           outlet: outlet
         ).call
       end
 
-      render json: @order, each_serializer: order_serializer_class
-    else
-      render json: @order.errors, status: :unprocessable_entity
+      return render ? render(json: order, each_serializer: order_serializer_class) : [true, order]
     end
+
+    payload = order.errors
+    render ? render(json: payload, status: :unprocessable_entity) : [false, payload]
   end
 
   def destroy

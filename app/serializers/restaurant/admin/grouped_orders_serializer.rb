@@ -50,6 +50,7 @@ module Restaurant
           total_price: order.total_price,
           created_at: order.created_at,
           updated_at: order.updated_at,
+          payment_details: Restaurant::Admin::SephcoccoRestaurantPaymentSerializer.new(order.sephcocco_restaurant_payment).as_json,
           product_details: prod ? {
             id: prod.id,
             name: prod.name,

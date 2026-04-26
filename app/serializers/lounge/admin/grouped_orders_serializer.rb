@@ -50,6 +50,7 @@ module Lounge
           total_price: order.total_price,
           created_at: order.created_at,
           updated_at: order.updated_at,
+          payment_details: Lounge::Admin::SephcoccoLoungePaymentSerializer.new(order.sephcocco_lounge_payment).as_json,
           product_details: prod ? {
             id: prod.id,
             name: prod.name,
