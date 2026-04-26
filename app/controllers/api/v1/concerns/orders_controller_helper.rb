@@ -14,11 +14,13 @@ module Api::V1::Concerns::OrdersControllerHelper
     if admin? && !is_waiter
       orders = order_class.all
       if params[:filter]
-        if params[:filter][:waiters] == true
-          # give me orders from all the users with the subrole "waiters"
+        # String "true" / "1" from query params must match (== true only matches JSON boolean true)
+        if ActiveModel::Type::Boolean.new.cast(params[:filter][:waiters])
+          # orders whose customer (sephcocco_user) has the "waiters" subrole
           orders = orders
                    .joins(sephcocco_user: :sephcocco_user_subroles)
                    .where(sephcocco_user_subroles: { name: "waiters" })
+                   .distinct
         end
 
         if params[:filter][:waiter_id].present?
@@ -339,6 +341,9 @@ module Api::V1::Concerns::OrdersControllerHelper
       render json: { error: "Failed to delete order" }, status: :unprocessable_entity
     end
   end
+
+  # Action methods below must be public (a `private` earlier is for internal helpers).
+  public
 
   def grouped_orders_destroy
     # destroy orders with the same order number params[:order_number]
