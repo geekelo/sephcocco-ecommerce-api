@@ -391,19 +391,34 @@ module Api::V1::Concerns::OrdersControllerHelper
     statuses = ["paid", "awaiting payment approval"]
   
     if current_user&.sephcocco_user_role&.name == "admin"
-      orders = order_class.where(status: statuses).order(updated_at: :desc)
-      orders = orders.page(params[:page]).per(params[:per_page] || 20) || []
-      # group orders by order_number and use group orders serializer
-      group_page = orders.group_by(&:order_number).page(params[:page]).per(params[:per_page] || 20) || []
-      render json: ActiveModelSerializers::SerializableResource.new(
-        group_page,
-        serializer: grouped_orders_serializer_class
-      ).as_json,
-      meta: {
-        # use group_page.total_count
-        total_count: group_page.total_count,
-        total_pages: group_page.total_pages,
-        current_page: group_page.current_page
+      orders = order_class.where(status: statuses)
+
+      per_page = (params[:per_page] || 20).to_i
+      page = (params[:page] || 1).to_i
+
+      group_page = orders
+                   .unscope(:order)
+                   .group(:order_number)
+                   .reorder(Arel.sql("MAX(#{order_class.table_name}.updated_at) DESC"))
+                   .select(:order_number)
+                   .page(page)
+                   .per(per_page)
+
+      order_numbers = group_page.pluck(:order_number)
+      orders = orders.where(order_number: order_numbers).order(updated_at: :desc).to_a
+
+      render json: {
+        orders: ActiveModelSerializers::SerializableResource.new(
+          GroupedOrdersCollection.new(orders: orders),
+          serializer: grouped_orders_serializer_class,
+          group_order_numbers: order_numbers
+        ).as_json,
+        meta: {
+          total_count: group_page.total_count,
+          total_pages: group_page.total_pages,
+          current_page: group_page.current_page,
+          per_page: group_page.limit_value
+        }
       }
     else
       orders = current_user
