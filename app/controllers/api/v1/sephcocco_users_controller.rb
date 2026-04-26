@@ -175,6 +175,16 @@ class Api::V1::SephcoccoUsersController < ApplicationController
     render json: riders, each_serializer: SephcoccoUserSerializer
   end
 
+  def get_waiters
+    waiters = SephcoccoUser.where(deleted_at: nil, sephcocco_user_subroles: { name: "waiters" })
+    render json: { message: "Waiters fetched successfully",
+      users: ActiveModelSerializers::SerializableResource.new(waiters, each_serializer: SephcoccoUserSerializer).as_json,
+      summary: {
+        total_waiters: waiters.count
+      }
+    }, status: :ok
+  end
+
   def check_email_confirmation
     if @user.email_confirmed
       render json: { message: "Email confirmed successfully" }, status: :ok
