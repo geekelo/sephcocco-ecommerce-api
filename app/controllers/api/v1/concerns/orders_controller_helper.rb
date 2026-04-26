@@ -555,7 +555,9 @@ module Api::V1::Concerns::OrdersControllerHelper
 
   # Admin order creation
   def admin_order_creation
-    order_number = waiters_order_params[:address].lower_case + DateTime.now.strftime("%Y%m%d%H%M%S")
+    address = waiters_order_params[:address].to_s.strip
+    normalized_address = address.downcase
+    order_number = "#{normalized_address}#{DateTime.now.strftime("%Y%m%d%H%M%S")}"
 
     waiters_order_params[:products].each do |product|
       product_key = :"sephcocco_#{outlet.name.downcase}_product_id"
@@ -582,7 +584,7 @@ module Api::V1::Concerns::OrdersControllerHelper
         product_key => current_product.id,
         unit_price: unit_price,
         quantity: qty,
-        address: waiters_order_params[:address].lower_case,
+        address: normalized_address,
         additional_notes: waiters_order_params[:additional_notes],
         order_number: order_number
       )
