@@ -16,7 +16,9 @@ module Api::V1::Concerns::OrdersControllerHelper
       if params[:filter]
         if params[:filter][:waiters] == true
           # give me orders from all the users with the subrole "waiters"
-          orders = orders.joins(:sephcocco_user).where(sephcocco_users.sephcocco_user_subroles.name: "waiters")
+          orders = orders
+                   .joins(sephcocco_user: :sephcocco_user_subroles)
+                   .where(sephcocco_user_subroles: { name: "waiters" })
         end
         
         if params[:filter][:status].present?
