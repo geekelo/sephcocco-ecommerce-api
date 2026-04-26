@@ -176,7 +176,11 @@ class Api::V1::SephcoccoUsersController < ApplicationController
   end
 
   def get_waiters
-    waiters = SephcoccoUser.where(deleted_at: nil, sephcocco_user_subroles: { name: "waiters" })
+    waiters = SephcoccoUser
+              .where(deleted_at: nil)
+              .joins(:sephcocco_user_subroles)
+              .where(sephcocco_user_subroles: { name: "waiters" })
+              .distinct
     render json: { message: "Waiters fetched successfully",
       users: ActiveModelSerializers::SerializableResource.new(waiters, each_serializer: SephcoccoUserSerializer).as_json,
       summary: {
