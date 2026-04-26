@@ -260,7 +260,8 @@ module Api::V1::Concerns::OrdersControllerHelper
         end
 
         if order.status == "refunded" || order.status == "cancelled" || order.status == "discarded"
-          payment = payment_class.find_by(id: order.payment_id)
+          payment_assoc = :"sephcocco_#{outlet.name.downcase}_payment"
+          payment = order.respond_to?(payment_assoc) ? order.public_send(payment_assoc) : nil
           if payment
             payment.update(amount: payment.amount - order.total_price)
             payment.save!
