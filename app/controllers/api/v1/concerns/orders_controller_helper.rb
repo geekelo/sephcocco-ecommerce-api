@@ -259,7 +259,7 @@ module Api::V1::Concerns::OrdersControllerHelper
           OrderMailer.with(order: order).order_created_email.deliver_now
         end
 
-        if order.status == "refunded"
+        if order.status == "refunded" || order.status == "cancelled" || order.status == "discarded"
           payment = payment_class.find_by(id: order.payment_id)
           if payment
             payment.update(amount: payment.amount - order.total_price)
@@ -270,7 +270,26 @@ module Api::V1::Concerns::OrdersControllerHelper
           product.update!(amount_in_stock: product.amount_in_stock + order.quantity)
           product.save!
 
-          OrderMailer.with(order: order).order_refunded_email.deliver_now
+          if order.status == "discarded"
+            order.destroy
+            if admin?
+              AdminActivities::CreateService.new(
+                user: current_user,
+                activity_type: "delete",
+                activity_name: "Order",
+                activity_description: "Order Deleted: #{@order.order_number}",
+                outlet: outlet
+              ).call
+            end
+          end
+
+          if order.status == "refunded"
+            OrderMailer.with(order: order).order_refunded_email.deliver_now
+          elsif order.status == "cancelled"
+            OrderMailer.with(order: order).order_cancelled_email.deliver_now
+          elsif order.status == "discarded"
+            OrderMailer.with(order: order).order_discarded_email.deliver_now
+          end
         end
       end
 
