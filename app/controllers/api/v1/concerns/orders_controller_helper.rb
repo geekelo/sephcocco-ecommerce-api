@@ -20,6 +20,11 @@ module Api::V1::Concerns::OrdersControllerHelper
                    .joins(sephcocco_user: :sephcocco_user_subroles)
                    .where(sephcocco_user_subroles: { name: "waiters" })
         end
+
+        if params[:filter][:waiter_id].present?
+          orders = orders.joins(sephcocco_user: :sephcocco_user_subroles)
+                         .where(sephcocco_user_subroles: { name: "waiters", id: params[:filter][:waiter_id] })
+        end
         
         if params[:filter][:status].present?
           orders = orders.where(status: params[:filter][:status])
