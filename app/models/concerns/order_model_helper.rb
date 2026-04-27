@@ -13,13 +13,6 @@ module OrderModelHelper
     self.stages.push({"status": status, "date": stage_date})
     self.current_stage = status
     self.save!
-    
-    # Send email notification for stage update
-    OrderMailer.with(
-      order: self,
-      new_stage: status,
-      stage_date: stage_date
-    ).order_stage_updated_email.deliver_now
   end
 
   def set_order_total(unit_price = nil, quantity = nil)
@@ -46,13 +39,6 @@ module OrderModelHelper
     self.stages.push({"status": status, "date": stage_date})
     self.current_stage = status
     self.save!
-    
-    # Send email notification for status change
-    OrderMailer.with(
-      order: self,
-      new_stage: status,
-      stage_date: stage_date
-    ).order_stage_updated_email.deliver_now
   end
 
   private
