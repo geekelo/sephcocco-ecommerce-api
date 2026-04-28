@@ -60,7 +60,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
       group_page = orders
                    .unscope(:order)
-                   .unscope(:distinct)
+                   .distinct(false)
                    .group(:order_number)
                    .reorder(Arel.sql("MAX(#{order_class.table_name}.created_at) DESC"))
                    .select(:order_number)
@@ -112,7 +112,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
       group_page = orders
                    .unscope(:order)
-                   .unscope(:distinct)
+                   .distinct(false)
                    .group(:order_number)
                    .reorder(Arel.sql("MAX(#{order_class.table_name}.created_at) DESC"))
                    .select(:order_number)
@@ -366,7 +366,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
       group_page = orders
                    .unscope(:order)
-                   .unscope(:distinct)
+                   .distinct(false)
                    .group(:order_number)
                    .reorder(Arel.sql("MAX(#{order_class.table_name}.created_at) DESC"))
                    .select(:order_number)
@@ -417,7 +417,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
       group_page = orders
                    .unscope(:order)
-                   .unscope(:distinct)
+                   .distinct(false)
                    .group(:order_number)
                    .reorder(Arel.sql("MAX(#{order_class.table_name}.updated_at) DESC"))
                    .select(:order_number)
@@ -468,7 +468,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
       group_page = orders
                    .unscope(:order)
-                   .unscope(:distinct)
+                   .distinct(false)
                    .group(:order_number)
                    .reorder(Arel.sql("MAX(#{order_class.table_name}.updated_at) DESC"))
                    .select(:order_number)
@@ -517,7 +517,7 @@ module Api::V1::Concerns::OrdersControllerHelper
 
       group_page = orders
                    .unscope(:order)
-                   .unscope(:distinct)
+                   .distinct(false)
                    .group(:order_number)
                    .reorder(Arel.sql("MAX(#{order_class.table_name}.updated_at) DESC"))
                    .select(:order_number)
