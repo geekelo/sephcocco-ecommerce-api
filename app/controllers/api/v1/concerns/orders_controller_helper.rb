@@ -47,11 +47,11 @@ module Api::V1::Concerns::OrdersControllerHelper
         end
         
         if params[:filter][:start_date].present? && params[:filter][:end_date].present?
-          orders = orders.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
+          orders = orders.where("#{order_class.table_name}.created_at" => params[:filter][:start_date]..params[:filter][:end_date])
         elsif params[:filter][:start_date].present?
-          orders = orders.where('created_at >= ?', params[:filter][:start_date])
+          orders = orders.where("#{order_class.table_name}.created_at >= ?", params[:filter][:start_date])
         elsif params[:filter][:end_date].present?
-          orders = orders.where('created_at <= ?', params[:filter][:end_date])
+          orders = orders.where("#{order_class.table_name}.created_at <= ?", params[:filter][:end_date])
         end
       end
 
@@ -98,11 +98,11 @@ module Api::V1::Concerns::OrdersControllerHelper
                          )        
         end
         if params[:filter][:start_date].present? && params[:filter][:end_date].present?
-          orders = orders.where(created_at: params[:filter][:start_date]..params[:filter][:end_date])
+          orders = orders.where("#{order_class.table_name}.created_at" => params[:filter][:start_date]..params[:filter][:end_date])
         elsif params[:filter][:start_date].present?
-          orders = orders.where('created_at >= ?', params[:filter][:start_date])
+          orders = orders.where("#{order_class.table_name}.created_at >= ?", params[:filter][:start_date])
         elsif params[:filter][:end_date].present?
-          orders = orders.where('created_at <= ?', params[:filter][:end_date])
+          orders = orders.where("#{order_class.table_name}.created_at <= ?", params[:filter][:end_date])
         elsif params[:filter][:order_number].present?
           orders = orders.where(order_number: params[:filter][:order_number])
         end
